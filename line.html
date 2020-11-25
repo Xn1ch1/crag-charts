@@ -1,0 +1,74 @@
+<html>
+
+	<head>
+
+		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+		<link href="resources/demo.css" rel="stylesheet">
+
+		<script src="resources/demo.js"></script>
+
+		<title>Crag Charts: Line Chart</title>
+
+		<link rel="apple-touch-icon" sizes="180x180" href="resources/icons/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="resources/icons/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="resources/icons/favicon-16x16.png">
+		<link rel="manifest" href="resources/icons/site.webmanifest">
+		<link rel="mask-icon" href="resources/icons/safari-pinned-tab.svg" color="#5bbad5">
+		<meta name="msapplication-TileColor" content="#da532c">
+		<meta name="theme-color" content="#ffffff">
+		<meta charset="UTF-8">
+
+	</head>
+
+
+	<body style="background: #EEE">
+
+		<div class="grid-container">
+
+			<div class="head">Crag Charts</div>
+			<div w3-include-html="nav.html" class="nav"></div>
+
+			<div class="body">
+				<div id="overview"></div>
+				<h1>Visualization: Line Chart</h1>
+
+				<hr>
+				<h2>Overview</h2>
+
+				<div id="line-chart" class="chart-container"></div>
+				<span class="chart-caption">Tip: Hover over the points to see the tool tip</span>
+
+			</div>
+
+			<div class="subnav">
+				<ul class="toc">
+					<li>Table of Content</li>
+					<li><a href="#overview">Overview</a></li>
+				</ul>
+			</div>
+
+		</div>
+
+		<script src="crag/crag.charts.loader.js"></script>
+		<script>
+
+			let chartDefault;
+
+			crag.onLoadCallBack(createCharts, ['line'], '/Crag-Charts/crag/');
+
+			function createCharts() {
+					let optionsDefault = {
+						series: [['A', 134], ['B', 255], ['C', 100], ['D', 50]],
+					}
+					chartDefault = new CragLine(optionsDefault).create('line-chart');
+				}
+
+				window.onresize = function() {
+					chartDefault.draw();
+				}
+
+			</script>
+
+	</body>
+
+</html>

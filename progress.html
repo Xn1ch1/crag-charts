@@ -1,0 +1,123 @@
+<html>
+
+	<head>
+
+		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+		<link href="resources/demo.css" rel="stylesheet">
+
+		<script src="resources/demo.js"></script>
+
+		<title>Crag Charts: Progress</title>
+
+		<link rel="apple-touch-icon" sizes="180x180" href="resources/icons/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="resources/icons/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="resources/icons/favicon-16x16.png">
+		<link rel="manifest" href="resources/icons/site.webmanifest">
+		<link rel="mask-icon" href="resources/icons/safari-pinned-tab.svg" color="#5bbad5">
+		<meta name="msapplication-TileColor" content="#da532c">
+		<meta name="theme-color" content="#ffffff">
+		<meta charset="UTF-8">
+
+	</head>
+
+
+	<body style="background: #EEE">
+
+		<div class="grid-container">
+
+			<div class="head">Crag Charts</div>
+			<div w3-include-html="nav.html" class="nav"></div>
+
+			<div class="body">
+				<div id="overview"></div>
+				<h1>Visualization: Progress Chart</h1>
+
+				<hr>
+				<h2>Overview</h2>
+
+				<div id="progress-chart" class="chart-container"></div>
+
+				<table class="config-table">
+					<tbody>
+						<tr>
+						<th colspan="2">Configuration Options</th>
+					</tr>
+					<tr>
+						<td>data.current</td>
+						<td>The current progress value<span>Type: number</span><span>Default: 0</span></td>
+					</tr>
+					<tr>
+						<td>data.target</td>
+						<td>The optional target value, this should be less than the total.<span>Type: number</span><span>Default: null</span></td>
+					</tr>
+					<tr>
+						<td>data.total</td>
+						<td>The total progress value<span>Type: number</span><span>Default: null</span></td>
+					</tr>
+					<tr>
+						<td>bar.color</td>
+						<td>The base color of the progress bar. See the color pallet options for available colors<span>Type: string</span><span>Default: blue</span></td>
+					</tr>
+					<tr>
+						<td>bar.targetColor</td>
+						<td>The color the bar will change to once the target value has been reached. <span>Type: string</span><span>Default: null</span></td>
+					</tr>
+						<tr><td>bar.totalColor</td>
+						<td>The color the bar will change to once the total value has been reached. <span>Type: string</span><span>Default: null</span></td>
+					</tr>
+						<tr><td>bar.striped</td>
+						<td>Apply a striped overlay on the bar, this will not affect specified colors. <span>Type: Boolean</span><span>Default: false</span></td>
+					</tr>
+						<tr><td>bar.animated</td>
+						<td>Right directional animate the stiped overlay of the bar. The animation will stop when the total value has been reached. <span>Type: Boolean</span><span>Default: false</span></td>
+					</tr>
+						<tr><td>labels.current</td>
+						<td>The label of the current progress indicator.> <span>Type: string</span><span>Default: ‘Current’</span></td>
+					</tr>
+						<tr><td>labels.target</td>
+						<td>The label of the target progress indicator. This will not show if no target value has been given.> <span>Type: string</span><span>Default: ‘Target’</span></td>
+					</tr>
+						<tr><td>labels.total</td>
+						<td>The label of the total indicator.> <span>Type: string</span><span>Default: ‘Current’</span></td>
+					</tr>
+					</tbody>
+			</table>
+
+			</div>
+
+			<div class="subnav">
+				<ul class="toc">
+					<li>Table of Content</li>
+					<li><a href="#overview">Overview</a></li>
+				</ul>
+			</div>
+
+		</div>
+
+		<script src="crag/crag.charts.loader.js"></script>
+		<script>
+
+			let chart;
+
+			crag.onLoadCallBack(createCharts, ['progress'], '/Crag-Charts/crag/');
+
+			function createCharts() {
+				let options = {
+					data: {
+						current: 57,
+						target: 95,
+						total: 160
+					}
+				}
+				chart = new CragProgress(options).create('progress-chart');
+			}
+
+			window.onresize = function() {
+				chart.draw();
+			}
+
+		</script>
+
+	</body>
+
+</html>

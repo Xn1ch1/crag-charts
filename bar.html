@@ -1,0 +1,429 @@
+<html>
+
+	<head>
+
+		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+		<link href="resources/demo.css" rel="stylesheet">
+
+		<script src="resources/demo.js"></script>
+
+		<title>Crag Charts: Bar Chart</title>
+
+		<link rel="apple-touch-icon" sizes="180x180" href="resources/icons/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="resources/icons/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="resources/icons/favicon-16x16.png">
+		<link rel="manifest" href="resources/icons/site.webmanifest">
+		<link rel="mask-icon" href="resources/icons/safari-pinned-tab.svg" color="#5bbad5">
+		<meta name="msapplication-TileColor" content="#da532c">
+		<meta name="theme-color" content="#ffffff">
+		<meta charset="UTF-8">
+
+	</head>
+
+	<body style="background: #EEE">
+
+		<div class="grid-container">
+
+			<div class="head">Crag Charts</div>
+			<div w3-include-html="nav.html" class="nav"></div>
+
+
+			<div class="body">
+				<div id="overview"></div>
+				<h1>Visualization: Bar Chart</h1>
+				<hr>
+
+				<h2>Overview</h2>
+
+				<p>A bar chart is a horizontal bar chart rendered in the browser using SVG and HTML. Like all Crag charts, bar charts display tooltips when the user hovers over the data. For a vertical version of this chart, see the bar chart TODO: LINK.</p>
+				<p>The chart is limited to 20 data points, data will auomtatically be truncated if there are more points provided.</p>
+				<p>The minimum required code required for invoking a chart is the following</p>
+
+<pre><code>&lt;div id="bar-chart" style="width: 100%;	height: 500px;"&gt;&lt;/div&gt;
+
+&lt;script src="https://combinatronics.com/Xn1ch1/Crag-Charts/main/crag/crag.charts.loader.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+	let chart;
+	crag.onLoadCallBack(createCharts, ['bar']);
+
+	function createCharts() {
+		const options = {
+			series: [['A', 500], ['B', 432], ['C', 300]];
+		}
+		chart = new CragBar(options).create('bar-chart');
+	}
+&lt;/script&gt;</code></pre>
+
+				<p>In the second script tag, the onLoadCallBack is invoked, the function paramater passed should be below this callback that will create the chart. For more detailed information, see <a href="use.html">How to Use</a>.</p>
+				<p>The above code will generate the following chart.</p>
+
+				<div id="bar-chart-default" class="chart-container"></div>
+				<span class="chart-caption">Tip: Hover over the bars to see the tool tip</span>
+
+				<div id="functions"></div>
+				<hr>
+
+				<h2>Built In Functions</h2>
+
+				<h3>Update</h3>
+
+				<p>To update the data in the chart, the update function should be called on the chart object. Only one parameter is required, an array of arrays. See <a href="#series">series</a> parameter for more infomration. The data set can change in size when updated, bars will be automatically added and removed as needed but will still be limited to 20 points and truncated automatically.</p>
+
+				<span>Example</span>
+
+<pre><code>chart.update([['A', 160], ['B', 527], ['C', 428]]);</code></pre>
+
+				<h3>Draw</h3>
+				<p>The draw function will cause a complete redraw of the chart with the pre existing data. This function will be useful where the size of the container object changes size. The below example is calling the draw function on the chart object when the window resizes.</p>
+
+<pre><code>window.onresize = function() {
+	chart.draw();
+}</code></pre>
+
+				<div id="examples"></div>
+				<hr>
+
+				<h2>Examples</h2>
+
+				<p>Optional paramters can be passed inside options when initializing the chart. These are used to style the chart and elements</p>
+
+				<p>The following example sets the bar width to 90%, sets the top of the bars to be rounded and applys an inset shadow.</p>
+
+<pre><code>let options = {
+	series: [['A', 500], ['B', 436], ['C', 300], ['D', 375]],
+	bar: {
+		width: 90,
+		rounded: true,
+		inset: true
+	}
+}</code></pre>
+
+				<p>This will generate the below chart. Tip: Use the random data generator button below the chart to generate and apply a new random data set.</p>
+
+				<div id="bar-chart-partial" class="chart-container"></div>
+				<span class="chart-caption"><button onclick="newDataPartial()">Random Data Set</button> Generate and apply a random data set for this chart.</span>
+
+				<p>Another example, the options passed have included vAxis and chart settings. The two paramters passed in vAxis are min and format. See TOOO LINK for more infomration on formatting axes. A min seeting of 'auto' will let the chart decide the lower bound value on the vertical axis.</p>
+				<p>In addition a chart title has also been specified and extra bar options have been passed such as color and a striped overlay.</p>
+
+<pre><code>let options = {
+	series: [['A', 400], ['B', 500], ['C', 300]],
+	bar: {
+		width: 95,
+		rounded: true,
+		inset: true,
+		striped: true,
+		animated: true,
+		color: 'amber'
+	},
+	vAxis: {
+		min: 'auto',
+		format: 'time'
+	}
+	chart: {
+		title: 'Time Taken'
+	}
+}</code></pre>
+
+				<p>This will generate the below chart. Tip: Use the random data generator button below to generate different data sets for the chart</p>
+
+				<div id="bar-chart" class="chart-container"></div>
+				<span class="chart-caption"><button onclick="newData()">Random Data Set</button> (Generate a new random data set for this chart)</span>
+
+				<div id="config"></div>
+				<hr>
+
+				<h1>Configuration</h1>
+
+				<table class="config-table">
+					<tbody>
+						<tr>
+							<th colspan="2">
+								Options
+							</th>
+						</tr>
+						<tr>
+							<td id="series">
+								series <em style="display: inline;">(Required)</em>
+							</td>
+							<td>
+								An array of arrays, each sub array will have the series label at index 0 and a number at index 1. A maximum of 20 points can be displayed on the chart, data will be automatically truncated.
+								<em>Example</em>
+
+<pre><code>options = {
+	series: [
+		['A’, 5],
+		['B’, 10],
+		['C’, 15],
+		['D’, 20],
+	]
+}</code></pre>
+								 
+								<span>Type: Array of arrays</span>
+								<span>Default: null</span>
+							</td>
+						</tr>
+						<tr id="bar">
+							<td>
+								bar.width
+							</td>
+							<td>
+								Percentage width of each bar, where 100 means there is no space between bars. Can not exceed 100.
+								 
+								<span>Type: number</span>
+								<span>Default: 100</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								bar.color
+							</td>
+							<td>
+								The base color of the bars. See the color pallet options for available colors . When not specified the bars will take the default array of colors .
+								 
+								<span>Type: string</span>
+								<span>Default: 'multi’</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								bar.rounded
+							</td>
+							<td>
+								Sets the top of the bars to have rounded corners.
+								 
+								<span>Type: Boolean</span>
+								<span>Default: false</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								bar.inset
+							</td>
+							<td>
+								Sets the bars to have an inset drop shadow.
+								 
+								<span>Type: Boolean</span>
+								<span>Default: false</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								bar.stripe
+							</td>
+							<td>
+								Apply a striped overlay on the bars, this will not affect the specified color .
+								 
+								<span>Type: Boolean</span>
+								<span>Default: false</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								bar.animated
+							</td>
+							<td>
+								Animate the stiped overlay of the bar.
+								 
+								<span>Type: Boolean</span>
+								<span>Default: false</span>
+							</td>
+						</tr>
+						<tr id="vAxis">
+							<td>
+								vAxis.label
+							</td>
+							<td>
+								The label of the vertical axis and the series values.
+								 
+								<span>Type: string</span>
+								<span>Default: 'Series 1’</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								vAxis.lines
+							</td>
+							<td>
+								Enables horizontal major and minor gridlines on the chart for the vertical axis points
+								 
+								<span>Type: string</span>
+								<span>Default: true</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								vAxis.format
+							</td>
+							<td>
+								Formatting of the major line values and the tool tip value label. See the label formatting guide on available formats.
+								 
+								<span>Type: string</span>
+								<span>Default: 'number’</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								vAxis.min
+							</td>
+							<td>
+								Sets the minimum value of the vertical axis. This should not be lower than the series values. Optionally the string value 'min’ can be passed for the chart to automatically calculate the minimum value.
+								 
+								<span>Type: number or string</span>
+								<span>Default: 0</span>
+							</td>
+						</tr>
+						<tr id="labels">
+							<td>
+								labels.position
+							</td>
+							<td>
+								Sets the default position of the bar value labels. The position will automatically switch where the label cannot fit in the default position. In addition, if the labels will not fit within the series width, the labels will automatically hide.
+								 
+								<em>Option</em>
+								<ul>
+									<li>'none’: labels will not be displayed</li>
+									<li>'outside’: labels will appear above the bars</li>
+									<li>'inside’: labels will appear inside the bars</li>
+								</ul>
+								 
+								<span>Type: string</span>
+								<span>Default: 'none’</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								labels.color
+							</td>
+							<td>
+								Sets the text color of the labels. See the color pallet options for available colors . By default, the labels will automatically switch between black and white depending on the background color .
+								 
+								<span>Type: string</span>
+								<span>Default: 'match’</span>
+							</td>
+						</tr>
+						<tr id="chart">
+							<td>
+								chart.title
+							</td>
+							<td>
+								The title to appear above the chart. See the color pallet options for available colors .
+								 
+								<span>Type: string</span>
+								<span>Default: null</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								chart.color
+							</td>
+							<td>
+								The background color of the chart.
+								 
+								<span>Type: string</span>
+								<span>Default: 'white’</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								chart.minorLines
+							</td>
+							<td>
+								Turns on or off the vertical axis minor lines.
+								 
+								<span>Type: Boolean</span>
+								<span>Default: false</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+
+			</div>
+
+			<div class="subnav">
+				<ul class="toc">
+					<li>Table of Content</li>
+					<li><a href="#overview">Overview</a></li>
+					<li><a href="#functions">Functions</a></li>
+					<li><a href="#examples">Examples</a></li>
+					<li><a href="#config">Configuration</a></li>
+					<ul>
+						<li><a href="#series">series</a></li>
+						<li><a href="#bar">bar</a></li>
+						<li><a href="#vAxis">vAxis</a></li>
+						<li><a href="#labels">labels</a></li>
+						<li><a href="#chart">chart</a></li>
+					</ul>
+				</ul>
+			</div>
+
+		</div>
+
+		<script src="crag/crag.charts.loader.js"></script>
+		<script>
+
+			let defaultChart;
+			let partialChart;
+			let chart;
+
+			crag.onLoadCallBack(createCharts, ['bar'], '/Crag-Charts/crag/');
+
+			function createCharts() {
+
+				const defaultOptions = {
+					series: [['A', 500], ['B', 432], ['C', 300]]
+				}
+
+				defaultChart = new CragBar(defaultOptions).create('bar-chart-default');
+
+				const partialOptions = {
+					series: [['A', 500], ['B', 436], ['C', 300], ['D', 375]],
+					bar: {
+						width: 90,
+						rounded: true,
+						inset: true
+					}
+				}
+
+				partialChart = new CragBar(partialOptions).create('bar-chart-partial');
+
+				const options = {
+					series: [['A', 400], ['B', 500], ['C', 300]],
+					bar: {
+						width: 95,
+						rounded: true,
+						inset: true,
+						striped: true,
+						animated: true,
+						color: 'amber'
+					},
+					vAxis: {
+						min: 'auto',
+						format: 'time'
+					},
+					chart: {
+						title: 'Time Taken'
+					}
+				}
+
+				chart = new CragBar(options).create('bar-chart');
+			}
+
+			window.onresize = function() {
+				defaultChart.draw();
+				partialChart.draw();
+				chart.draw();
+			}
+
+			function newDataPartial() {
+				partialChart.update(randomDataSeries());
+			}
+			function newData() {
+				chart.update(randomDataSeries());
+			}
+
+		</script>
+
+	</body>
+
+</html>

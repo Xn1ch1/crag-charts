@@ -1,0 +1,159 @@
+.cragLineChartContainer {
+	width: 100%;
+	height: 100%;
+	display: grid;
+	grid-template-columns: min-content 1fr;
+	grid-template-rows: min-content 1fr min-content;
+	gap: 0px 0px;
+	grid-template-areas:
+		"cragLineVAxis cragLineTitle"
+		"cragLineVAxis cragLineChartArea"
+		"cragLineVAxis cragLineHAxis";
+	overflow: hidden;
+}
+.cragLineVAxis {
+	grid-area: cragLineVAxis;
+	position: relative;
+	transition: all 0.8s ease;
+}
+.cragLineTitle {
+	grid-area: cragLineTitle;
+	position: relative;
+	transition: all 0.8s ease;
+	min-height: 10px;
+}
+.cragLineTitleText {
+	margin: 0 0 16px 0;
+    font-size: 25px;
+    font-family: 'Roboto';
+    font-weight: 300;
+    text-align: center;
+}
+.cragLineChartArea {
+	grid-area: cragLineChartArea;
+	position: relative;
+}
+.cragLineCharSubArea {
+	position: absolute;
+	overflow: hidden;
+	width: 100%;
+	height: 100%;
+}
+.cragLineHAxis {
+	grid-area: cragLineHAxis;
+	position: relative;
+	font-size: 0;
+	overflow: hidden;
+	height: 20px;
+	box-sizing: border-box;
+	pointer-events: none;
+}
+.cragLineHAxisLabel {
+	display: inline-block;
+	font-size: 12px;
+	overflow: hidden;
+	text-align: center;
+	transition: all 0.6s ease;
+	padding: 2px;
+	box-sizing: border-box;
+	position: absolute;
+	left: 100%;
+	font-family: 'Roboto';
+}
+.cragLinePointLabel {
+	position: absolute;
+	text-align: center;
+	font-size: 12px;
+	transition: all 0.9s ease;
+	left: 100%;
+	box-sizing: border-box;
+	font-family: 'Roboto';
+    opacity: 0.9;
+    transform: translatex(-50%);
+}
+.cragLineVAxisLabel {
+	position: absolute;
+	box-sizing: border-box;
+	padding-right: 8px;
+	padding-left: 2px;
+	text-align: right;
+	display: block;
+	font-family: 'Roboto';
+	font-size: 12px;
+	transition: all 0.5s ease;
+	right: 0;
+	bottom: 100%;
+	pointer-events: none;
+}
+.cragLineAxisLineMajor {
+	position: absolute;
+	height: 1px;
+	width: 100%;
+	background: #000000;
+	bottom: 0px;
+	transition: all 1s ease;
+	opacity: 0.1;
+}
+.cragLineAxisLineMinor {
+	position: absolute;
+	height: 1px;
+	width: 100%;
+	background: #222222;
+	bottom: 0px;
+	transition: all 1s ease;
+	opacity: 0.05;
+}
+.cragLinePoint {
+	transition: all 0.4s ease;
+	left: 100%;
+	cursor: pointer;
+	stroke-width: 24px;
+    stroke: transparent;
+    paint-order: stroke;
+}
+.cragLineLine {
+	transition: all 0.8s ease;
+	-webkit-transition: all 0.8s ease;
+}
+.cragLineToolTip {
+	position: absolute;
+	padding: 8px 16px;
+	opacity: 0;
+	transition: all 0.5s ease;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	box-shadow: 0px -2px 10px #000000CC;
+	pointer-events: none;
+}
+.cragLineToolTipTitle {
+	color: #FFFFFF;
+	font-family: 'Roboto';
+	font-size: 12px;
+	margin: 2px 0;
+	width: 100%;
+	text-align: center;
+	font-weight: 300;
+}
+.cragLineToolTipLabel {
+	display: inline;
+	color: #FFFFFF;
+	font-family: 'Roboto';
+	font-size: 16px;
+	margin: 8px 16px 8px 0;
+	text-align: right;
+	font-weight: 300;
+	float: left;
+	clear: left;
+}
+.cragLineToolTipValue {
+	display: inline;
+	color: #FFFFFF;
+	font-family: 'Roboto';
+	font-size: 16px;
+	margin: 8px 0px 8px 16px;
+	text-align: right;
+	float: right;
+	font-weight: 400;
+	clear: right;
+}

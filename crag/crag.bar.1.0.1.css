@@ -1,0 +1,184 @@
+.cragBarChartContainer {
+	width: 100%;
+	height: 100%;
+	display: grid;
+	grid-template-columns: min-content 1fr;
+	grid-template-rows: min-content 1fr min-content;
+	gap: 0px 0px;
+	grid-template-areas:
+		"cragBarVAxis cragBarTitle"
+		"cragBarVAxis cragBarChartArea"
+		"cragBarVAxis cragBarHAxis";
+	overflow: hidden;
+}
+.cragBarVAxis {
+	grid-area: cragBarVAxis;
+	position: relative;
+	transition: all 0.8s ease;
+}
+.cragBarTitle {
+	grid-area: cragBarTitle;
+	position: relative;
+	transition: all 0.8s ease;
+	min-height: 10px;
+}
+.cragBarTitleText {
+	margin: 0 0 16px 0;
+    font-size: 25px;
+    font-family: 'Roboto';
+    font-weight: 300;
+    text-align: center;
+}
+.cragBarChartArea {
+	grid-area: cragBarChartArea;
+	position: relative;
+}
+.cragBarCharSubArea {
+	position: absolute;
+	overflow: hidden;
+	width: 100%;
+	height: 100%;
+}
+.cragBarHAxis {
+	grid-area: cragBarHAxis;
+	position: relative;
+	font-size: 0;
+	overflow: hidden;
+	height: 20px;
+	box-sizing: border-box;
+	pointer-events: none;
+}
+.cragBarHAxisLabel {
+	display: inline-block;
+	font-size: 12px;
+	overflow: hidden;
+	text-align: center;
+	transition: all 0.6s ease;
+	padding: 2px;
+	box-sizing: border-box;
+	position: absolute;
+	left: 100%;
+	font-family: 'Roboto';
+}
+.cragBarBarLabel {
+	position: absolute;
+	text-align: center;
+	font-size: 12px;
+	transition: all 0.9s ease;
+	padding: 8px 2px;
+	left: 100%;
+	box-sizing: border-box;
+	font-family: 'Roboto';
+}
+.cragBarVAxisLabel {
+	position: absolute;
+	box-sizing: border-box;
+	padding-right: 8px;
+	padding-left: 2px;
+	text-align: right;
+	display: block;
+	font-family: 'Roboto';
+	font-size: 12px;
+	transition: all 0.5s ease;
+	right: 0;
+	bottom: 100%;
+	pointer-events: none;
+}
+.cragBarAxisLineMajor {
+	position: absolute;
+	height: 1px;
+	width: 100%;
+	background: #000000;
+	bottom: 0px;
+	transition: all 1s ease;
+	opacity: 0.1;
+}
+.cragBarAxisLineMinor {
+	position: absolute;
+	height: 1px;
+	width: 100%;
+	background: #222222;
+	bottom: 0px;
+	transition: all 1s ease;
+	opacity: 0.05;
+}
+.cragBarBar {
+	height: 0;
+	transition: height 1.1s ease, width 0.6s ease, background-color 0.8s ease, left 0.7s ease, opacity 0.7s ease;
+	position: absolute;
+	box-sizing: border-box;
+	cursor: pointer;
+	bottom: 0;
+	left: 100%;
+}
+.cragBarBar:hover {
+	box-shadow: 0px -2px 10px #000000CC;
+}
+.cragBarBarRound {
+	-webkit-border-top-left-radius: 10px;
+	-webkit-border-top-right-radius: 10px;
+	-moz-border-radius-topleft: 10px;
+	-moz-border-radius-topright: 10px;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+}
+.cragBarBarInset {
+	-webkit-box-shadow: inset 0px 5px 10px 0px rgba(0,0,0,0.3);
+	-moz-box-shadow: inset 0px 5px 10px 0px rgba(0,0,0,0.3);
+	box-shadow: inset 0px 5px 10px 0px rgba(0,0,0,0.3);
+}
+.cragBarBarStriped {
+	background-size: 50px 50px;
+	background-image: -moz-linear-gradient(-45deg, #FFFFFF11 25%, transparent 25%, transparent 50%, #FFFFFF11 50%, #FFFFFF11 75%, transparent 75%, transparent);
+	background-image: linear-gradient(-45deg, #FFFFFF11 25%, transparent 25%, transparent 50%, #FFFFFF11 50%, #FFFFFF11 75%, transparent 75%, transparent);
+}
+.cragBarBarStripedAnimate {
+	animation: barberpole 5s linear infinite;
+}
+.cragBarToolTip {
+	position: absolute;
+	padding: 8px 16px;
+	opacity: 0;
+	transition: all 0.5s ease;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	box-shadow: 0px -2px 10px #000000CC;
+	pointer-events: none;
+}
+.cragBarToolTipTitle {
+	color: #FFFFFF;
+	font-family: 'Roboto';
+	font-size: 12px;
+	margin: 2px 0;
+	width: 100%;
+	text-align: center;
+	font-weight: 300;
+}
+.cragBarToolTipLabel {
+	display: inline;
+	color: #FFFFFF;
+	font-family: 'Roboto';
+	font-size: 16px;
+	margin: 8px 16px 8px 0;
+	text-align: right;
+	font-weight: 300;
+	float: left;
+	clear: left;
+}
+.cragBarToolTipValue {
+	display: inline;
+	color: #FFFFFF;
+	font-family: 'Roboto';
+	font-size: 16px;
+	margin: 8px 0px 8px 16px;
+	text-align: right;
+	float: right;
+	font-weight: 400;
+	clear: right;
+}
+@keyframes barberpole {
+	100% {
+		background-position: 100px 0px;
+	}
+}

@@ -1,0 +1,71 @@
+.cragProgressArea {
+	position: relative;
+	width: 100%;
+	height: 250px;
+	margin: auto 0;
+	overflow: hidden;
+}
+.cragProgressBar {
+    width: 100%;
+    height: 60px;
+    background: #DDD;
+    border: 5px solid #DDD;
+    position: absolute;
+    top: 95px;
+    overflow: hidden;
+    transition: border-radius 1s ease;
+    box-sizing: border-box;
+    -webkit-box-shadow: inset 0px 0px 10px 3px rgba(143,143,143, 0.2);
+    -moz-box-shadow: inset 0px 0px 10px 3px rgba(143,143,143, 0.2);
+    box-shadow: inset 0px 0px 10px 3px rgba(143,143,143, 0.2);
+}
+.cragProgressProgress {
+    display: block;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    transition: all 1.5s .1s ease;
+    width: 0%;
+    -webkit-box-shadow: inset 0px 0px 10px 3px rgba(123,123,123, 0.3);
+    -moz-box-shadow: inset 0px 0px 10px 3px rgba(123,123,123, 0.3);
+    box-shadow: inset 0px 0px 10px 3px rgba(123,123,123, 0.3);
+}
+.cragProgressLine {
+    width: 5px;
+    position: absolute;
+    transition: all 0.7s ease;
+}
+.cragProgressLabel {
+    position: absolute;
+    transition: left 1.2s ease, right 1.2s ease;
+    color: #555;
+    font-family: 'Roboto';
+	line-height: 1;
+	padding: 0 4px;
+	box-sizing: border-box;
+	font-size: 14px;
+}
+.cragProgressValueLabel {
+    position: absolute;
+    font-size: 20px;
+    transition: left 1.1s ease, right 1.1s ease;
+    color: #555;
+    font-family: 'Roboto';
+    line-height: 1;
+	padding: 0 4px;
+	box-sizing: border-box;
+}
+.cragProgressStripe {
+    background-size: 50px 50px;
+    background-image: -webkit-linear-gradient(linear, 0 0, 100% 100%, color-stop(0.25, rgba(255, 255, 255, 0.2)), color-stop(0.25, transparent), color-stop(0.5, transparent), color-stop(0.5, rgba(255, 255, 255, 0.2)), color-stop(0.75, rgba(255, 255, 255, 0.2)), color-stop(0.75, transparent), to(transparent));
+    background-image: -moz-linear-gradient(-45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent);
+    background-image: linear-gradient(-45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent);
+}
+.cragProgressStripeAnimate {
+    animation: progressBarberpole 5s linear infinite;
+}
+@keyframes progressBarberpole {
+    100% {
+        background-position: 100px 100px;
+    }
+}
