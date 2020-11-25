@@ -3,12 +3,12 @@
 	<head>
 
 		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
-		<link href="resources/demo.css" rel="stylesheet">
 
-		<script src="resources/demo.js"></script>
+		<link href="resources/demo.css?v=1" rel="stylesheet">
+		<script src="resources/demo.js?v=1"></script>
 
 		<title>Crag Charts: Line Chart</title>
-
+?v=1
 		<link rel="apple-touch-icon" sizes="180x180" href="resources/icons/apple-touch-icon.png">
 		<link rel="icon" type="image/png" sizes="32x32" href="resources/icons/favicon-32x32.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="resources/icons/favicon-16x16.png">
@@ -26,7 +26,7 @@
 		<div class="grid-container">
 
 			<div class="head">Crag Charts</div>
-			<div w3-include-html="nav.html" class="nav"></div>
+			<div w3-include-html="nav.html" id="nav" class="nav"></div>
 
 			<div class="body">
 				<div id="overview"></div>
@@ -49,12 +49,12 @@
 
 		</div>
 
-		<script src="crag/crag.charts.loader.js"></script>
+		<script src="crag/crag.charts.loader.js?v=1"></script>
 		<script>
 
 			let chartDefault;
 
-			crag.onLoadCallBack(createCharts, ['line'], '/crag/');
+			crag.onLoadCallBack(createCharts, ['line']);
 
 			function createCharts() {
 					let optionsDefault = {

@@ -3,9 +3,9 @@
 	<head>
 
 		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
-		<link href="resources/demo.css" rel="stylesheet">
+		<link href="resources/demo.css?v=1" rel="stylesheet">
 
-		<script src="resources/demo.js"></script>
+		<script src="resources/demo.js?v=1"></script>
 
 		<title>Crag Charts: How To</title>
 
@@ -25,7 +25,7 @@
 		<div class="grid-container">
 
 			<div class="head">Crag Charts</div>
-			<div w3-include-html="nav.html" class="nav"></div>
+			<div w3-include-html="nav.html" id="nav" class="nav"></div>
 
 			<div class="body">
 				<div id="loader"></div>
@@ -158,7 +158,7 @@ const chart = new CragBar(options).create('bar-chart');</code></pre>
 			</div>
 
 		</div>
-		<script src="crag/crag.charts.loader.js"></script>
+		<script src="crag/crag.charts.loader.js?v=1"></script>
 		<script>
 			let chart;
 			crag.onLoadCallBack(createCharts, ['bar']);

@@ -3,9 +3,9 @@
 	<head>
 
 		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
-		<link href="resources/demo.css" rel="stylesheet">
+		<link href="resources/demo.css?v=1" rel="stylesheet">
 
-		<script src="resources/demo.js"></script>
+		<script src="resources/demo.js?v=1"></script>
 
 		<title>Crag Charts: Bar Chart</title>
 
@@ -25,7 +25,7 @@
 		<div class="grid-container">
 
 			<div class="head">Crag Charts</div>
-			<div w3-include-html="nav.html" class="nav"></div>
+			<div w3-include-html="nav.html" id="nav" class="nav"></div>
 
 
 			<div class="body">
@@ -101,7 +101,7 @@
 				<p>This will generate the below chart. Tip: Use the random data generator button below the chart to generate and apply a new random data set.</p>
 
 				<div id="bar-chart-partial" class="chart-container"></div>
-				<span class="chart-caption"><button onclick="newDataPartial()">Random Data Set</button> Generate and apply a random data set for this chart.</span>
+				<span class="chart-caption"><button onclick="newDataPartial();disableBtn(this)">Random Data Set</button> Generate and apply a random data set for this chart.</span>
 
 				<p>Another example, the options passed have included vAxis and chart settings. The two paramters passed in vAxis are min and format. See TOOO LINK for more infomration on formatting axes. A min seeting of 'auto' will let the chart decide the lower bound value on the vertical axis.</p>
 				<p>In addition a chart title has also been specified and extra bar options have been passed such as color and a striped overlay.</p>
@@ -128,7 +128,7 @@
 				<p>This will generate the below chart. Tip: Use the random data generator button below to generate different data sets for the chart</p>
 
 				<div id="bar-chart" class="chart-container"></div>
-				<span class="chart-caption"><button onclick="newData()">Random Data Set</button> (Generate a new random data set for this chart)</span>
+				<span class="chart-caption"><button onclick="newData();disableBtn(this)">Random Data Set</button> (Generate a new random data set for this chart)</span>
 
 				<div id="config"></div>
 				<hr>
@@ -359,14 +359,14 @@
 
 		</div>
 
-		<script src="crag/crag.charts.loader.js"></script>
+		<script src="crag/crag.charts.loader.js?v=1"></script>
 		<script>
 
 			let defaultChart;
 			let partialChart;
 			let chart;
 
-			crag.onLoadCallBack(createCharts, ['bar'], '/crag/');
+			crag.onLoadCallBack(createCharts, ['bar']);
 
 			function createCharts() {
 

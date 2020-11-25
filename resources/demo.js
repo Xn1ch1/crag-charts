@@ -3,33 +3,41 @@ let progressTotal = 200;
 let progressCurrent = randomInt(0, progressTotal);
 let progressTarget = randomInt(0, progressTotal);
 
-function includeHTML() {
-	var z, i, elmnt, file, xhttp;
-	z = document.getElementsByTagName("*");
-	for (i = 0; i < z.length; i++) {
-	  elmnt = z[i];
-	  file = elmnt.getAttribute("w3-include-html");
-	  if (file) {
-		xhttp = new XMLHttpRequest();
-		xhttp.onreadystatechange = function() {
-		  if (this.readyState == 4) {
-			if (this.status == 200) {elmnt.innerHTML = this.responseText;}
-			if (this.status == 404) {elmnt.innerHTML = "Page not found.";}
-			elmnt.removeAttribute("w3-include-html");
-			includeHTML();
-		  }
-		}
-		xhttp.open("GET", file, true);
-		xhttp.send();
-		return;
-	  }
-	}
-  }
+function includeNav() {
+	var elmnt, file, xhttp;
+	elmnt = document.getElementById('nav');
+	file = elmnt.getAttribute("w3-include-html");
 
-window.onload = function() {
-	includeHTML();
+	xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if (this.readyState == 4) {
+		if (this.status == 200) {
+
+			elmnt.innerHTML = this.responseText;
+
+			var path = window.location.pathname;
+			var page = path.split("/").pop().replace('.html', '');
+
+			document.getElementsByClassName('nav-'+page)[0].classList.add('nav-active');
+
+		}
+		if (this.status == 404) {elmnt.innerHTML = "Page not found.";}
+		}
+	}
+	xhttp.open("GET", file, true);
+	xhttp.send();
 }
 
+window.onload = function() {
+	includeNav();
+}
+function disableBtn(btn) {
+	const b = btn;
+	btn.disabled = true;
+	setTimeout(function() {
+		b.disabled = false;
+	}, 800);
+}
 function randomInt(min, max) {
 	return Math.floor(Math.random() * (max - min + 1) + min);
 }
