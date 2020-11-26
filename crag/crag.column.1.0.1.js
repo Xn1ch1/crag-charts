@@ -1,4 +1,4 @@
-class CragBar {
+class CragColumn {
 
 	constructor (options) {
 
@@ -180,23 +180,23 @@ class CragBar {
 
 		if (this.options.chart.title != null) {
 			this.title.title = document.createElement('h1');
-			this.title.title.className = 'cragBarTitleText';
+			this.title.title.className = 'cragColumnTitleText';
 			this.title.title.textContent = this.options.chart.title;
 			this.title.area.appendChild(this.title.title);
 		}
 
-		this.chartContainer.className = 'cragBarChartContainer';
-		this.vAxis.area.className = 'cragBarVAxis';
-		this.hAxis.area.className = 'cragBarHAxis';
-		this.title.area.className = 'cragBarTitle';
-		this.chart.area.className = 'cragBarChartArea';
-		this.chart.gridArea.className = 'cragBarCharSubArea';
-		this.chart.labelArea.className = 'cragBarCharSubArea';
-		this.chart.barArea.className = 'cragBarCharSubArea';
-		this.toolTip.container.className = 'cragBarToolTip';
-		this.toolTip.title.className = 'cragBarToolTipTitle';
-		this.toolTip.value.className = 'cragBarToolTipValue';
-		this.toolTip.label.className = 'cragBarToolTipLabel';
+		this.chartContainer.className = 'cragColumnChartContainer';
+		this.vAxis.area.className = 'cragColumnVAxis';
+		this.hAxis.area.className = 'cragColumnHAxis';
+		this.title.area.className = 'cragColumnTitle';
+		this.chart.area.className = 'cragColumnChartArea';
+		this.chart.gridArea.className = 'cragColumnCharSubArea';
+		this.chart.labelArea.className = 'cragColumnCharSubArea';
+		this.chart.barArea.className = 'cragColumnCharSubArea';
+		this.toolTip.container.className = 'cragColumnToolTip';
+		this.toolTip.title.className = 'cragColumnToolTipTitle';
+		this.toolTip.value.className = 'cragColumnToolTipValue';
+		this.toolTip.label.className = 'cragColumnToolTipLabel';
 
 		this.toolTip.label.textContent = this.options.vAxis.label;
 
@@ -367,12 +367,12 @@ class CragBar {
 				const index = i + sL;
 				const bar = t.chart.elements[index].bar;
 				const barLabel = t.chart.elements[index].label;
-				const cragBarHAxisLabel = t.hAxis.elements[index].label;
+				const cragColumnHAxisLabel = t.hAxis.elements[index].label;
 
 				bar.style.left = 'calc(100% + ' + parseInt(bar.style.width.replace('px', '')) * i + 'px)';
 
-				cragBarHAxisLabel.style.opacity = 0;
-				cragBarHAxisLabel.style.left = '100%';
+				cragColumnHAxisLabel.style.opacity = 0;
+				cragColumnHAxisLabel.style.left = '100%';
 
 				if (barLabel != null) {
 					barLabel.style.opacity = 0;
@@ -381,7 +381,7 @@ class CragBar {
 
 				setTimeout(function() {
 					bar.remove();
-					cragBarHAxisLabel.remove();
+					cragColumnHAxisLabel.remove();
 					if (barLabel != null) {
 						barLabel.remove();
 					}
@@ -426,7 +426,7 @@ class CragBar {
 
 		if (t.vAxis.baseLine == null) {
 			let major = document.createElement('div');
-				major.className = 'cragBarAxisLineMajor';
+				major.className = 'cragColumnAxisLineMajor';
 				major.style.bottom = 0;
 				major.style.right = 0;
 				major.style.backgroundColor = pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)]
@@ -438,7 +438,7 @@ class CragBar {
 
 		if (t.vAxis.baseValue == null) {
 			var label = document.createElement('span');
-				label.className = 'cragBarVAxisLabel';
+				label.className = 'cragColumnVAxisLabel';
 				label.textContent = '0';
 				label.style.bottom = 0;
 				label.style.color = pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)];
@@ -483,21 +483,21 @@ class CragBar {
 
 				if (t.options.vAxis.lines) {
 					major = document.createElement('div');
-					major.className = 'cragBarAxisLineMajor';
+					major.className = 'cragColumnAxisLineMajor';
 					major.style.bottom = '100%';
 					major.style.right = 0;
 					major.style.backgroundColor = pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)];
 
 					if (t.options.chart.minorLines) {
 						minor = document.createElement('div');
-						minor.className = 'cragBarAxisLineMinor';
+						minor.className = 'cragColumnAxisLineMinor';
 						minor.style.bottom = '100%';
 						minor.style.backgroundColor = pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)];
 					}
 				}
 
 				var label = document.createElement('span');
-					label.className = 'cragBarVAxisLabel';
+					label.className = 'cragColumnVAxisLabel';
 					label.style.bottom = '100%';
 					label.textContent = '0';
 					label.style.color = pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)];
@@ -596,12 +596,12 @@ class CragBar {
 		const bar = document.createElement('div');
 		const option = this.options.bar;
 
-		bar.className = 'cragBarBar';
+		bar.className = 'cragColumnBar';
 
-		if (option.rounded) bar.classList.add('cragBarBarRound');
-		if (option.inset) bar.classList.add('cragBarBarInset');
-		if (option.striped) bar.classList.add('cragBarBarStriped');
-		if (option.animated) bar.classList.add('cragBarBarStripedAnimate');
+		if (option.rounded) bar.classList.add('cragColumnBarRound');
+		if (option.inset) bar.classList.add('cragColumnBarInset');
+		if (option.striped) bar.classList.add('cragColumnBarStriped');
+		if (option.animated) bar.classList.add('cragColumnBarStripedAnimate');
 
 		return bar;
 
@@ -610,7 +610,7 @@ class CragBar {
 	_createLabel() {
 
 		const label = document.createElement('span');
-		label.className = 'cragBarHAxisLabel';
+		label.className = 'cragColumnHAxisLabel';
 		return label;
 
 	}
@@ -619,7 +619,7 @@ class CragBar {
 
 		if (this.options.labels.position != 'none') {
 			const label = document.createElement('span');
-			label.className = 'cragBarBarLabel';
+			label.className = 'cragColumnBarLabel';
 			if (this.options.labels.color !== 'match') {
 				label.style.color = pallet[this.options.labels.color];
 			}

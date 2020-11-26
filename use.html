@@ -69,8 +69,8 @@
 								A string array of all the charts required for the current page.
 								<em>Example</em>
 								<ul>
-									<li>['bar'] or</li>
-									<li>['bar', 'line']</li>
+									<li>['column'] or</li>
+									<li>['column', 'line']</li>
 								</ul>
 								<span>Type: Array[string]</span>
 							</td>
@@ -89,7 +89,7 @@
 
 				<p>For example, to load the bar chart resources and call the function createCharts the following would be used</p>
 
-<pre><code>crag.onLoadCallBack(createCharts, ['bar']);</code></pre>
+<pre><code>crag.onLoadCallBack(createCharts, ['column']);</code></pre>
 
 				<hr id="create">
 
@@ -102,7 +102,7 @@
 				<p>Every chart class has a built in function of <em>create()</em>, this function requires a single string variable matching the parent element ID. The create function will also return the class object for the chart created to enable addditional functions to be called.</p>
 				<p>In the below example bar chart will be created and assigned to a const variable for future use.</p>
 
-<pre><code>const chart = new CragBar(options).create('bar-chart');</code></pre>
+<pre><code>const chart = new CragColumn(options).create('bar-chart');</code></pre>
 
 				<span class="chart-caption">Tip: For more specific chart guides, see each charts page.</span>
 
@@ -111,7 +111,7 @@
 <pre><code>const options = {
 	series: [['A', 500], ['B', 432], ['C', 300]];
 }
-const chart = new CragBar(options).create('bar-chart');</code></pre>
+const chart = new CragColumn(options).create('bar-chart');</code></pre>
 
 				<p>See the chart specific pages on formatting and names of the ooptions available</p>
 
@@ -131,13 +131,13 @@ const chart = new CragBar(options).create('bar-chart');</code></pre>
 		&lt;script src="https://combinatronics.com/Xn1ch1/Crag-Charts/main/crag/crag.charts.loader.js"&gt;&lt;/script&gt;
 		&lt;script&gt;
 			let chart;
-			crag.onLoadCallBack(createCharts, ['bar']);
+			crag.onLoadCallBack(createCharts, ['column']);
 
 			function createCharts() {
 				const options = {
 					series: [['A', 500], ['B', 432], ['C', 300]]
 				}
-				chart = new CragBar(options).create('bar-chart');
+				chart = new CragColumn(options).create('bar-chart');
 			}
 		&lt;/script&gt;
 	&lt;/body&gt;
@@ -161,13 +161,13 @@ const chart = new CragBar(options).create('bar-chart');</code></pre>
 		<script src="crag/crag.charts.loader.js?v=1"></script>
 		<script>
 			let chart;
-			crag.onLoadCallBack(createCharts, ['bar']);
+			crag.onLoadCallBack(createCharts, ['column']);
 
 			function createCharts() {
 				const options = {
 					series: [['A', 500], ['B', 432], ['C', 300]]
 				}
-				chart = new CragBar(options).create('bar-chart');
+				chart = new CragColumn(options).create('bar-chart');
 			}
 		</script>
 

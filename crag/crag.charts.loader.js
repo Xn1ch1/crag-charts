@@ -5,8 +5,8 @@ const resources = {
 		js: 'crag.charts.core.0.2.0.js'
 	},
 	bar: {
-		js: 'crag.bar.1.0.1.js',
-		css: 'crag.bar.1.0.1.css'
+		js: 'crag.column.1.0.1.js',
+		css: 'crag.column.1.0.1.css'
 	},
 	progress: {
 		js: 'crag.progress.1.0.1.js',
@@ -63,7 +63,7 @@ async function attachResources(res) {
 				js = resources.progress.js;
 				css = resources.progress.css;
 				break;
-			case 'bar':
+			case 'column':
 				js = resources.bar.js;
 				css = resources.bar.css;
 				break;

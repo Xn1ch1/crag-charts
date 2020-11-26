@@ -30,34 +30,34 @@
 
 			<div class="body">
 				<div id="overview"></div>
-				<h1>Visualization: Bar Chart</h1>
+				<h1>Visualization: Column Chart</h1>
 				<hr>
 
 				<h2>Overview</h2>
 
-				<p>A bar chart is a horizontal bar chart rendered in the browser using SVG and HTML. Like all Crag charts, bar charts display tooltips when the user hovers over the data. For a vertical version of this chart, see the bar chart TODO: LINK.</p>
+				<p>A column chart is a horizontal bar chart rendered in the browser using SVG and HTML. Like all Crag charts, bar charts display tooltips when the user hovers over the data. For a vertical version of this chart, see the bar chart TODO: LINK.</p>
 				<p>The chart is limited to 20 data points, data will auomtatically be truncated if there are more points provided.</p>
 				<p>The minimum required code required for invoking a chart is the following</p>
 
-<pre><code>&lt;div id="bar-chart" style="width: 100%;	height: 500px;"&gt;&lt;/div&gt;
+<pre><code>&lt;div id="column-chart" style="width: 100%;	height: 500px;"&gt;&lt;/div&gt;
 
 &lt;script src="https://combinatronics.com/Xn1ch1/Crag-Charts/main/crag/crag.charts.loader.js"&gt;&lt;/script&gt;
 &lt;script&gt;
 	let chart;
-	crag.onLoadCallBack(createCharts, ['bar']);
+	crag.onLoadCallBack(createCharts, ['column']);
 
 	function createCharts() {
 		const options = {
 			series: [['A', 500], ['B', 432], ['C', 300]];
 		}
-		chart = new CragBar(options).create('bar-chart');
+		chart = new CragColumn(options).create('column-chart');
 	}
 &lt;/script&gt;</code></pre>
 
 				<p>In the second script tag, the onLoadCallBack is invoked, the function paramater passed should be below this callback that will create the chart. For more detailed information, see <a href="use.html">How to Use</a>.</p>
 				<p>The above code will generate the following chart.</p>
 
-				<div id="bar-chart-default" class="chart-container"></div>
+				<div id="column-chart-default" class="chart-container"></div>
 				<span class="chart-caption">Tip: Hover over the bars to see the tool tip</span>
 
 				<div id="functions"></div>
@@ -100,7 +100,7 @@
 
 				<p>This will generate the below chart. Tip: Use the random data generator button below the chart to generate and apply a new random data set.</p>
 
-				<div id="bar-chart-partial" class="chart-container"></div>
+				<div id="column-chart-partial" class="chart-container"></div>
 				<span class="chart-caption"><button onclick="newDataPartial();disableBtn(this)">Random Data Set</button> Generate and apply a random data set for this chart.</span>
 
 				<p>Another example, the options passed have included vAxis and chart settings. The two paramters passed in vAxis are min and format. See TOOO LINK for more infomration on formatting axes. A min seeting of 'auto' will let the chart decide the lower bound value on the vertical axis.</p>
@@ -127,7 +127,7 @@
 
 				<p>This will generate the below chart. Tip: Use the random data generator button below to generate different data sets for the chart</p>
 
-				<div id="bar-chart" class="chart-container"></div>
+				<div id="column-chart" class="chart-container"></div>
 				<span class="chart-caption"><button onclick="newData();disableBtn(this)">Random Data Set</button> (Generate a new random data set for this chart)</span>
 
 				<div id="config"></div>
@@ -366,7 +366,7 @@
 			let partialChart;
 			let chart;
 
-			crag.onLoadCallBack(createCharts, ['bar']);
+			crag.onLoadCallBack(createCharts, ['column']);
 
 			function createCharts() {
 
@@ -374,7 +374,7 @@
 					series: [['A', 500], ['B', 432], ['C', 300]]
 				}
 
-				defaultChart = new CragBar(defaultOptions).create('bar-chart-default');
+				defaultChart = new CragColumn(defaultOptions).create('column-chart-default');
 
 				const partialOptions = {
 					series: [['A', 500], ['B', 436], ['C', 300], ['D', 375]],
@@ -385,7 +385,7 @@
 					}
 				}
 
-				partialChart = new CragBar(partialOptions).create('bar-chart-partial');
+				partialChart = new CragColumn(partialOptions).create('column-chart-partial');
 
 				const options = {
 					series: [['A', 400], ['B', 500], ['C', 300]],
@@ -406,7 +406,7 @@
 					}
 				}
 
-				chart = new CragBar(options).create('bar-chart');
+				chart = new CragColumn(options).create('column-chart');
 			}
 
 			window.onresize = function() {

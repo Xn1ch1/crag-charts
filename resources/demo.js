@@ -4,6 +4,7 @@ let progressCurrent = randomInt(0, progressTotal);
 let progressTarget = randomInt(0, progressTotal);
 
 function includeNav() {
+
 	var elmnt, file, xhttp;
 	elmnt = document.getElementById('nav');
 	file = elmnt.getAttribute("w3-include-html");
@@ -18,14 +19,20 @@ function includeNav() {
 			var path = window.location.pathname;
 			var page = path.split("/").pop().replace('.html', '');
 
+			if (page == '') {
+				page = 'index'
+			}
+
 			document.getElementsByClassName('nav-'+page)[0].classList.add('nav-active');
 
 		}
-		if (this.status == 404) {elmnt.innerHTML = "Page not found.";}
+		if (this.status == 404) {elmnt.innerHTML = 'Page not found.';}
 		}
 	}
+
 	xhttp.open("GET", file, true);
 	xhttp.send();
+
 }
 
 window.onload = function() {

@@ -41,13 +41,16 @@ function formatLabel(value, type = 'number', max = 0) {
 
 	switch(type) {
 		case 'decimal':
-			label = value.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+			label = value.toLocaleString({minimumFractionDigits: 2, maximumFractionDigits: 2});
 			break;
 		case 'time':
 			label = sToTime(value, max);
 			break;
+		case 'currency':
+			label = value.toLocaleString({minimumFractionDigits: 2, maximumFractionDigits: 2, style: 'currency'});
+			break;
 		default:
-			label = value.toLocaleString('en-US', {maximumFractionDigits: 0});
+			label = value.toLocaleString({maximumFractionDigits: 0});
 	  }
 
 	return label;
