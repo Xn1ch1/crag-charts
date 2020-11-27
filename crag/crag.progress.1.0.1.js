@@ -223,9 +223,17 @@ class CragProgress {
 		t.chart.valueLabels.total.style.right = 5;
 
 		if (t.data.current == t.data.total) {
-            if (t.options.bar.totalColor != null) t.chart.progress.style.backgroundColor = pallet[t.options.bar.totalColor];
+            if (t.options.bar.totalColor != null) {
+				t.chart.progress.style.backgroundColor = pallet[t.options.bar.totalColor];
+			} else {
+				t.chart.progress.style.backgroundColor = pallet[t.options.bar.color];
+			}
 		} else if (t.data.current >= t.data.target) {
-            if (t.options.bar.targetColor != null) t.chart.progress.style.backgroundColor = pallet[t.options.bar.targetColor];
+            if (t.options.bar.targetColor != null) {
+				t.chart.progress.style.backgroundColor = pallet[t.options.bar.targetColor];
+			} else {
+				t.chart.progress.style.backgroundColor = pallet[t.options.bar.color];
+			}
 		} else {
             t.chart.progress.style.backgroundColor = pallet[t.options.bar.color];
 		}

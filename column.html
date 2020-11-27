@@ -7,7 +7,7 @@
 
 		<script src="resources/demo.js?v=1"></script>
 
-		<title>Crag Charts: Bar Chart</title>
+		<title>Crag Charts: Column Chart</title>
 
 		<link rel="apple-touch-icon" sizes="180x180" href="resources/icons/apple-touch-icon.png">
 		<link rel="icon" type="image/png" sizes="32x32" href="resources/icons/favicon-32x32.png">
@@ -35,11 +35,12 @@
 
 				<h2>Overview</h2>
 
-				<p>A column chart is a horizontal bar chart rendered in the browser using SVG and HTML. Like all Crag charts, bar charts display tooltips when the user hovers over the data. For a vertical version of this chart, see the bar chart TODO: LINK.</p>
-				<p>The chart is limited to 20 data points, data will auomtatically be truncated if there are more points provided.</p>
+				<p>The column chart is a horizontal bar chart rendered in the browser using SVG and HTML. Like all Crag Charts, column charts display tooltips when the user hovers over the series elements. The chart is also limited to 20 data points and data will auomtatically be truncated if there are more points provided.</p>
+				<p>For a vertical version of this chart, see the bar chart TODO: LINK.</p>
+
 				<p>The minimum required code required for invoking a chart is the following</p>
 
-<pre><code>&lt;div id="column-chart" style="width: 100%;	height: 500px;"&gt;&lt;/div&gt;
+<pre><code>&lt;div id="column-chart" style="width: 100%; height: 500px;"&gt;&lt;/div&gt;
 
 &lt;script src="https://combinatronics.com/Xn1ch1/Crag-Charts/main/crag/crag.charts.loader.js"&gt;&lt;/script&gt;
 &lt;script&gt;
@@ -67,7 +68,7 @@
 
 				<h3>Update</h3>
 
-				<p>To update the data in the chart, the update function should be called on the chart object. Only one parameter is required, an array of arrays. See <a href="#series">series</a> parameter for more infomration. The data set can change in size when updated, bars will be automatically added and removed as needed but will still be limited to 20 points and truncated automatically.</p>
+				<p>To update the data in the chart, the update function should be called on the chart object. Only one parameter is required, an array of arrays. See <a href="#series">series</a> parameter for more information. The data set can change in size when updated, bars will be automatically added and removed as needed but will still be limited to 20 points and truncated automatically. In addition, this function will automatically call the draw function (below) once the update has been completed.</p>
 
 				<span>Example</span>
 
@@ -85,9 +86,9 @@
 
 				<h2>Examples</h2>
 
-				<p>Optional paramters can be passed inside options when initializing the chart. These are used to style the chart and elements</p>
+				<p>Optional paramters can be passed as a single object in the class object call, these are used to style the chart and its elements.</p>
 
-				<p>The following example sets the bar width to 90%, sets the top of the bars to be rounded and applys an inset shadow.</p>
+				<p>The following example is an object containing the data series and additional paramerters, these parameters set the bar width to 90%, the top of the bars to be rounded and applys an inset shadow.</p>
 
 <pre><code>let options = {
 	series: [['A', 500], ['B', 436], ['C', 300], ['D', 375]],
@@ -103,8 +104,8 @@
 				<div id="column-chart-partial" class="chart-container"></div>
 				<span class="chart-caption"><button onclick="newDataPartial();disableBtn(this)">Random Data Set</button> Generate and apply a random data set for this chart.</span>
 
-				<p>Another example, the options passed have included vAxis and chart settings. The two paramters passed in vAxis are min and format. See TOOO LINK for more infomration on formatting axes. A min seeting of 'auto' will let the chart decide the lower bound value on the vertical axis.</p>
-				<p>In addition a chart title has also been specified and extra bar options have been passed such as color and a striped overlay.</p>
+				<p>Another example, the options passed have included vAxis and chart settings. The two paramters passed in vAxis are min and format. See <a href="labels.html">Labels</a> for more infomration on formatting axes labels. A min seeting of 'auto' will let the chart decide the lower bound value on the vertical axis.</p>
+				<p>Additionally, a chart title has also been specified and extra bar options have been passed such as color and a striped overlay.</p>
 
 <pre><code>let options = {
 	series: [['A', 400], ['B', 500], ['C', 300]],
@@ -136,6 +137,10 @@
 				<h1>Configuration</h1>
 
 				<table class="config-table">
+					<colgroup>
+						<col width="25%" />
+						<col width="75%" />
+					  </colgroup>
 					<tbody>
 						<tr>
 							<th colspan="2">
@@ -147,7 +152,8 @@
 								series <em style="display: inline;">(Required)</em>
 							</td>
 							<td>
-								An array of arrays, each sub array will have the series label at index 0 and a number at index 1. A maximum of 20 points can be displayed on the chart, data will be automatically truncated.
+								<p>An array of arrays where each child array has two elements. The first point of the child arrays should be formatted as a string, this will be the name of the data point, the second is the numerical value for this point.</p>
+								<p>A maximum of 20 points can be displayed on the chart, data will be automatically truncated where the array contains more than 20 child arrays.</p>
 								<em>Example</em>
 
 <pre><code>options = {
@@ -158,148 +164,9 @@
 		['D’, 20],
 	]
 }</code></pre>
-								 
-								<span>Type: Array of arrays</span>
+
+								<span class="type">Type: Array of Arrays</span>
 								<span>Default: null</span>
-							</td>
-						</tr>
-						<tr id="bar">
-							<td>
-								bar.width
-							</td>
-							<td>
-								Percentage width of each bar, where 100 means there is no space between bars. Can not exceed 100.
-								 
-								<span>Type: number</span>
-								<span>Default: 100</span>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								bar.color
-							</td>
-							<td>
-								The base color of the bars. See the color pallet options for available colors . When not specified the bars will take the default array of colors .
-								 
-								<span>Type: string</span>
-								<span>Default: 'multi’</span>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								bar.rounded
-							</td>
-							<td>
-								Sets the top of the bars to have rounded corners.
-								 
-								<span>Type: Boolean</span>
-								<span>Default: false</span>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								bar.inset
-							</td>
-							<td>
-								Sets the bars to have an inset drop shadow.
-								 
-								<span>Type: Boolean</span>
-								<span>Default: false</span>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								bar.stripe
-							</td>
-							<td>
-								Apply a striped overlay on the bars, this will not affect the specified color .
-								 
-								<span>Type: Boolean</span>
-								<span>Default: false</span>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								bar.animated
-							</td>
-							<td>
-								Animate the stiped overlay of the bar.
-								 
-								<span>Type: Boolean</span>
-								<span>Default: false</span>
-							</td>
-						</tr>
-						<tr id="vAxis">
-							<td>
-								vAxis.label
-							</td>
-							<td>
-								The label of the vertical axis and the series values.
-								 
-								<span>Type: string</span>
-								<span>Default: 'Series 1’</span>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								vAxis.lines
-							</td>
-							<td>
-								Enables horizontal major and minor gridlines on the chart for the vertical axis points
-								 
-								<span>Type: string</span>
-								<span>Default: true</span>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								vAxis.format
-							</td>
-							<td>
-								Formatting of the major line values and the tool tip value label. See the label formatting guide on available formats.
-								 
-								<span>Type: string</span>
-								<span>Default: 'number’</span>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								vAxis.min
-							</td>
-							<td>
-								Sets the minimum value of the vertical axis. This should not be lower than the series values. Optionally the string value 'min’ can be passed for the chart to automatically calculate the minimum value.
-								 
-								<span>Type: number or string</span>
-								<span>Default: 0</span>
-							</td>
-						</tr>
-						<tr id="labels">
-							<td>
-								labels.position
-							</td>
-							<td>
-								Sets the default position of the bar value labels. The position will automatically switch where the label cannot fit in the default position. In addition, if the labels will not fit within the series width, the labels will automatically hide.
-								 
-								<em>Option</em>
-								<ul>
-									<li>'none’: labels will not be displayed</li>
-									<li>'outside’: labels will appear above the bars</li>
-									<li>'inside’: labels will appear inside the bars</li>
-								</ul>
-								 
-								<span>Type: string</span>
-								<span>Default: 'none’</span>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								labels.color
-							</td>
-							<td>
-								Sets the text color of the labels. See the color pallet options for available colors . By default, the labels will automatically switch between black and white depending on the background color .
-								 
-								<span>Type: string</span>
-								<span>Default: 'match’</span>
 							</td>
 						</tr>
 						<tr id="chart">
@@ -307,9 +174,9 @@
 								chart.title
 							</td>
 							<td>
-								The title to appear above the chart. See the color pallet options for available colors .
-								 
-								<span>Type: string</span>
+								The title to appear above the chart, when not specified, the chart will expand to fill the height of the parent element automatically.
+
+								<span class="type">Type: String</span>
 								<span>Default: null</span>
 							</td>
 						</tr>
@@ -319,8 +186,8 @@
 							</td>
 							<td>
 								The background color of the chart.
-								 
-								<span>Type: string</span>
+
+								<span class="type">Type: String</span>
 								<span>Default: 'white’</span>
 							</td>
 						</tr>
@@ -329,10 +196,150 @@
 								chart.minorLines
 							</td>
 							<td>
-								Turns on or off the vertical axis minor lines.
-								 
-								<span>Type: Boolean</span>
+								Enables or disables minor gridlines on the vertical axis.
+
+								<span class="type">Type: Boolean</span>
 								<span>Default: false</span>
+							</td>
+						</tr>
+						<tr id="bar">
+							<td>
+								bar.width
+							</td>
+							<td>
+								Percentage width of each bar, where 100 means there is no space between bars. This cannot exceed 100.
+
+								<span class="type">Type: Number</span>
+								<span>Default: 100</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								bar.color
+							</td>
+							<td>
+								The base color of the bars, when not specified the bars will take the default array of colors.
+								<br>See <a href="pallet.html">Pallet</a> options for a list of available colors, these should be passed as strings.
+
+								<span class="type">Type: String</span>
+								<span>Default: 'multi’</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								bar.rounded
+							</td>
+							<td>
+								Sets the top of the bars to have rounded corners.
+
+								<span class="type">Type: Boolean</span>
+								<span>Default: false</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								bar.inset
+							</td>
+							<td>
+								Sets the bars to have an inset drop shadow.
+
+								<span class="type">Type: Boolean</span>
+								<span>Default: false</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								bar.stripe
+							</td>
+							<td>
+								Applies a striped overlay on the bars, this will not affect the specified color.
+
+								<span class="type">Type: Boolean</span>
+								<span>Default: false</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								bar.animated
+							</td>
+							<td>
+								Animates the stiped overlay of the bar, will have no effect unless stripe is set to true.
+
+								<span class="type">Type: Boolean</span>
+								<span>Default: false</span>
+							</td>
+						</tr>
+						<tr id="vAxis">
+							<td>
+								vAxis.label
+							</td>
+							<td>
+								The name of the vertical axis values, this name will show inside the tool tip along side the value for the data points.
+
+								<span class="type">Type: String</span>
+								<span>Default: 'Series 1’</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								vAxis.lines
+							</td>
+							<td>
+								Enables or disables horizontal major and minor gridlines on the chart for the vertical axis points
+
+								<span class="type">Type: String</span>
+								<span>Default: true</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								vAxis.format
+							</td>
+							<td>
+								Formatting of the axis labels and the tool tip value label. See the <a href="labels.html">Labels</a> for a guide of the available formats.
+
+								<span class="type">Type: String</span>
+								<span>Default: 'number’</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								vAxis.min
+							</td>
+							<td>
+								Sets the minimum value of the vertical axis. When left to default, all columsn will start at 0. Optionally the string value 'min’ can be passed where the chart will automatically calculate the minimum value and upper value of the vAxis.
+
+								<span class="type">Type: Number or String</span>
+								<span>Default: 0</span>
+							</td>
+						</tr>
+						<tr id="labels">
+							<td>
+								labels.position
+							</td>
+							<td>
+								Sets the default position of the bar value labels. The position will automatically switch where the label cannot fit in the defined position. In addition, if each label will not fit within the series width, the labels will automatically hide.
+
+								<em>Option</em>
+								<ul>
+									<li>'none’: labels will not be displayed</li>
+									<li>'outside’: labels will appear above the bars</li>
+									<li>'inside’: labels will appear inside the bars</li>
+								</ul>
+
+								<span class="type">Type: String</span>
+								<span>Default: 'none’</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								labels.color
+							</td>
+							<td>
+								Sets the text color of the labels. See <a href="pallet.html">Pallet</a> for a list of the available colors. By default, the labels will automatically switch between black and white depending on the background color.
+
+								<span class="type">Type: String</span>
+								<span>Default: 'match’</span>
 							</td>
 						</tr>
 					</tbody>
@@ -349,10 +356,10 @@
 					<li><a href="#config">Configuration</a></li>
 					<ul>
 						<li><a href="#series">series</a></li>
+						<li><a href="#chart">chart</a></li>
 						<li><a href="#bar">bar</a></li>
 						<li><a href="#vAxis">vAxis</a></li>
 						<li><a href="#labels">labels</a></li>
-						<li><a href="#chart">chart</a></li>
 					</ul>
 				</ul>
 			</div>
@@ -366,7 +373,7 @@
 			let partialChart;
 			let chart;
 
-			crag.onLoadCallBack(createCharts, ['column']);
+			crag.onLoadCallBack(createCharts, ['column'], '/crag/');
 
 			function createCharts() {
 

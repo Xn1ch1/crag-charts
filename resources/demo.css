@@ -136,7 +136,6 @@ hr {
 }
 .config-table {
 	width: 100%;
-	table-layout: fixed;
 	border: 1px solid #DDD;
 	border-collapse: collapse;
 }
@@ -165,7 +164,7 @@ hr {
 	display: block;
 	font-weight: 400;
 }
-.config-table td span:nth-child(1) {
+.config-table td .type {
 	padding-top: 24px;
 	padding-bottom: 4px;
 }
@@ -185,6 +184,7 @@ pre code {
 	border: 1px solid #999;
 	display: block;
 	padding: 20px;
+	tab-size: 4;
 }
 .col-container {
     display: table;
@@ -200,6 +200,29 @@ pre code {
 	border: 1px solid #DDD;
 	box-sizing: border-box;
 	padding: 12px 24px;
+}
+.chart-container-resize {
+	resize: both;
+    overflow: hidden;
+    max-width: 100%;
+    max-height: 500px;
+    min-height: 250px;
+	min-width: 50%;
+	position: relative;
+}
+.pull-tab {
+    height: 0px;
+    width: 0px;
+    border-top: 20px solid #666;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+    position: absolute;
+    bottom: -3px;
+    right: -15px;
+    pointer-events: none;
+    z-index: 2;
 }
 .chart-caption {
 	margin-top: 0;

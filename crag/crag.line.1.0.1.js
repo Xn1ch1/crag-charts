@@ -107,10 +107,10 @@ class CragLine {
 				if (option.smooth != undefined && typeof option.smooth === 'boolean') {
 					this.options.line.smooth = option.smooth;
 				}
-				if (option.width != undefined && option.width >= 0 && option.width < 51) {
+				if (option.width != undefined && option.width >= 1 && option.width < 21) {
 					this.options.line.width = option.width;
 				}
-				if (option.pointSize != undefined && option.pointSize >= 0 && option.pointSize < 51) {
+				if (option.pointSize != undefined && option.pointSize >= 0 && option.pointSize < 16) {
 					this.options.line.pointSize = option.pointSize;
 				}
 
@@ -255,8 +255,6 @@ class CragLine {
 
 		for (const [index, elements] of Object.entries(t.chart.elements)) {
 
-			let realInside = true;
-
 			const label = elements.label;
 			const value = elements.val;
 			const point = elements.point;
@@ -268,7 +266,7 @@ class CragLine {
 				if (label.offsetWidth > seriesItemWidth) {
 					label.style.opacity = 0;
 				} else {
-					label.style.opacity = 1;
+					label.style.opacity = 0.9;
 				}
 
 				label.style.left = seriesItemWidth * index;
@@ -688,6 +686,7 @@ class CragLine {
 		if (this.options.labels.position != 'none') {
 			const label = document.createElement('span');
 			label.className = 'cragLinePointLabel';
+			label.style.backgroundColor = this.options.chart.color;
 			if (this.options.labels.color != null) {
 				label.style.color = pallet[this.options.labels.color];
 			} else {

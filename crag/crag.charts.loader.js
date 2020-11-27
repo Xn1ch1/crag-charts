@@ -13,8 +13,8 @@ const resources = {
 		css: 'crag.progress.1.0.1.css'
 	},
 	line: {
-		js: 'crag.line.1.0.0.js',
-		css: 'crag.line.1.0.1.css'
+		js: 'crag.line.1.0.1.js',
+		css: 'crag.line.1.0.2.css'
 	},
 	combo: {
 		js: 'crag.combo.1.0.0.js',

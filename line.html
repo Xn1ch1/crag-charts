@@ -35,8 +35,287 @@
 				<hr>
 				<h2>Overview</h2>
 
+				<p>The line chart is rendered in the browser using SVG and HTML. Like all Crag Charts, line charts display tooltips when the user hovers over the series elements. The chart is also limited to 20 data points and data will auomtatically be truncated if there are more points provided.</p>
+
+				<p>The minimum required code required for invoking a chart is the following</p>
+
+<pre><code>&lt;div id="line-chart" style="width: 100%; height: 500px;"&gt;&lt;/div&gt;
+
+&lt;script src="https://combinatronics.com/Xn1ch1/Crag-Charts/main/crag/crag.charts.loader.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+	let chart;
+	crag.onLoadCallBack(createCharts, ['line']);
+
+	function createCharts() {
+		const options = {
+			series: [['A', 134], ['B', 255], ['C', 100], ['D', 50]];
+		}
+		chart = new CragColumn(options).create('column-chart');
+	}
+&lt;/script&gt;</code></pre>
+
+				<p>In the second script tag, the onLoadCallBack is invoked, the function paramater passed should be below this callback that will create the chart. For more detailed information, see <a href="use.html">How to Use</a>.</p>
+				<p>The above code will generate the following chart.</p>
+
 				<div id="line-chart" class="chart-container"></div>
 				<span class="chart-caption">Tip: Hover over the points to see the tool tip</span>
+
+				<div id="functions"></div>
+				<hr>
+
+				<h2>Built In Functions</h2>
+
+				<h3>Update</h3>
+
+				<p>To update the data in the chart, the update function should be called on the chart object. Only one parameter is required, an array of arrays. See <a href="#series">series</a> parameter for more information. The data set can change in size when updated, bars will be automatically added and removed as needed but will still be limited to 20 points and truncated automatically. In addition, this function will automatically call the draw function (below) once the update has been completed.</p>
+
+				<span>Example</span>
+
+<pre><code>chart.update([['A', 160], ['B', 527], ['C', 428]]);</code></pre>
+
+				<h3>Draw</h3>
+				<p>The draw function will cause a complete redraw of the chart with the pre existing data. This function will be useful where the size of the container object changes size. The below example is calling the draw function on the chart object when the window resizes.</p>
+
+<pre><code>window.onresize = function() {
+	chart.draw();
+}</code></pre>
+
+				<div id="line-chart-2" class="chart-container chart-container-resize">
+					<div class="pull-tab"></div>
+				</div>
+				<span class="chart-caption">Tip: Drag the tab in the bottom corner of the chart container to resize the chart and see the draw function in action.</span>
+
+				<div id="examples"></div>
+				<hr>
+
+				<h2>Examples</h2>
+
+				<p>Optional paramters can be passed as a single object in the class object call, these are used to style the chart and its elements.</p>
+
+				<p>The following example is an object containing the data series and additional paramerters, these parameters set the line width to 5 and the color of the line to red.</p>
+
+<pre><code>let options = {
+	series: [['A', 500], ['B', 436], ['C', 300], ['D', 375]],
+	line: {
+		width: 5,
+		color: 'red'
+	}
+}</code></pre>
+
+				<p>This will generate the below chart. Tip: Use the random data generator button below the chart to generate and apply a new random data set.</p>
+
+				<div id="line-chart-partial" class="chart-container"></div>
+				<span class="chart-caption"><button onclick="newDataPartial();disableBtn(this)">Random Data Set</button> Generate and apply a random data set for this chart.</span>
+
+				<p>Another example, the options passed have included vAxis and chart settings, see <a href="labels.html">Labels</a> for more infomration on formatting axes labels. A min seeting of 'auto' will let the chart decide the lower bound value on the vertical axis.</p>
+				<p>Additionally, a chart title has also been specified in addiditon to smoothing of the line turned off in the line options.</p>
+
+<pre><code>let options = {
+	series: [['A', 500], ['B', 436], ['C', 300], ['D', 375]],
+	line: {
+		color: 'teal',
+		pointSize: 0,
+		smooth: false
+	},
+	vAxis: {
+		min: 'auto',
+		format: 'decimal'
+	},
+	chart: {
+		title: 'Count of Things'
+	}
+}</code></pre>
+
+				<p>This will generate the below chart. Tip: Use the random data generator button below to generate different data sets for the chart</p>
+
+				<div id="line-chart-full" class="chart-container"></div>
+				<span class="chart-caption"><button onclick="newDataFull();disableBtn(this)">Random Data Set</button> (Generate a new random data set for this chart)</span>
+
+				<div id="config"></div>
+				<hr>
+
+				<h1>Configuration</h1>
+
+				<table class="config-table">
+					<colgroup>
+						<col width="25%" />
+						<col width="75%" />
+					  </colgroup>
+					<tbody>
+						<tr>
+							<th colspan="2">
+								Options
+							</th>
+						</tr>
+						<tr>
+							<td id="series">
+								series <em style="display: inline;">(Required)</em>
+							</td>
+							<td>
+								<p>An array of arrays where each child array has two elements. The first point of the child arrays should be formatted as a string, this will be the name of the data point, the second is the numerical value for this point.</p>
+								<p>A maximum of 20 points can be displayed on the chart, data will be automatically truncated where the array contains more than 20 child arrays.</p>
+								<em>Example</em>
+
+<pre><code>options = {
+	series: [
+		['A’, 5],
+		['B’, 10],
+		['C’, 15],
+		['D’, 20],
+	]
+}</code></pre>
+
+								<span class="type">Type: Array of Arrays</span>
+								<span>Default: null</span>
+							</td>
+						</tr>
+						<tr id="chart">
+							<td>
+								chart.title
+							</td>
+							<td>
+								The title to appear above the chart, when not specified, the chart will expand to fill the height of the parent element automatically.
+
+								<span class="type">Type: String</span>
+								<span>Default: null</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								chart.color
+							</td>
+							<td>
+								The background color of the chart.
+
+								<span class="type">Type: String</span>
+								<span>Default: 'white’</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								chart.minorLines
+							</td>
+							<td>
+								Enables or disables minor gridlines on the vertical axis.
+
+								<span class="type">Type: Boolean</span>
+								<span>Default: false</span>
+							</td>
+						</tr>
+						<tr id="line">
+							<td>
+								line.width
+							</td>
+							<td>
+								Width in pixles of the series line, this value should be a whole number between 1 and 21 inclusive.
+
+								<span class="type">Type: Number</span>
+								<span>Default: 4</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								line.pointSize
+							</td>
+							<td>
+								Radius in pixles of the series point markers, this value should be a whole number between 0 and 15 inclusive. When set to 0, the markers will not be visible.
+
+								<span class="type">Type: Number</span>
+								<span>Default: 6</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								line.color
+							</td>
+							<td>
+								The base color of the line, when not specified the bars will take the default of indigo.
+								<br>See <a href="pallet.html">Pallet</a> options for a list of available colors, these should be passed as strings.
+
+								<span class="type">Type: String</span>
+								<span>Default: 'indigo</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								line.smooth
+							</td>
+							<td>
+								Sets the line to be smoothed out at each series point. When set to false the lines will be straight and have shap angles at each point. A smooth line may exceed the chart bound on the curve depending on the difference and value of each series point.
+
+								<span class="type">Type: Boolean</span>
+								<span>Default: true</span>
+							</td>
+						</tr>
+						<tr id="vAxis">
+							<td>
+								vAxis.label
+							</td>
+							<td>
+								The name of the vertical axis values, this name will show inside the tool tip along side the value for the data points.
+
+								<span class="type">Type: String</span>
+								<span>Default: 'Series’</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								vAxis.lines
+							</td>
+							<td>
+								Enables or disables horizontal major and minor gridlines on the chart for the vertical axis points
+
+								<span class="type">Type: String</span>
+								<span>Default: true</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								vAxis.format
+							</td>
+							<td>
+								Formatting of the axis labels and the tool tip value label. See the <a href="labels.html">Labels</a> for a guide of the available formats.
+
+								<span class="type">Type: String</span>
+								<span>Default: 'number’</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								vAxis.min
+							</td>
+							<td>
+								Sets the minimum value of the vertical axis. When left to default, all columsn will start at 0. Optionally the string value 'min’ can be passed where the chart will automatically calculate the minimum value and upper value of the vAxis.
+
+								<span class="type">Type: Number or String</span>
+								<span>Default: 0</span>
+							</td>
+						</tr>
+						<tr id="labels">
+							<td>
+								labels.show
+							</td>
+							<td>
+								Sets the series point labels visible or invisible
+
+								<span class="type">Type: Boolean</span>
+								<span>Default: true</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								labels.color
+							</td>
+							<td>
+								Sets the text color of the labels. See <a href="pallet.html">Pallet</a> for a list of the available colors. By default, the labels will automatically switch between black and white depending on the background color.
+
+								<span class="type">Type: String</span>
+								<span>Default: 'match’</span>
+							</td>
+						</tr>
+					</tbody>
+
+				</table>
 
 			</div>
 
@@ -44,6 +323,16 @@
 				<ul class="toc">
 					<li>Table of Content</li>
 					<li><a href="#overview">Overview</a></li>
+					<li><a href="#functions">Functions</a></li>
+					<li><a href="#examples">Examples</a></li>
+					<li><a href="#config">Configuration</a></li>
+					<ul>
+						<li><a href="#series">series</a></li>
+						<li><a href="#chart">chart</a></li>
+						<li><a href="#line">line</a></li>
+						<li><a href="#vAxis">vAxis</a></li>
+						<li><a href="#labels">labels</a></li>
+					</ul>
 				</ul>
 			</div>
 
@@ -53,21 +342,85 @@
 		<script>
 
 			let chartDefault;
+			let chartDefault2;
+			let chartPartial;
+			let chartFull;
 
-			crag.onLoadCallBack(createCharts, ['line']);
+			crag.onLoadCallBack(createCharts, ['line'], '/crag/');
 
 			function createCharts() {
-					let optionsDefault = {
-						series: [['A', 134], ['B', 255], ['C', 100], ['D', 50]],
+				let optionsDefault = {
+					series: [['A', 134], ['B', 255], ['C', 100], ['D', 50]],
+				}
+				chartDefault = new CragLine(optionsDefault).create('line-chart');
+
+				let optionsDefault2 = {
+					series: [['A', 400], ['B', 800], ['C', 650], ['D', 500], ['E', 700]],
+					line: {
+						color: 'purple'
+					},
+					vAxis: {
+						min: 'auto'
 					}
-					chartDefault = new CragLine(optionsDefault).create('line-chart');
 				}
+				chartDefault2 = new CragLine(optionsDefault2).create('line-chart-2');
 
-				window.onresize = function() {
-					chartDefault.draw();
+				let optionsPartial = {
+					series: [['A', 500], ['B', 436], ['C', 300], ['D', 375]],
+					line: {
+						width: 5,
+						color: 'red'
+					}
 				}
+				chartPartial = new CragLine(optionsPartial).create('line-chart-partial');
 
-			</script>
+				let optionsFull = {
+					series: [['A', 500], ['B', 436], ['C', 300], ['D', 375]],
+					line: {
+						color: 'teal',
+						pointSize: 1,
+						smooth: false
+					},
+					vAxis: {
+						min: 'auto',
+						format: 'decimal'
+					},
+					chart: {
+						title: 'Count of Things'
+					}
+				}
+				chartFull = new CragLine(optionsFull).create('line-chart-full');
+			}
+
+			window.onresize = function() {
+				chartDefault.draw();
+				chartPartial.draw();
+				chartFull.draw();
+			}
+
+			let resizeChart = document.getElementById('line-chart-2');
+
+			let w = resizeChart.offsetWidth;
+			let h = resizeChart.offsetHeight;
+
+			var tid = setInterval(mycode, 1000);
+			function mycode() {
+				if (w != resizeChart.offsetWidth || h != resizeChart.offsetHeight) {
+					w = resizeChart.offsetWidth;
+					h = resizeChart.offsetHeight;
+					chartDefault2.draw();
+				}
+			}
+
+			function newDataPartial() {
+				chartPartial.update(randomDataSeries());
+			}
+
+			function newDataFull() {
+				chartFull.update(randomDataSeries());
+			}
+
+		</script>
 
 	</body>
 

@@ -35,7 +35,27 @@
 				<hr>
 				<h2>Overview</h2>
 
-				<div id="progress-chart" class="chart-container"></div>
+				<p>The progress chart is a single horizontal bar chart rendered in the browser using SVG and HTML, the bar prepresents the progress of a single data point against a total data point with an optional mid point target. The chart takes as minimum two values passed in the class options and requires a parent with a minimum of 250px in height.</p>
+				<p>The below if the minimum code required for a chart</p>
+
+<pre><code>&lt;div id="progress-chart" style="width: 100%; height: 300px;"&gt;&lt;/div&gt;
+
+&lt;script src="https://combinatronics.com/Xn1ch1/Crag-Charts/main/crag/crag.charts.loader.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+	let chart;
+	crag.onLoadCallBack(createCharts, ['progress']);
+
+	function createCharts() {
+		const options = {
+			data: {current: 45, total: 120}
+		}
+		chart = new CragProgress(options).create('progress-chart');
+	}
+&lt;/script&gt;</code></pre>
+
+				<p>This will generate the following</p>
+
+				<div id="progress-chart" class="chart-container" style="height:300px"></div>
 
 				<table class="config-table">
 					<tbody>
@@ -98,19 +118,15 @@
 		<script>
 
 			let chart;
-
-			crag.onLoadCallBack(createCharts, ['progress']);
+			crag.onLoadCallBack(createCharts, ['progress'], '/crag/');
 
 			function createCharts() {
-				let options = {
-					data: {
-						current: 57,
-						target: 95,
-						total: 160
-					}
+				const options = {
+					data: {current: 45, total: 120}
 				}
 				chart = new CragProgress(options).create('progress-chart');
 			}
+
 
 			window.onresize = function() {
 				chart.draw();
