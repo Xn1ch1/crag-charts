@@ -453,7 +453,7 @@ class CragLine {
 		for (let i = 0; i < t.data.series.length; i++) {
 			t.chart.elements[i].val = t.data.series[i][1];
 			t.chart.elements[i].text = formatLabel(t.data.series[i][1], t.options.vAxis.format, t.data.max);
-			t.hAxis.elements[i].label.textContent = t.data.series[i][0];
+			t.hAxis.elements[i].label.textContent = t.data.series[i][0], t.options.vAxis.format, t.data.max;
 			t.hAxis.elements[i].text = t.data.series[i][0];
 			if (t.chart.elements[i].label != null) {
 				t.chart.elements[i].label.textContent = t.chart.elements[i].text;

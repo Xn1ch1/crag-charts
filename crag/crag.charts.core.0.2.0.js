@@ -1,3 +1,14 @@
+// Hello.
+//
+// This is JSHint, a tool that helps to detect errors and potential
+// problems in your JavaScript code.
+//
+// To start, simply enter some JavaScript anywhere on this page. Your
+// report will appear on the right side.
+//
+// Additionally, you can toggle specific options in the Configure
+// menu.
+
 const pallet = {
 	red: '#f44336',
 	pink: '#ec407a',
@@ -21,7 +32,7 @@ const pallet = {
 	darkbluegrey: '#192841',
 	black: '#000000',
 	almostblack: '#222222',
-	darkgrey: '#444444',
+	darkgrey: '#555555',
 	lightgrey: '#DDDDDD',
 	white: '#FFFFFF',
 	multi: null,
@@ -29,7 +40,7 @@ const pallet = {
 	key: function(n) {
 		return this[Object.keys(this)[n]];
 	}
-}
+};
 
 function validColor(col) {
 	return pallet.hasOwnProperty(col);
@@ -41,17 +52,18 @@ function formatLabel(value, type = 'number', max = 0) {
 
 	switch(type) {
 		case 'decimal':
-			label = value.toLocaleString({minimumFractionDigits: 2, maximumFractionDigits: 2});
+			label = value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
 			break;
 		case 'time':
 			label = sToTime(value, max);
 			break;
 		case 'currency':
-			label = value.toLocaleString({minimumFractionDigits: 2, maximumFractionDigits: 2, style: 'currency'});
+			label = value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2, style: 'currency'});
 			break;
 		default:
-			label = value.toLocaleString({maximumFractionDigits: 0});
-	  }
+			label = value.toLocaleString(undefined, {maximumFractionDigits: 0});
+			break;
+	}
 
 	return label;
 
@@ -288,6 +300,6 @@ function getContrastYIQ(color){
 
 	let yiq = ((r*299)+(g*587)+(b*114))/1000;
 
-	return (yiq >= 128) ? 'almostblack' : 'white';
+	return (yiq >= 128) ? 'darkgrey' : 'white';
 
 }

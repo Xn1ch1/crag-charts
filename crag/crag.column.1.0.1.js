@@ -178,11 +178,14 @@ class CragColumn {
 		this.toolTip.value = document.createElement('h6');
 		this.toolTip.label = document.createElement('h6');
 
+		this.chartContainer.style.backgroundColor = pallet[this.options.chart.color];
+
 		if (this.options.chart.title != null) {
 			this.title.title = document.createElement('h1');
 			this.title.title.className = 'cragColumnTitleText';
 			this.title.title.textContent = this.options.chart.title;
 			this.title.area.appendChild(this.title.title);
+			this.title.title.style.color = pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)];
 		}
 
 		this.chartContainer.className = 'cragColumnChartContainer';
@@ -203,8 +206,6 @@ class CragColumn {
 		this.chart.gridArea.style.pointerEvents = 'none';
 		this.chart.gridArea.style.overflow = 'visible';
 		this.chart.labelArea.style.pointerEvents = 'none';
-		this.toolTip.container.style.backgroundColor = pallet.darkgrey;
-		this.chartContainer.style.backgroundColor = pallet[this.options.chart.color];
 
 		this.parent.appendChild(this.chartContainer);
 		this.chartContainer.appendChild(this.vAxis.area);
@@ -241,8 +242,6 @@ class CragColumn {
 		const barMin = t.options.vAxis.min == 'auto' ? t.vAxis.min : t.options.vAxis.min;
 		const barHeight = chartAreaHeight / (t.vAxis.max - barMin);
 
-		let seriesLinePoints = [];
-
 		t.vAxis.area.style.width = vAxisWidth + 'px';
 
 		for (const [index, elements] of Object.entries(t.hAxis.elements)) {
@@ -252,6 +251,11 @@ class CragColumn {
 			elements.label.style.color = pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)];
 
 		}
+
+		t.toolTip.container.style.backgroundColor = pallet[getContrastYIQ(t.chartContainer.style.backgroundColor)];
+		t.toolTip.title.style.color = pallet[getContrastYIQ(t.toolTip.container.style.backgroundColor)];
+		t.toolTip.value.style.color = pallet[getContrastYIQ(t.toolTip.container.style.backgroundColor)];
+		t.toolTip.label.style.color = pallet[getContrastYIQ(t.toolTip.container.style.backgroundColor)];
 
 		for (const [index, elements] of Object.entries(t.chart.elements)) {
 
@@ -646,7 +650,6 @@ class CragColumn {
 		const tipHeight = this.toolTip.container.offsetHeight;
 		const tipWidth = this.toolTip.container.offsetWidth;
 
-		this.chart.elements[index].bar.style.backgroundColor = pallet.darkgrey;
 
 		let hAlignment = 0;
 		let vAlignment = 0;
@@ -702,16 +705,26 @@ class CragColumn {
 			this.toolTip.container.style.bottom = barHeight + 8;
 		}
 
+		for (const [index, elements] of Object.entries(this.chart.elements)) {
+			elements.bar.style.opacity = 0.3;
+		}
+		// this.chart.elements[index].bar.style.backgroundColor = pallet.darkgrey;
+		this.chart.elements[index].bar.style.opacity = 1;
+
 	}
 
 	_hideToolTip(index) {
 
 		this.toolTip.container.style.opacity = 0;
 
-		if (this.options.bar.color == 'multi') {
-			this.chart.elements[index].bar.style.backgroundColor = pallet.key(index);
-		} else {
-			this.chart.elements[index].bar.style.backgroundColor = pallet[this.options.bar.color];
+		// if (this.options.bar.color == 'multi') {
+		// 	this.chart.elements[index].bar.style.backgroundColor = pallet.key(index);
+		// } else {
+		// 	this.chart.elements[index].bar.style.backgroundColor = pallet[this.options.bar.color];
+		// }
+
+		for (const [index, elements] of Object.entries(this.chart.elements)) {
+			elements.bar.style.opacity = 1;
 		}
 
 	}

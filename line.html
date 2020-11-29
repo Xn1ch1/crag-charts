@@ -9,11 +9,11 @@
 
 		<title>Crag Charts: Line Chart</title>
 
-		<link rel="apple-touch-icon" sizes="180x180" href="resources/icons/apple-touch-icon.png">
-		<link rel="icon" type="image/png" sizes="32x32" href="resources/icons/favicon-32x32.png">
-		<link rel="icon" type="image/png" sizes="16x16" href="resources/icons/favicon-16x16.png">
-		<link rel="manifest" href="resources/icons/site.webmanifest">
-		<link rel="mask-icon" href="resources/icons/safari-pinned-tab.svg" color="#5bbad5">
+		<link rel="apple-touch-icon" sizes="180x180" href="/resources/icons/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/resources/icons/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/resources/icons/favicon-16x16.png">
+		<link rel="manifest" href="/resources/icons/site.webmanifest">
+		<link rel="mask-icon" href="/resources/icons/safari-pinned-tab.svg" color="#5bbad5">
 		<meta name="msapplication-TileColor" content="#da532c">
 		<meta name="theme-color" content="#ffffff">
 		<meta charset="UTF-8">
@@ -26,7 +26,26 @@
 		<div class="grid-container">
 
 			<div class="head">Crag Charts</div>
+
 			<div w3-include-html="nav.html" id="nav" class="nav"></div>
+
+			<div class="subnav">
+				<ul class="toc">
+					<li>Table of Content</li>
+					<li><a href="#overview">Overview</a></li>
+					<li><a href="#functions">Functions</a></li>
+					<li><a href="#examples">Examples</a></li>
+					<li><a href="#config">Configuration</a></li>
+					<ul>
+						<li><a href="#series">series</a></li>
+						<li><a href="#chart">chart</a></li>
+						<li><a href="#line">line</a></li>
+						<li><a href="#vAxis">vAxis</a></li>
+						<li><a href="#labels">labels</a></li>
+					</ul>
+					<li><a href="#default">Full Defaults</a></li>
+				</ul>
+			</div>
 
 			<div class="body">
 				<div id="overview"></div>
@@ -111,18 +130,19 @@
 				<p>Additionally, a chart title has also been specified in addiditon to smoothing of the line turned off in the line options.</p>
 
 <pre><code>let options = {
-	series: [['A', 500], ['B', 436], ['C', 300], ['D', 375]],
+	series: [['A', 2.3], ['B', 3.6], ['C', 1.2], ['D', 5.4], ['E', 4.4], ['F', 3.2]],
 	line: {
 		color: 'teal',
-		pointSize: 0,
+		pointSize: 1,
 		smooth: false
 	},
 	vAxis: {
 		min: 'auto',
 		format: 'decimal'
+		label: 'Score'
 	},
 	chart: {
-		title: 'Count of Things'
+		title: 'Score per Player'
 	}
 }</code></pre>
 
@@ -134,7 +154,7 @@
 				<div id="config"></div>
 				<hr>
 
-				<h1>Configuration</h1>
+				<h2>Configuration</h2>
 
 				<table class="config-table">
 					<colgroup>
@@ -317,23 +337,36 @@
 
 				</table>
 
-			</div>
+				<div id="default"></div>
+				<hr>
 
-			<div class="subnav">
-				<ul class="toc">
-					<li>Table of Content</li>
-					<li><a href="#overview">Overview</a></li>
-					<li><a href="#functions">Functions</a></li>
-					<li><a href="#examples">Examples</a></li>
-					<li><a href="#config">Configuration</a></li>
-					<ul>
-						<li><a href="#series">series</a></li>
-						<li><a href="#chart">chart</a></li>
-						<li><a href="#line">line</a></li>
-						<li><a href="#vAxis">vAxis</a></li>
-						<li><a href="#labels">labels</a></li>
-					</ul>
-				</ul>
+				<h2>Full Default Configuration</h2>
+
+<pre><code>options = {
+	series: null,
+	line: {
+		color: 'indigo',
+		width: 4,
+		pointSize: 6,
+		smooth: true
+	},
+	vAxis: {
+		label: 'Series',
+		lines: true,
+		format: 'number',
+		min: 0
+	},
+	labels: {
+		show: true,
+		color: null
+	},
+	chart: {
+		title: null,
+		color: 'white',
+		minorLines: true
+	}
+}</code></pre>
+
 			</div>
 
 		</div>
@@ -375,7 +408,7 @@
 				chartPartial = new CragLine(optionsPartial).create('line-chart-partial');
 
 				let optionsFull = {
-					series: [['A', 500], ['B', 436], ['C', 300], ['D', 375]],
+					series: [['A', 2.3], ['B', 3.6], ['C', 1.2], ['D', 5.4], ['E', 4.4], ['F', 3.2]],
 					line: {
 						color: 'teal',
 						pointSize: 1,
@@ -383,10 +416,11 @@
 					},
 					vAxis: {
 						min: 'auto',
-						format: 'decimal'
+						format: 'decimal',
+						label: 'Score'
 					},
 					chart: {
-						title: 'Count of Things'
+						title: 'Score per Player'
 					}
 				}
 				chartFull = new CragLine(optionsFull).create('line-chart-full');
@@ -417,7 +451,7 @@
 			}
 
 			function newDataFull() {
-				chartFull.update(randomDataSeries());
+				chartFull.update(randomFractionalDataSeries());
 			}
 
 		</script>

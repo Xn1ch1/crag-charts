@@ -1,0 +1,54 @@
+<html>
+
+	<body>
+		<div id="chart" style="width: 90%; height: 500px; margin: 0 auto;"></div>
+	</body>
+
+	<script src="crag/crag.charts.loader.js?v=1"></script>
+		<script>
+
+			let chart;
+			crag.onLoadCallBack(createCharts, ['progress'], '/crag/');
+
+			function createCharts() {
+				const options = {
+					chart: {
+						color: 'white',
+						title: 'Chart Title'
+					},
+					bar: {
+						inset: true,
+						striped: true,
+						animated: true
+					},
+					current: {
+						value: 50,
+						label: 'Current',
+						color: 'blue',
+						percentage: true,
+						inside: false,
+						show: true
+					},
+					total: {
+						value: 100,
+						label: 'Total',
+						color: null,
+						show: true
+					},
+					target: {
+						value: 0,
+						label: 'Target',
+						color: null
+					}
+				}
+				chart = new CragProgress(options).create('chart');
+			}
+
+
+			window.onresize = function() {
+				chart.draw();
+			}
+
+		</script>
+
+</html>

@@ -48,6 +48,9 @@ function disableBtn(btn) {
 function randomInt(min, max) {
 	return Math.floor(Math.random() * (max - min + 1) + min);
 }
+function randomDec(min, max) {
+	return (Math.floor(Math.random() * max) + 1) / 5;
+}
 function makeid(length) {
 	var result           = '';
 	var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -72,51 +75,18 @@ function randomDataSeries() {
 	}
 	return series;
 }
-function plusC(x) {
-	if (x == 0) {
-		progressCurrent = progressTotal;
-	} else if (x == 1) {
-		progressCurrent++;
-	} else if (x == 2) {
-		progressCurrent += randomInt(1, progressTotal / 10);
+function randomFractionalDataSeries() {
+
+	let series = [];
+
+	const length = randomInt(5, 20);
+	const min1 = randomDec(100, 10000);
+	const max1 = randomDec(min1, min1 * randomInt(2, 10));
+	const min2 = randomDec(10, 3600);
+	const max2 = randomDec(min2, min2 * randomInt(2, 10));
+
+	for (var i = 0; i < length; i++) {
+		series.push([makeid(2), randomDec(min1, max1), randomDec(min2, max2)]);
 	}
-	progressChart.current = progressCurrent;
-}
-function minusC(x) {
-	if (x == 0) {
-		progressCurrent = 0;
-	} else if (x == 1) {
-		progressCurrent--;
-	} else if (x == 2) {
-		progressCurrent -= randomInt(1, progressTotal / 10);
-	}
-	progressChart.current = progressCurrent;
-}
-function c() {
-	progressCurrent = randomInt(0, progressTotal);
-	progressChart.current = progressCurrent;
-}
-function plusT(x) {
-	if (x == 0) {
-		progressTarget = progressTotal;
-	} else if (x == 1) {
-		progressTarget++;
-	} else if (x == 2) {
-		progressTarget += randomInt(1, progressTotal / 10);
-	}
-	progressChart.target = progressTarget;
-}
-function minusT(x) {
-	if (x == 0) {
-		progressTarget = 0;
-	} else if (x == 1) {
-		progressTarget--;
-	} else if (x == 2) {
-		progressTarget -= randomInt(1, progressTotal / 10);
-	}
-	progressChart.target = progressTarget;
-}
-function t() {
-	progressTarget = randomInt(0, progressTotal);
-	progressChart.target = progressTarget;
+	return series;
 }

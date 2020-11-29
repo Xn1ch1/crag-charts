@@ -9,7 +9,7 @@ const resources = {
 		css: 'crag.column.1.0.1.css'
 	},
 	progress: {
-		js: 'crag.progress.1.0.1.js',
+		js: 'crag.progress.1.0.2.js',
 		css: 'crag.progress.1.0.1.css'
 	},
 	line: {
@@ -20,7 +20,7 @@ const resources = {
 		js: 'crag.combo.1.0.0.js',
 		css: 'crag.combo.1.0.0.css'
 	}
-}
+};
 
 let attachPath = 'https://combinatronics.com/Xn1ch1/Crag-Charts/main/crag/';
 
@@ -98,8 +98,8 @@ async function attachResources(res) {
 
 		script.onload = function() {
 			resolve(true);
-		}
+		};
 
 	});
 
-};
+}

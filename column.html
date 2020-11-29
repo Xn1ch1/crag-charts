@@ -9,11 +9,11 @@
 
 		<title>Crag Charts: Column Chart</title>
 
-		<link rel="apple-touch-icon" sizes="180x180" href="resources/icons/apple-touch-icon.png">
-		<link rel="icon" type="image/png" sizes="32x32" href="resources/icons/favicon-32x32.png">
-		<link rel="icon" type="image/png" sizes="16x16" href="resources/icons/favicon-16x16.png">
-		<link rel="manifest" href="resources/icons/site.webmanifest">
-		<link rel="mask-icon" href="resources/icons/safari-pinned-tab.svg" color="#5bbad5">
+		<link rel="apple-touch-icon" sizes="180x180" href="/resources/icons/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/resources/icons/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/resources/icons/favicon-16x16.png">
+		<link rel="manifest" href="/resources/icons/site.webmanifest">
+		<link rel="mask-icon" href="/resources/icons/safari-pinned-tab.svg" color="#5bbad5">
 		<meta name="msapplication-TileColor" content="#da532c">
 		<meta name="theme-color" content="#ffffff">
 		<meta charset="UTF-8">
@@ -27,6 +27,23 @@
 			<div class="head">Crag Charts</div>
 			<div w3-include-html="nav.html" id="nav" class="nav"></div>
 
+			<div class="subnav">
+				<ul class="toc">
+					<li>Table of Content</li>
+					<li><a href="#overview">Overview</a></li>
+					<li><a href="#functions">Functions</a></li>
+					<li><a href="#examples">Examples</a></li>
+					<li><a href="#config">Configuration</a></li>
+					<ul>
+						<li><a href="#series">series</a></li>
+						<li><a href="#chart">chart</a></li>
+						<li><a href="#bar">bar</a></li>
+						<li><a href="#vAxis">vAxis</a></li>
+						<li><a href="#labels">labels</a></li>
+					</ul>
+					<li><a href="#default">Full Defaults</a></li>
+				</ul>
+			</div>
 
 			<div class="body">
 				<div id="overview"></div>
@@ -122,19 +139,20 @@
 		format: 'time'
 	}
 	chart: {
-		title: 'Time Taken'
+		title: 'Time Taken',
+		color: 'darkgrey'
 	}
 }</code></pre>
 
 				<p>This will generate the below chart. Tip: Use the random data generator button below to generate different data sets for the chart</p>
 
-				<div id="column-chart" class="chart-container"></div>
+				<div id="column-chart" class="chart-container" style="background-color: #555555"></div>
 				<span class="chart-caption"><button onclick="newData();disableBtn(this)">Random Data Set</button> (Generate a new random data set for this chart)</span>
 
 				<div id="config"></div>
 				<hr>
 
-				<h1>Configuration</h1>
+				<h2>Configuration</h2>
 
 				<table class="config-table">
 					<colgroup>
@@ -263,7 +281,7 @@
 								bar.animated
 							</td>
 							<td>
-								Animates the stiped overlay of the bar, will have no effect unless stripe is set to true.
+								Animates the stiped overlay of the bars, will have no effect unless bar.stripe is set to true.
 
 								<span class="type">Type: Boolean</span>
 								<span>Default: false</span>
@@ -345,23 +363,38 @@
 					</tbody>
 				</table>
 
-			</div>
+				<div id="default"></div>
+				<hr>
 
-			<div class="subnav">
-				<ul class="toc">
-					<li>Table of Content</li>
-					<li><a href="#overview">Overview</a></li>
-					<li><a href="#functions">Functions</a></li>
-					<li><a href="#examples">Examples</a></li>
-					<li><a href="#config">Configuration</a></li>
-					<ul>
-						<li><a href="#series">series</a></li>
-						<li><a href="#chart">chart</a></li>
-						<li><a href="#bar">bar</a></li>
-						<li><a href="#vAxis">vAxis</a></li>
-						<li><a href="#labels">labels</a></li>
-					</ul>
-				</ul>
+				<h2>Full Default Configuration</h2>
+
+<pre><code>options = {
+	series: null,
+	bar: {
+		width: 100,
+		color: 'multi',
+		rounded: false,
+		inset: false,
+		stripe: false,
+		animated: false
+	},
+	vAxis: {
+		label: 'Series',
+		lines: true,
+		format: 'number',
+		min: 0
+	},
+	labels: {
+		position: 'none',
+		color: 'match'
+	},
+	chart: {
+		title: null,
+		color: 'white',
+		minorLines: true
+	}
+}</code></pre>
+
 			</div>
 
 		</div>
@@ -409,7 +442,8 @@
 						format: 'time'
 					},
 					chart: {
-						title: 'Time Taken'
+						title: 'Time Taken',
+						color: 'darkgrey'
 					}
 				}
 
