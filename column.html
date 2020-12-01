@@ -3,11 +3,13 @@
 	<head>
 
 		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+
 		<link href="resources/demo.css?v=1" rel="stylesheet">
-
+		<link href="resources/prism.css?v=1" rel="stylesheet">
 		<script src="resources/demo.js?v=1"></script>
+		<script src="resources/prism.js"></script>
 
-		<title>Crag Charts: Column Chart</title>
+		<title>Crag Charts: Column</title>
 
 		<link rel="apple-touch-icon" sizes="180x180" href="/resources/icons/apple-touch-icon.png">
 		<link rel="icon" type="image/png" sizes="32x32" href="/resources/icons/favicon-32x32.png">
@@ -20,7 +22,7 @@
 
 	</head>
 
-	<body style="background: #EEE">
+	<body style="background: #EEE" class="language-js">
 
 		<div class="grid-container">
 
@@ -89,7 +91,8 @@
 
 				<span>Example</span>
 
-<pre><code>chart.update([['A', 160], ['B', 527], ['C', 428]]);</code></pre>
+<pre><code>let newData = [['A', 160], ['B', 527], ['C', 428]];
+chart.update(newData);</code></pre>
 
 				<h3>Draw</h3>
 				<p>The draw function will cause a complete redraw of the chart with the pre existing data. This function will be useful where the size of the container object changes size. The below example is calling the draw function on the chart object when the window resizes.</p>
@@ -176,15 +179,15 @@
 
 <pre><code>options = {
 	series: [
-		['A’, 5],
-		['B’, 10],
-		['C’, 15],
-		['D’, 20],
+		['A', 5],
+		['B', 10],
+		['C', 15],
+		['D', 20],
 	]
 }</code></pre>
 
 								<span class="type">Type: Array of Arrays</span>
-								<span>Default: null</span>
+								<span class="default">Default: null</span>
 							</td>
 						</tr>
 						<tr id="chart">
@@ -195,7 +198,7 @@
 								The title to appear above the chart, when not specified, the chart will expand to fill the height of the parent element automatically.
 
 								<span class="type">Type: String</span>
-								<span>Default: null</span>
+								<span class="default">Default: null</span>
 							</td>
 						</tr>
 						<tr>
@@ -206,7 +209,7 @@
 								The background color of the chart.
 
 								<span class="type">Type: String</span>
-								<span>Default: 'white’</span>
+								<span class="default">Default: 'white'</span>
 							</td>
 						</tr>
 						<tr>
@@ -217,7 +220,7 @@
 								Enables or disables minor gridlines on the vertical axis.
 
 								<span class="type">Type: Boolean</span>
-								<span>Default: false</span>
+								<span class="default">Default: false</span>
 							</td>
 						</tr>
 						<tr id="bar">
@@ -228,7 +231,7 @@
 								Percentage width of each bar, where 100 means there is no space between bars. This cannot exceed 100.
 
 								<span class="type">Type: Number</span>
-								<span>Default: 100</span>
+								<span class="default">Default: 100</span>
 							</td>
 						</tr>
 						<tr>
@@ -240,7 +243,7 @@
 								<br>See <a href="pallet.html">Pallet</a> options for a list of available colors, these should be passed as strings.
 
 								<span class="type">Type: String</span>
-								<span>Default: 'multi’</span>
+								<span class="default">Default: 'multi'</span>
 							</td>
 						</tr>
 						<tr>
@@ -251,7 +254,7 @@
 								Sets the top of the bars to have rounded corners.
 
 								<span class="type">Type: Boolean</span>
-								<span>Default: false</span>
+								<span class="default">Default: false</span>
 							</td>
 						</tr>
 						<tr>
@@ -262,7 +265,7 @@
 								Sets the bars to have an inset drop shadow.
 
 								<span class="type">Type: Boolean</span>
-								<span>Default: false</span>
+								<span class="default">Default: false</span>
 							</td>
 						</tr>
 						<tr>
@@ -273,7 +276,7 @@
 								Applies a striped overlay on the bars, this will not affect the specified color.
 
 								<span class="type">Type: Boolean</span>
-								<span>Default: false</span>
+								<span class="default">Default: false</span>
 							</td>
 						</tr>
 						<tr>
@@ -284,7 +287,7 @@
 								Animates the stiped overlay of the bars, will have no effect unless bar.stripe is set to true.
 
 								<span class="type">Type: Boolean</span>
-								<span>Default: false</span>
+								<span class="default">Default: false</span>
 							</td>
 						</tr>
 						<tr id="vAxis">
@@ -295,7 +298,7 @@
 								The name of the vertical axis values, this name will show inside the tool tip along side the value for the data points.
 
 								<span class="type">Type: String</span>
-								<span>Default: 'Series 1’</span>
+								<span class="default">Default: 'Series 1'</span>
 							</td>
 						</tr>
 						<tr>
@@ -306,7 +309,7 @@
 								Enables or disables horizontal major and minor gridlines on the chart for the vertical axis points
 
 								<span class="type">Type: String</span>
-								<span>Default: true</span>
+								<span class="default">Default: true</span>
 							</td>
 						</tr>
 						<tr>
@@ -317,7 +320,7 @@
 								Formatting of the axis labels and the tool tip value label. See the <a href="labels.html">Labels</a> for a guide of the available formats.
 
 								<span class="type">Type: String</span>
-								<span>Default: 'number’</span>
+								<span class="default">Default: 'number'</span>
 							</td>
 						</tr>
 						<tr>
@@ -325,10 +328,10 @@
 								vAxis.min
 							</td>
 							<td>
-								Sets the minimum value of the vertical axis. When left to default, all columsn will start at 0. Optionally the string value 'min’ can be passed where the chart will automatically calculate the minimum value and upper value of the vAxis.
+								Sets the minimum value of the vertical axis. When left to default, all columsn will start at 0. Optionally the string value 'min' can be passed where the chart will automatically calculate the minimum value and upper value of the vAxis.
 
 								<span class="type">Type: Number or String</span>
-								<span>Default: 0</span>
+								<span class="default">Default: 0</span>
 							</td>
 						</tr>
 						<tr id="labels">
@@ -340,13 +343,13 @@
 
 								<em>Option</em>
 								<ul>
-									<li>'none’: labels will not be displayed</li>
-									<li>'outside’: labels will appear above the bars</li>
-									<li>'inside’: labels will appear inside the bars</li>
+									<li>'none': labels will not be displayed</li>
+									<li>'outside': labels will appear above the bars</li>
+									<li>'inside': labels will appear inside the bars</li>
 								</ul>
 
 								<span class="type">Type: String</span>
-								<span>Default: 'none’</span>
+								<span class="default">Default: 'none'</span>
 							</td>
 						</tr>
 						<tr>
@@ -357,7 +360,7 @@
 								Sets the text color of the labels. See <a href="pallet.html">Pallet</a> for a list of the available colors. By default, the labels will automatically switch between black and white depending on the background color.
 
 								<span class="type">Type: String</span>
-								<span>Default: 'match’</span>
+								<span class="default">Default: 'match'</span>
 							</td>
 						</tr>
 					</tbody>

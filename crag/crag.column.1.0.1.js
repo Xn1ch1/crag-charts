@@ -348,7 +348,7 @@ class CragColumn {
 					t.chart.barArea.appendChild(this);
 				});
 				t.chart.elements[index].bar.addEventListener('mouseout', function() {
-					t._hideToolTip(index);
+					t._hideToolTip();
 				});
 
 				t.hAxis.elements[index] = {
@@ -708,20 +708,14 @@ class CragColumn {
 		for (const [index, elements] of Object.entries(this.chart.elements)) {
 			elements.bar.style.opacity = 0.3;
 		}
-		// this.chart.elements[index].bar.style.backgroundColor = pallet.darkgrey;
+
 		this.chart.elements[index].bar.style.opacity = 1;
 
 	}
 
-	_hideToolTip(index) {
+	_hideToolTip() {
 
 		this.toolTip.container.style.opacity = 0;
-
-		// if (this.options.bar.color == 'multi') {
-		// 	this.chart.elements[index].bar.style.backgroundColor = pallet.key(index);
-		// } else {
-		// 	this.chart.elements[index].bar.style.backgroundColor = pallet[this.options.bar.color];
-		// }
 
 		for (const [index, elements] of Object.entries(this.chart.elements)) {
 			elements.bar.style.opacity = 1;

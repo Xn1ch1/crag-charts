@@ -5,33 +5,37 @@ let progressTarget = randomInt(0, progressTotal);
 
 function includeNav() {
 
-	var elmnt, file, xhttp;
-	elmnt = document.getElementById('nav');
-	file = elmnt.getAttribute("w3-include-html");
+	if (document.getElementById('nav')) {
 
-	xhttp = new XMLHttpRequest();
-	xhttp.onreadystatechange = function() {
-		if (this.readyState == 4) {
-		if (this.status == 200) {
+		var elmnt, file, xhttp;
+		elmnt = document.getElementById('nav');
+		file = elmnt.getAttribute("w3-include-html");
 
-			elmnt.innerHTML = this.responseText;
+		xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function() {
+			if (this.readyState == 4) {
+			if (this.status == 200) {
 
-			var path = window.location.pathname;
-			var page = path.split("/").pop().replace('.html', '');
+				elmnt.innerHTML = this.responseText;
 
-			if (page == '') {
-				page = 'index'
+				var path = window.location.pathname;
+				var page = path.split("/").pop().replace('.html', '');
+
+				if (page == '') {
+					page = 'index'
+				}
+
+				document.getElementsByClassName('nav-'+page)[0].classList.add('nav-active');
+
 			}
-
-			document.getElementsByClassName('nav-'+page)[0].classList.add('nav-active');
-
+			if (this.status == 404) {elmnt.innerHTML = 'Page not found.';}
+			}
 		}
-		if (this.status == 404) {elmnt.innerHTML = 'Page not found.';}
-		}
+
+		xhttp.open("GET", file, true);
+		xhttp.send();
+
 	}
-
-	xhttp.open("GET", file, true);
-	xhttp.send();
 
 }
 

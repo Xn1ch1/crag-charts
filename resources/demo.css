@@ -8,6 +8,7 @@ body {
 body, h1, h2, h3, h4, h5, h6, button, span, p {
 	font-family: 'Roboto';
 	font-weight: 300;
+	color: #333333;
 }
 h1 {
 	margin-top: 0;
@@ -114,18 +115,15 @@ hr {
 }
 .body {
 	grid-area: body;
-    height: calc(100vh - 158px);
+    height: calc(100vh - 50px);
     overflow-y: auto;
 	overflow-x: hidden;
-    margin-top: 24px;
+	box-sizing: border-box;
 	background: #FFF;
 	padding: 32px;
 	-webkit-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.3);
 	box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.3);
 	scroll-behavior: smooth;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
 }
 .subnav {
 	grid-area: subnav;
@@ -160,24 +158,27 @@ hr {
 	text-align: left;
 	background-color: #EEE;
 }
-.config-table span {
+.config-table td .type {
+	padding-top: 24px;
+	padding-bottom: 6px;
 	display: block;
 	font-weight: 400;
 }
-.config-table td .type {
-	padding-top: 24px;
-	padding-bottom: 4px;
+.config-table .default {
+	display: block;
+	font-weight: 400;
 }
 .config-table em {
 	margin-top: 16px;
     display: block;
 }
 .colors td{
-	padding: 8px 0 24px 8px;
+	padding: 8px 0 32px 8px;
 }
 pre {
 	width: 100%;
 	margin: 0 auto;
+	box-sizing: border-box;
 }
 pre code {
 	background-color: #eee;

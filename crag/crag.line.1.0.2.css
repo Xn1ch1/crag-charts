@@ -116,6 +116,7 @@
 .cragLineLine {
 	transition: all 0.8s ease;
 	-webkit-transition: all 0.8s ease;
+	stroke-linecap: round;
 }
 .cragLineToolTip {
 	position: absolute;

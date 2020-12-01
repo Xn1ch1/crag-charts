@@ -3,9 +3,11 @@
 	<head>
 
 		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
-		<link href="resources/demo.css?v=1" rel="stylesheet">
 
+		<link href="resources/demo.css?v=1" rel="stylesheet">
+		<link href="resources/prism.css?v=1" rel="stylesheet">
 		<script src="resources/demo.js?v=1"></script>
+		<script src="resources/prism.js"></script>
 
 		<title>Crag Charts: Progress</title>
 
@@ -20,8 +22,7 @@
 
 	</head>
 
-
-	<body style="background: #EEE">
+	<body style="background: #EEE" class="language-js">
 
 		<div class="grid-container">
 
@@ -175,7 +176,7 @@ function updateTarget(val)
 	},
 	current: {
 		value: 72,
-		color: 'teal',
+		color: 'bluegrey',
 		percentage: true,
 		inside: true
 	},
@@ -198,7 +199,7 @@ function updateTarget(val)
 					<colgroup>
 						<col width="25%" />
 						<col width="75%" />
-					  </colgroup>
+					</colgroup>
 					<tbody>
 						<tr>
 							<th colspan="2">Configuration Options</th>
@@ -211,7 +212,7 @@ function updateTarget(val)
 								The title to appear above the chart, when specified, the bar will move down from the center of the parent to allow for the title margins.
 
 								<span class="type">Type: String</span>
-								<span>Default: null</span>
+								<span class="default">Default: null</span>
 							</td>
 						</tr>
 						<tr>
@@ -222,7 +223,7 @@ function updateTarget(val)
 								The background color of the chart.
 
 								<span class="type">Type: String</span>
-								<span>Default: 'white’</span>
+								<span class="default">Default: 'white'</span>
 							</td>
 						</tr>
 						<tr id="bar">
@@ -233,7 +234,7 @@ function updateTarget(val)
 								Sets the progress bar container to have an inset drop shadow.
 
 								<span class="type">Type: Boolean</span>
-								<span>Default: false</span>
+								<span class="default">Default: false</span>
 							</td>
 						</tr>
 						<tr>
@@ -244,7 +245,7 @@ function updateTarget(val)
 								Applies a striped overlay on the progress bar, this will not affect the specified color.
 
 								<span class="type">Type: Boolean</span>
-								<span>Default: false</span>
+								<span class="default">Default: false</span>
 							</td>
 						</tr>
 						<tr>
@@ -255,7 +256,7 @@ function updateTarget(val)
 								Animates the stiped overlay of the bar, will have no effect unless striped is set to true.
 
 								<span class="type">Type: Boolean</span>
-								<span>Default: false</span>
+								<span class="default">Default: false</span>
 							</td>
 						</tr>
 						<tr id="current">
@@ -266,7 +267,7 @@ function updateTarget(val)
 								Sets the initial value of the progress bar. This number can not exceed total.
 
 								<span class="type">Type: Number</span>
-								<span>Default: 0</span>
+								<span class="default">Default: 0</span>
 							</td>
 						</tr>
 						<tr>
@@ -277,7 +278,7 @@ function updateTarget(val)
 								Sets the text content displayed for the label below the current value. This is only visible when current.inside = false and current.show = true.
 
 								<span class="type">Type: String</span>
-								<span>Default: 'Current</span>
+								<span class="default">Default: 'Current'</span>
 							</td>
 						</tr>
 						<tr>
@@ -288,7 +289,7 @@ function updateTarget(val)
 								Sets the base color of the progress bar.
 
 								<span class="type">Type: String</span>
-								<span>Default: 'blue'</span>
+								<span class="default">Default: 'blue'</span>
 							</td>
 						</tr>
 						<tr>
@@ -299,7 +300,7 @@ function updateTarget(val)
 								Sets the current value to show as a percentage instead of the default number.
 
 								<span class="type">Type: Boolean</span>
-								<span>Default: false</span>
+								<span class="default">Default: false</span>
 							</td>
 						</tr>
 						<tr>
@@ -310,7 +311,7 @@ function updateTarget(val)
 								Sets the curent value to show inside the progress bar. This will also remove the label and the progress indicator.
 
 								<span class="type">Type: Boolean</span>
-								<span>Default: false</span>
+								<span class="default">Default: false</span>
 							</td>
 						</tr>
 						<tr>
@@ -321,10 +322,89 @@ function updateTarget(val)
 								Sets the current value, value label and progress indicator line visible or invisible.
 
 								<span class="type">Type: Boolean</span>
-								<span>Default: true</span>
+								<span class="default">Default: true</span>
 							</td>
 						</tr>
 
+						<tr id="target">
+							<td>
+								current.value
+							</td>
+							<td>
+								Sets the initial value of the progress bar. This number can not exceed total.
+
+								<span class="type">Type: Number</span>
+								<span class="default">Default: 0</span>
+							</td>
+						</tr>
+						<tr>
+						<tr>
+							<td>
+								target.label
+							</td>
+							<td>
+								Sets the text content displayed for the label above the target value. This is only visible when the target is set to greater than 0.
+
+								<span class="type">Type: String</span>
+								<span class="default">Default: 'Target'</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								target.color
+							</td>
+							<td>
+								Sets the color color of the progress bar once the target has been met.
+
+								<span class="type">Type: String</span>
+								<span class="default">Default: 'blue'</span>
+							</td>
+						</tr>
+
+						<tr id="total">
+							<td>
+								total.value
+							</td>
+							<td>
+								Sets the total value of the progress bar. This number can not be lower than target or current.
+
+								<span class="type">Type: Number</span>
+								<span class="default">Default: 0</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								total.label
+							</td>
+							<td>
+								Sets the text content displayed for the label above the total value. This is only visible when total.show = true. In addition this will also self hide where the target is close enough to overlap the value or label.
+
+								<span class="type">Type: String</span>
+								<span class="default">Default: 'Total'</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								total.color
+							</td>
+							<td>
+								Sets the color of the progress bar when the total has been reached. When not set the color will remain its curent or target color where specified.
+
+								<span class="type">Type: String</span>
+								<span class="default">Default: 'blue'</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								total.show
+							</td>
+							<td>
+								Sets the toal value, value label and progress indicator line visible or invisible.
+
+								<span class="type">Type: Boolean</span>
+								<span class="default">Default: true</span>
+							</td>
+						</tr>
 					</tbody>
 				</table>
 

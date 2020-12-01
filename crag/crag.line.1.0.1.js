@@ -715,7 +715,7 @@ class CragLine {
 		const tipHeight = this.toolTip.container.offsetHeight;
 		const tipWidth = this.toolTip.container.offsetWidth;
 
-		this.chart.elements[index].point.style.fill = pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)];
+		// this.chart.elements[index].point.style.fill = pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)];
 
 		let hAlignment = 0;
 		let vAlignment = 0;
@@ -771,12 +771,22 @@ class CragLine {
 			this.toolTip.container.style.bottom = 8;
 		}
 
+		for (const [index, elements] of Object.entries(this.chart.elements)) {
+			elements.point.style.opacity = 0.3;
+		}
+		this.chart.elements[index].point.style.opacity = 1;
+		this.seriesLine.line.style.opacity  = 0.3;
+
 	}
 
 	_hideToolTip(index) {
 
 		this.toolTip.container.style.opacity = 0;
-		this.chart.elements[index].point.style.fill = pallet[this.options.line.color];
+		for (const [index, elements] of Object.entries(this.chart.elements)) {
+			elements.point.style.opacity = 1;
+		}
+		this.seriesLine.line.style.opacity  = 1;
+		// this.chart.elements[index].point.style.fill = pallet[this.options.line.color];
 
 	}
 

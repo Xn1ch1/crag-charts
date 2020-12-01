@@ -17,8 +17,8 @@ const resources = {
 		css: 'crag.line.1.0.2.css'
 	},
 	combo: {
-		js: 'crag.combo.1.0.0.js',
-		css: 'crag.combo.1.0.0.css'
+		js: 'crag.combo.1.0.1.js',
+		css: 'crag.combo.1.0.1.css'
 	}
 };
 

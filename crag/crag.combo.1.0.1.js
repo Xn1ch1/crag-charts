@@ -15,10 +15,11 @@ class CragCombo {
 				rounded: false,
 				inset: false,
 				stripe: false,
-				animated: false
+				animated: false,
+				onClick: null
 			},
 			line: {
-				color: 'darkgrey',
+				color: null,
 				width: 2,
 				pointSize: 4,
 				smooth: true
@@ -133,6 +134,9 @@ class CragCombo {
 				}
 				if (option.animated != undefined && typeof option.animated === 'boolean') {
 					this.options.bar.animated = option.animated;
+				}
+				if (option.onClick != undefined) {
+					this.options.bar.onClick = option.onClick;
 				}
 
 			}
@@ -249,6 +253,8 @@ class CragCombo {
 		this.toolTip.labels[0] = document.createElement('h6');
 		this.toolTip.labels[1] = document.createElement('h6');
 
+		this.chartContainer.style.backgroundColor = pallet[this.options.chart.color];
+
 		this.chart.pointArea = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 		this.seriesLine.line = this._createLine();
 
@@ -256,6 +262,7 @@ class CragCombo {
 			this.title.title = document.createElement('h1');
 			this.title.title.className = 'cragComboTitleText';
 			this.title.title.textContent = this.options.chart.title;
+			this.title.title.style.color = pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)];
 			this.title.area.appendChild(this.title.title);
 		}
 
@@ -287,7 +294,6 @@ class CragCombo {
 		this.chart.labelArea.style.pointerEvents = 'none';
 		this.chart.pointArea.style.pointerEvents = 'none';
 		this.toolTip.container.style.backgroundColor = pallet.darkgrey;
-		this.chartContainer.style.backgroundColor = pallet[this.options.chart.color];
 
 		this.parent.appendChild(this.chartContainer);
 		this.chartContainer.appendChild(this.vAxes[0].area);
@@ -333,6 +339,14 @@ class CragCombo {
 		const barHeight = chartAreaHeight / (t.vAxes[0].max - barMin);
 		const pointHeight = chartAreaHeight / (t.vAxes[1].max - pointMin);
 
+
+		t.toolTip.container.style.backgroundColor = pallet[getContrastYIQ(t.chartContainer.style.backgroundColor)];
+		t.toolTip.title.style.color = pallet[getContrastYIQ(t.toolTip.container.style.backgroundColor)];
+		t.toolTip.values[0].style.color = pallet[getContrastYIQ(t.toolTip.container.style.backgroundColor)];
+		t.toolTip.labels[0].style.color = pallet[getContrastYIQ(t.toolTip.container.style.backgroundColor)];
+		t.toolTip.values[1].style.color = pallet[getContrastYIQ(t.toolTip.container.style.backgroundColor)];
+		t.toolTip.labels[1].style.color = pallet[getContrastYIQ(t.toolTip.container.style.backgroundColor)];
+
 		let seriesLinePoints = [];
 
 		t.vAxes[0].area.style.width = vAxisWidth[0] + 'px';
@@ -351,8 +365,8 @@ class CragCombo {
 			let realInside = true;
 
 			const label = elements.label;
-			const value = elements.val;
-			const secondaryValue = elements.secondaryVal;
+			const value = elements.values[0];
+			const secondaryValue = elements.values[1];
 			const bar = elements.bar;
 			const point = elements.point;
 			const pointCX = Math.round((seriesItemWidth * index) + (seriesItemWidth / 2));
@@ -516,13 +530,18 @@ class CragCombo {
 				const index = i + sE;
 
 				t.chart.elements[index] = {
-					val: 0,
-					secondaryVal: 0,
-					text: '',
-					secondaryText: '',
+					values: [0, 0],
+					texts: ['', ''],
+					name: t.data.series[index][0],
 					bar: t._createBar(),
 					label: t._createBarLabel(),
 					point: t._createPoint()
+				}
+
+				if (t.options.bar.onClick != null) {
+					t.chart.elements[index].bar.onclick = function() {
+						t.options.bar.onClick(t.chart.elements[index]);
+					}
 				}
 
 				if (t.options.bar.color == 'multi') {
@@ -536,7 +555,7 @@ class CragCombo {
 					t.chart.barArea.appendChild(this);
 				});
 				t.chart.elements[index].bar.addEventListener('mouseout', function() {
-					t._hideToolTip(index);
+					t._hideToolTip();
 				});
 
 				t.hAxis.elements[index] = {
@@ -592,16 +611,21 @@ class CragCombo {
 		}
 
 		for (let i = 0; i < t.data.series.length; i++) {
-			t.chart.elements[i].secondaryVal = t.data.series[i][2];
-			t.chart.elements[i].val = t.data.series[i][1];
-			t.chart.elements[i].text = formatLabel(t.data.series[i][1], t.options.vAxes[0].format, t.data.max[0]);
-			t.chart.elements[i].secondaryText = formatLabel(t.data.series[i][2], t.options.vAxes[1].format, t.data.max[1]);
+
+			t.chart.elements[i].values[1] = t.data.series[i][2];
+			t.chart.elements[i].values[0] = t.data.series[i][1];
+
+			t.chart.elements[i].texts[0] = formatLabel(t.data.series[i][1], t.options.vAxes[0].format, t.data.max[0]);
+			t.chart.elements[i].texts[1] = formatLabel(t.data.series[i][2], t.options.vAxes[1].format, t.data.max[1]);
+
 			t.hAxis.elements[i].label.textContent = t.data.series[i][0];
 			t.hAxis.elements[i].text = t.data.series[i][0];
+
 			if (t.chart.elements[i].label != null) {
-				t.chart.elements[i].label.textContent = t.chart.elements[i].text;
+				t.chart.elements[i].label.textContent = t.chart.elements[i].texts[0];
 				t.hAxis.elements[i].label.textContent = t.data.series[i][0];
 			}
+
 		}
 
 	}
@@ -811,7 +835,11 @@ class CragCombo {
 		const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
 		circle.setAttribute('cx', '100%');
 		circle.setAttribute('cy', '100%');
-		circle.setAttribute('fill', pallet[this.options.line.color]);
+		if (this.options.line.color == null) {
+			circle.setAttribute('fill', pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)]);
+		} else {
+			circle.setAttribute('fill', pallet[this.options.line.color]);
+		}
 		circle.setAttribute('r', this.options.line.pointSize);
 		circle.setAttribute('class', 'cragComboPoint');
 
@@ -823,7 +851,12 @@ class CragCombo {
 
 		const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
 		path.setAttribute('fill', 'none');
-		path.setAttribute('stroke', pallet[this.options.line.color]);
+
+		if (this.options.line.color == null) {
+			path.setAttribute('stroke', pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)]);
+		} else {
+			path.setAttribute('stroke', pallet[this.options.line.color]);
+		}
 		path.setAttribute('stroke-width', this.options.line.width);
 		path.setAttribute('class', 'cragComboLine');
 		path.setAttribute('d', 'M0,0');
@@ -859,11 +892,10 @@ class CragCombo {
 
 		this.toolTip.title.textContent = this.data.series[index][0];
 		this.toolTip.labels[0].textContent = this.options.vAxes[0].label;
-		this.toolTip.values[0].textContent = this.chart.elements[index].text;
-		this.toolTip.values[0].textContent = this.chart.elements[index].text;
+		this.toolTip.values[0].textContent = this.chart.elements[index].texts[0];
 
 		this.toolTip.labels[1].textContent = this.options.vAxes[1].label;
-		this.toolTip.values[1].textContent = formatLabel(this.data.series[index][2], this.options.vAxes[1].format, this.data.max[1]);
+		this.toolTip.values[1].textContent = this.chart.elements[index].texts[1];
 
 		const chartHeight = this.chart.area.offsetHeight;
 		const chartWidth = this.chart.area.offsetWidth;
@@ -876,14 +908,6 @@ class CragCombo {
 
 		const tipHeight = this.toolTip.container.offsetHeight;
 		const tipWidth = this.toolTip.container.offsetWidth;
-
-		this.chart.elements[index].bar.style.backgroundColor = pallet.darkgrey;
-
-		if (pointHeight < barHeight) {
-			this.chart.elements[index].point.style.fill = pallet[getContrastYIQ(this.chart.elements[index].bar.style.backgroundColor)];
-		} else {
-			this.chart.elements[index].point.style.fill = pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)];
-		}
 
 		let hAlignment = 0;
 		let vAlignment = 0;
@@ -939,18 +963,25 @@ class CragCombo {
 			this.toolTip.container.style.bottom = barHeight + 8;
 		}
 
+		for (const [index, elements] of Object.entries(this.chart.elements)) {
+			elements.bar.style.opacity = 0.3;
+			elements.point.style.opacity = 0.3;
+		}
+		this.seriesLine.line.style.opacity = 0.3;
+		this.chart.elements[index].bar.style.opacity = 1;
+		this.chart.elements[index].point.style.opacity = 1;
+
 	}
 
-	_hideToolTip(index) {
+	_hideToolTip() {
 
 		this.toolTip.container.style.opacity = 0;
 
-		if (this.options.bar.color == 'multi') {
-			this.chart.elements[index].bar.style.backgroundColor = pallet.key(index);
-		} else {
-			this.chart.elements[index].bar.style.backgroundColor = pallet[this.options.bar.color];
+		for (const [index, elements] of Object.entries(this.chart.elements)) {
+			elements.bar.style.opacity = 1;
+			elements.point.style.opacity = 1;
 		}
-		this.chart.elements[index].point.style.fill = pallet[this.options.line.color];
+		this.seriesLine.line.style.opacity = 1;
 
 	}
 
@@ -985,7 +1016,7 @@ class CragCombo {
 	update(data) {
 
 		if (data.length > 20) {
-			data = val.slice(0, 20);
+			data = data.slice(0, 20);
 		}
 
 		this.data.series = data;

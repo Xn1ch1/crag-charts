@@ -3,9 +3,11 @@
 	<head>
 
 		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
-		<link href="resources/demo.css?v=1" rel="stylesheet">
 
+		<link href="resources/demo.css?v=1" rel="stylesheet">
+		<link href="resources/prism.css?v=1" rel="stylesheet">
 		<script src="resources/demo.js?v=1"></script>
+		<script src="resources/prism.js"></script>
 
 		<title>Crag Charts: Labels</title>
 
@@ -20,7 +22,7 @@
 
 	</head>
 
-	<body style="background: #EEE">
+	<body style="background: #EEE" class="language-js">
 
 		<div class="grid-container">
 
@@ -51,6 +53,10 @@
 				<h2>Configuration</h2>
 
 				<table class="config-table">
+					<colgroup>
+						<col width="25%" />
+						<col width="75%" />
+					</colgroup>
 					<tbody>
 						<tr>
 							<th colspan="2">Options</th>
@@ -72,8 +78,8 @@
 							<td>time</td>
 							<td>Formats values, taken in seconds, as time.
 								<ul>
-									<li>752 = ‘12:32’</li>
-									<li>9019 = ‘02:30:19’</li>
+									<li>752 = ‘12:32'</li>
+									<li>9019 = ‘02:30:19'</li>
 								</ul>
 							</td>
 						</tr>

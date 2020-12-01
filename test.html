@@ -1,6 +1,10 @@
 <html>
 
-	<body>
+	<head>
+		<script src="resources/demo.js?v=1"></script>
+	</head>
+
+	<body style="background-color: #222222">
 		<div id="chart" style="width: 90%; height: 500px; margin: 0 auto;"></div>
 	</body>
 
@@ -8,45 +12,40 @@
 		<script>
 
 			let chart;
-			crag.onLoadCallBack(createCharts, ['progress'], '/crag/');
+			crag.onLoadCallBack(createCharts, ['combo'], '/crag/');
 
 			function createCharts() {
 				const options = {
+					series: randomDataSeries(),
 					chart: {
-						color: 'white',
-						title: 'Chart Title'
+						title: 'My Chart',
+						color: 'almostblack'
 					},
 					bar: {
+						width: 90,
+						rounded: true,
 						inset: true,
 						striped: true,
-						animated: true
+						animated: true,
+						onClick: myCallBack,
+						color: 'multi'
 					},
-					current: {
-						value: 50,
-						label: 'Current',
-						color: 'blue',
-						percentage: true,
-						inside: false,
-						show: true
-					},
-					total: {
-						value: 100,
-						label: 'Total',
-						color: null,
-						show: true
-					},
-					target: {
-						value: 0,
-						label: 'Target',
-						color: null
+					vAxes: {
+						1: {
+							format: 'time'
+						}
 					}
 				}
-				chart = new CragProgress(options).create('chart');
+				chart = new CragCombo(options).create('chart');
 			}
 
 
 			window.onresize = function() {
 				chart.draw();
+			}
+
+			function myCallBack(e) {
+				console.log(e);
 			}
 
 		</script>
