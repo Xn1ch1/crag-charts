@@ -1,10 +1,10 @@
 <html>
 
 	<head>
-		<script src="resources/demo.js?v=1"></script>
+		<script src="resources/demo.js?v=2"></script>
 	</head>
 
-	<body style="background-color: #222222">
+	<body>
 		<div id="chart" style="width: 90%; height: 500px; margin: 0 auto;"></div>
 	</body>
 
@@ -16,10 +16,9 @@
 
 			function createCharts() {
 				const options = {
-					series: randomDataSeries(),
+					series: dataGenerator(20, 2),
 					chart: {
-						title: 'My Chart',
-						color: 'almostblack'
+						title: 'My Chart'
 					},
 					bar: {
 						width: 90,
@@ -44,8 +43,10 @@
 				chart.draw();
 			}
 
-			function myCallBack(e) {
-				console.log(e);
+			function myCallBack(obj) {
+				console.log(obj);
+				let str = 'Data point: ' + obj.name + '\nValues: ' + obj.values + '\nTexts: ' + obj.texts;
+				alert(str);
 			}
 
 		</script>

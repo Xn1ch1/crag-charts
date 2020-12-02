@@ -6,7 +6,7 @@
 
 		<link href="resources/demo.css?v=1" rel="stylesheet">
 		<link href="resources/prism.css?v=1" rel="stylesheet">
-		<script src="resources/demo.js?v=1"></script>
+		<script src="resources/demo.js?v=2"></script>
 		<script src="resources/prism.js"></script>
 
 		<title>Crag Charts: Column</title>
@@ -34,10 +34,16 @@
 					<li>Table of Content</li>
 					<li><a href="#overview">Overview</a></li>
 					<li><a href="#functions">Functions</a></li>
+					<ul>
+						<li><a href="#function-title">Title</a></li>
+						<li><a href="#function-update">Update</a></li>
+						<li><a href="#function-draw">Draw</a></li>
+						<li><a href="#function-callback">Callback</a></li>
+					</ul>
 					<li><a href="#examples">Examples</a></li>
 					<li><a href="#config">Configuration</a></li>
 					<ul>
-						<li><a href="#series">series</a></li>
+						<li><a href="#data">data</a></li>
 						<li><a href="#chart">chart</a></li>
 						<li><a href="#bar">bar</a></li>
 						<li><a href="#vAxis">vAxis</a></li>
@@ -68,7 +74,7 @@
 
 	function createCharts() {
 		const options = {
-			series: [['A', 500], ['B', 432], ['C', 300]];
+			data: [['A', 500], ['B', 432], ['C', 300]];
 		}
 		chart = new CragColumn(options).create('column-chart');
 	}
@@ -77,7 +83,7 @@
 				<p>In the second script tag, the onLoadCallBack is invoked, the function paramater passed should be below this callback that will create the chart. For more detailed information, see <a href="use.html">How to Use</a>.</p>
 				<p>The above code will generate the following chart.</p>
 
-				<div id="column-chart-default" class="chart-container"></div>
+				<div id="column-chart-1" class="chart-container"></div>
 				<span class="chart-caption">Tip: Hover over the bars to see the tool tip</span>
 
 				<div id="functions"></div>
@@ -85,21 +91,105 @@
 
 				<h2>Built In Functions</h2>
 
-				<h3>Update</h3>
+				<h3 id="function-title">Title Update</h3>
+				<p>The chart title can be updated at any time even if one was not defined in the inital options, should the chart need adjusting for the new space the draw function will be called automatically. The title property should be applied to the chart object.</p>
 
-				<p>To update the data in the chart, the update function should be called on the chart object. Only one parameter is required, an array of arrays. See <a href="#series">series</a> parameter for more information. The data set can change in size when updated, bars will be automatically added and removed as needed but will still be limited to 20 points and truncated automatically. In addition, this function will automatically call the draw function (below) once the update has been completed.</p>
+<pre><code>chart.title = 'New Chart Title';</code></pre>
 
-				<span>Example</span>
+				<hr class="mini-hr">
+
+				<h3 id="function-update">Data Update</h3>
+
+				<p>To update the data in the chart, the update function should be called on the chart object. Only one parameter is required, an array of arrays. See <a href="#data">data</a> parameter for more information. The data set can change in size when updated, bars will be automatically added and removed as needed but will still be limited to 20 points and truncated automatically. In addition, this function will automatically call the draw function (below) once the update has been completed.</p>
 
 <pre><code>let newData = [['A', 160], ['B', 527], ['C', 428]];
 chart.update(newData);</code></pre>
 
-				<h3>Draw</h3>
+				<hr class="mini-hr">
+
+				<h3 id="function-draw">Draw</h3>
 				<p>The draw function will cause a complete redraw of the chart with the pre existing data. This function will be useful where the size of the container object changes size. The below example is calling the draw function on the chart object when the window resizes.</p>
 
 <pre><code>window.onresize = function() {
 	chart.draw();
 }</code></pre>
+
+				<hr class="mini-hr">
+
+				<h3 id="function-callback">On Click Callback</h3>
+
+				<p>A function can be passed to the onClick property in the options to the bar elements. This function will be called when a series bar is clicked.</p>
+
+<pre><code>let options = {
+	bar: {
+		onClick: myFunction
+	}
+}
+myFunction(obj) {
+	... ...
+}
+</code></pre>
+
+				<p>The function should have one parameter, an object which will be returned by the click listener. This object will contain information on the series point clicked in addition to the elements related to it. The object will contain the following</p>
+
+				<table class="config-table">
+					<colgroup>
+						<col width="25%" />
+						<col width="75%" />
+					  </colgroup>
+					<tbody>
+						<tr>
+							<th colspan="2">
+								Object Parameters
+							</th>
+						</tr>
+						<tr>
+							<td>
+								bar
+							</td>
+							<td>
+								The html element of the bar clicked as an object.
+								<span class="type">Type: HTMLElement</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								label
+							</td>
+							<td>
+								The html element of the label related to the bar clicked as an object. If the label positions are none, this will return null.
+								<span class="type">Type: HTMLElement</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								name
+							</td>
+							<td>
+								The name of the data point, this is the same name used in the hAxis.
+								<span class="type">Type: String</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								text
+							</td>
+							<td>
+								The formatted string of the data point value. The format can be defined by the chart options. See <a href="#vAxis">vAxis.format</a> for more information.
+								<span class="type">Type: String</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								value
+							</td>
+							<td>
+								<p>The numerical value of the data point.</p>
+								<span class="type">Type: Number</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
 
 				<div id="examples"></div>
 				<hr>
@@ -108,10 +198,12 @@ chart.update(newData);</code></pre>
 
 				<p>Optional paramters can be passed as a single object in the class object call, these are used to style the chart and its elements.</p>
 
+				<h3>Example 1</h3>
+
 				<p>The following example is an object containing the data series and additional paramerters, these parameters set the bar width to 90%, the top of the bars to be rounded and applys an inset shadow.</p>
 
 <pre><code>let options = {
-	series: [['A', 500], ['B', 436], ['C', 300], ['D', 375]],
+	data: [['A', 500], ['B', 436], ['C', 300], ['D', 375]],
 	bar: {
 		width: 90,
 		rounded: true,
@@ -121,14 +213,18 @@ chart.update(newData);</code></pre>
 
 				<p>This will generate the below chart. Tip: Use the random data generator button below the chart to generate and apply a new random data set.</p>
 
-				<div id="column-chart-partial" class="chart-container"></div>
-				<span class="chart-caption"><button onclick="newDataPartial();disableBtn(this)">Random Data Set</button> Generate and apply a random data set for this chart.</span>
+				<div id="column-chart-2" class="chart-container"></div>
+				<span class="chart-caption"><button onclick="newData2();disableBtn(this)">Random Data Set</button> Generate and apply a random data set for this chart.</span>
 
-				<p>Another example, the options passed have included vAxis and chart settings. The two paramters passed in vAxis are min and format. See <a href="labels.html">Labels</a> for more infomration on formatting axes labels. A min seeting of 'auto' will let the chart decide the lower bound value on the vertical axis.</p>
+				<hr class="mini-hr">
+
+				<h3>Example 2</h3>
+
+				<p>In this example, the options passed have included vAxis and chart settings. The two paramters passed in vAxis are min and format. See <a href="labels.html">Labels</a> for more infomration on formatting axes labels. A min seeting of 'auto' will let the chart decide the lower bound value on the vertical axis.</p>
 				<p>Additionally, a chart title has also been specified and extra bar options have been passed such as color and a striped overlay.</p>
 
 <pre><code>let options = {
-	series: [['A', 400], ['B', 500], ['C', 300]],
+	data: [['A', 400], ['B', 500], ['C', 300]],
 	bar: {
 		width: 95,
 		rounded: true,
@@ -149,8 +245,38 @@ chart.update(newData);</code></pre>
 
 				<p>This will generate the below chart. Tip: Use the random data generator button below to generate different data sets for the chart</p>
 
-				<div id="column-chart" class="chart-container" style="background-color: #555555"></div>
-				<span class="chart-caption"><button onclick="newData();disableBtn(this)">Random Data Set</button> (Generate a new random data set for this chart)</span>
+				<div id="column-chart-3" class="chart-container" style="background-color: #333333"></div>
+				<span class="chart-caption"><button onclick="newData3();disableBtn(this)">Random Data Set</button> (Generate a new random data set for this chart)</span>
+
+				<hr class="mini-hr">
+
+				<h3>Example 3</h3>
+
+				<p>This final example demonstrates the onClick callback on the bar elements.</p>
+
+<pre><code>let options = {
+	data: [['A', 194], ['B', 240], ['C', 128], ['D', 207], ['E', 90]],
+	bar: {
+		width: 80,
+		rounded: true,
+		color: 'bluegrey',
+		onClick: myFunction
+	},
+	vAxis: {
+		format: 'time'
+	}
+}
+function myFunction(obj) {
+	nameElement.textContent = obj.name;
+	valueElement.textContent = obj.value;
+	textElement.textContent = obj.text;
+}</code></pre>
+
+				<p>This will generate the following. Click on a bar to see the values in the table below the chart update.</p>
+
+				<div id="column-chart-4" class="chart-container"></div>
+				<span class="chart-caption"><button onclick="newData4();disableBtn(this)">Random Data Set</button> (Generate a new random data set for this chart)</span>
+				<table style="table-layout: fixed;width: 100%;padding: 4px;border: 1px solid #DDD;"><tr><td>Selected Bar</td><td id="chart-4-name">Name: </td><td id="chart-4-value">Value: </td><td id="chart-4-text">Text: </td></tr></table>
 
 				<div id="config"></div>
 				<hr>
@@ -169,8 +295,8 @@ chart.update(newData);</code></pre>
 							</th>
 						</tr>
 						<tr>
-							<td id="series">
-								series <em style="display: inline;">(Required)</em>
+							<td id="data">
+								data <em style="display: inline;">(Required)</em>
 							</td>
 							<td>
 								<p>An array of arrays where each child array has two elements. The first point of the child arrays should be formatted as a string, this will be the name of the data point, the second is the numerical value for this point.</p>
@@ -178,7 +304,7 @@ chart.update(newData);</code></pre>
 								<em>Example</em>
 
 <pre><code>options = {
-	series: [
+	data: [
 		['A', 5],
 		['B', 10],
 		['C', 15],
@@ -290,6 +416,26 @@ chart.update(newData);</code></pre>
 								<span class="default">Default: false</span>
 							</td>
 						</tr>
+						<tr>
+							<td>
+								bar.onClick
+							</td>
+							<td>
+								A function to be called when a bar in the chart is clicked. The function will return a single object containing elements and data related to the bar clicked, see <a href="#functions">Functions</a> for more information.
+								<em>The return object looks as follows.</em>
+
+<pre><code>obj = {
+	bar: HTMLElement,
+	label: HTMLElement,
+	name: String,
+	text: String,
+	value: Number
+}</code></pre>
+
+								<span class="type">Type: Function</span>
+								<span class="default">Default: null</span>
+							</td>
+						</tr>
 						<tr id="vAxis">
 							<td>
 								vAxis.label
@@ -298,7 +444,7 @@ chart.update(newData);</code></pre>
 								The name of the vertical axis values, this name will show inside the tool tip along side the value for the data points.
 
 								<span class="type">Type: String</span>
-								<span class="default">Default: 'Series 1'</span>
+								<span class="default">Default: 'Series'</span>
 							</td>
 						</tr>
 						<tr>
@@ -372,14 +518,15 @@ chart.update(newData);</code></pre>
 				<h2>Full Default Configuration</h2>
 
 <pre><code>options = {
-	series: null,
+	data: null,
 	bar: {
 		width: 100,
 		color: 'multi',
 		rounded: false,
 		inset: false,
 		stripe: false,
-		animated: false
+		animated: false,
+		onClick: null
 	},
 	vAxis: {
 		label: 'Series',
@@ -405,33 +552,32 @@ chart.update(newData);</code></pre>
 		<script src="crag/crag.charts.loader.js?v=1"></script>
 		<script>
 
-			let defaultChart;
-			let partialChart;
-			let chart;
+			let chart1;
+			let chart2;
+			let chart3;
+			let chart4;
 
 			crag.onLoadCallBack(createCharts, ['column'], '/crag/');
 
 			function createCharts() {
 
-				const defaultOptions = {
-					series: [['A', 500], ['B', 432], ['C', 300]]
+				const chart1Options = {
+					data: [['A', 500], ['B', 432], ['C', 300]]
 				}
+				chart1 = new CragColumn(chart1Options).create('column-chart-1');
 
-				defaultChart = new CragColumn(defaultOptions).create('column-chart-default');
-
-				const partialOptions = {
-					series: [['A', 500], ['B', 436], ['C', 300], ['D', 375]],
+				const chart2Options = {
+					data: [['A', 500], ['B', 436], ['C', 300], ['D', 375]],
 					bar: {
 						width: 90,
 						rounded: true,
 						inset: true
 					}
 				}
+				chart2 = new CragColumn(chart2Options).create('column-chart-2');
 
-				partialChart = new CragColumn(partialOptions).create('column-chart-partial');
-
-				const options = {
-					series: [['A', 400], ['B', 500], ['C', 300]],
+				const chart3Options = {
+					data: [['A', 400], ['B', 500], ['C', 300]],
 					bar: {
 						width: 95,
 						rounded: true,
@@ -446,24 +592,51 @@ chart.update(newData);</code></pre>
 					},
 					chart: {
 						title: 'Time Taken',
-						color: 'darkgrey'
+						color: 'deepgrey'
 					}
 				}
+				chart3 = new CragColumn(chart3Options).create('column-chart-3');
 
-				chart = new CragColumn(options).create('column-chart');
+				const chart4Options = {
+					data: [['A', 194], ['B', 240], ['C', 128], ['D', 207], ['E', 90]],
+					bar: {
+						width: 80,
+						rounded: true,
+						color: 'bluegrey',
+						onClick: chart4Function
+					},
+					vAxis: {
+						format: 'time'
+					}
+				}
+				chart4 = new CragColumn(chart4Options).create('column-chart-4');
+
 			}
 
 			window.onresize = function() {
-				defaultChart.draw();
-				partialChart.draw();
-				chart.draw();
+				chart1.draw();
+				chart2.draw();
+				chart3.draw();
+				chart4.draw();
 			}
 
-			function newDataPartial() {
-				partialChart.update(randomDataSeries());
+			function newData2() {
+				chart2.update(dataGenerator(20));
 			}
-			function newData() {
-				chart.update(randomDataSeries());
+			function newData3() {
+				chart3.update(dataGenerator(20));
+			}
+			function newData4() {
+				document.getElementById('chart-4-name').textContent = 'Name: ';
+				document.getElementById('chart-4-value').textContent = 'Value: ';
+				document.getElementById('chart-4-text').textContent = 'Text: ';
+				chart4.update(dataGenerator(20));
+			}
+
+			function chart4Function(obj) {
+				document.getElementById('chart-4-name').textContent = 'Name: ' + obj.name;
+				document.getElementById('chart-4-value').textContent = 'Value: ' + obj.value;
+				document.getElementById('chart-4-text').textContent = 'Text: ' + obj.text;
 			}
 
 		</script>

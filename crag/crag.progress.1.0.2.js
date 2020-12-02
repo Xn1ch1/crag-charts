@@ -187,7 +187,7 @@ class CragProgress {
 		this.chart.parent.style.position = 'relative';
 
 		// Chart Area
-		this.chart.area.style.top = (this.chart.parent.offsetHeight / 2) - 125;
+		this.chart.area.style.marginTop = (this.chart.parent.offsetHeight / 2) - 125 + 'px';
 		this.chart.area.className = 'cragProgressArea';
 
 		if (this.options.chart.title != null) {
@@ -206,16 +206,16 @@ class CragProgress {
 			if (this.options.current.inside) {
 				this.chart.lines.current.style.display = 'none';
 				this.chart.labels.current.style.display = 'none';
-				this.chart.valueLabels.current.style.bottom = 116 - this.chart.titleMargin;
+				this.chart.valueLabels.current.style.bottom = 116 - this.chart.titleMargin + 'px';
 			} else {
-				this.chart.lines.current.style.left = -5;
-				this.chart.lines.current.style.bottom = 50 - this.chart.titleMargin;
-				this.chart.labels.current.style.left = -100;
-				this.chart.labels.current.style.bottom = 50 - this.chart.titleMargin;
-				this.chart.valueLabels.current.style.bottom = 68 - this.chart.titleMargin;
+				this.chart.lines.current.style.left = -5 + 'px';
+				this.chart.lines.current.style.bottom = 50 - this.chart.titleMargin + 'px';
+				this.chart.labels.current.style.left = -100 + 'px';
+				this.chart.labels.current.style.bottom = 50 - this.chart.titleMargin + 'px';
+				this.chart.valueLabels.current.style.bottom = 68 - this.chart.titleMargin + 'px';
 			}
 
-			this.chart.valueLabels.current.style.left = -100;
+			this.chart.valueLabels.current.style.left = -100 + 'px';
 			this.chart.valueLabels.current.textContent = this.data.current;
 			this.chart.labels.current.textContent = this.options.current.label;
 			this.chart.valueLabels.current.className = 'cragProgressValueLabel';
@@ -226,12 +226,12 @@ class CragProgress {
 
 		// Total
 		if (this.options.total.show) {
-			this.chart.lines.total.style.right = -4;
-			this.chart.lines.total.style.top = 50 + this.chart.titleMargin;
-			this.chart.labels.total.style.right = -100;
-			this.chart.labels.total.style.top = 50 + this.chart.titleMargin;
-			this.chart.valueLabels.total.style.right = -100;
-			this.chart.valueLabels.total.style.top = 68 + this.chart.titleMargin;
+			this.chart.lines.total.style.right = -4 + 'px';
+			this.chart.lines.total.style.top = 50 + this.chart.titleMargin + 'px';
+			this.chart.labels.total.style.right = -100 + 'px';
+			this.chart.labels.total.style.top = 50 + this.chart.titleMargin + 'px';
+			this.chart.valueLabels.total.style.right = -100 + 'px';
+			this.chart.valueLabels.total.style.top = 68 + this.chart.titleMargin + 'px';
 			this.chart.labels.total.textContent = this.options.total.label;
 			this.chart.valueLabels.total.textContent = this.data.total;
 			this.chart.lines.total.className = 'cragProgressLine';
@@ -240,12 +240,12 @@ class CragProgress {
 		}
 
 		// Target
-		this.chart.lines.target.style.left = -5;
-		this.chart.lines.target.style.top = 50 + this.chart.titleMargin;
-		this.chart.labels.target.style.left = -100;
-		this.chart.labels.target.style.top = 50 + this.chart.titleMargin;
-		this.chart.valueLabels.target.style.left = -100;
-		this.chart.valueLabels.target.style.top = 68 + this.chart.titleMargin;
+		this.chart.lines.target.style.left = -5 + 'px';
+		this.chart.lines.target.style.top = 50 + this.chart.titleMargin + 'px';
+		this.chart.labels.target.style.left = -100 + 'px';
+		this.chart.labels.target.style.top = 50 + this.chart.titleMargin + 'px';
+		this.chart.valueLabels.target.style.left = -100 + 'px';
+		this.chart.valueLabels.target.style.top = 68 + this.chart.titleMargin + 'px';
 		this.chart.labels.target.textContent = this.options.target.label;
 		this.chart.valueLabels.target.textContent = this.data.target;
 		this.chart.lines.target.className = 'cragProgressLine';
@@ -325,19 +325,19 @@ class CragProgress {
 			}
 
 			if (currentPosition < Math.max(t.chart.labels.current.offsetWidth, t.chart.valueLabels.current.offsetWidth)) {
-				t.chart.labels.current.style.left = currentPosition + 4;
-				t.chart.valueLabels.current.style.left = currentPosition + 4;
+				t.chart.labels.current.style.left = currentPosition + 4 + 'px';
+				t.chart.valueLabels.current.style.left = currentPosition + 4 + 'px';
 			} else {
 				if (t.data.total == t.data.current) {
-					t.chart.labels.current.style.left = currentPosition - t.chart.labels.current.offsetWidth - 4;
-					t.chart.valueLabels.current.style.left = currentPosition - t.chart.valueLabels.current.offsetWidth - 4;
+					t.chart.labels.current.style.left = currentPosition - t.chart.labels.current.offsetWidth - 4 + 'px';
+					t.chart.valueLabels.current.style.left = currentPosition - t.chart.valueLabels.current.offsetWidth - 4 + 'px';
 				} else {
 					let offset = 4;
 					if (!t.options.current.inside) {
 						offset = 0;
 					}
-					t.chart.labels.current.style.left = currentPosition - t.chart.labels.current.offsetWidth + offset;
-					t.chart.valueLabels.current.style.left = currentPosition - t.chart.valueLabels.current.offsetWidth + offset;
+					t.chart.labels.current.style.left = currentPosition - t.chart.labels.current.offsetWidth + offset + 'px';
+					t.chart.valueLabels.current.style.left = currentPosition - t.chart.valueLabels.current.offsetWidth + offset + 'px';
 				}
 			}
 
@@ -381,7 +381,7 @@ class CragProgress {
 		// Target
 		if (t.data.target == 0) {
 
-			t.chart.lines.target.style.left = 0;
+			t.chart.lines.target.style.left = '0px';
 			t._lineSmall(t.chart.lines.target);
 			t._hideTarget();
 
@@ -394,20 +394,20 @@ class CragProgress {
 			}
 
 			if (targetPosition < Math.max(t.chart.labels.target.offsetWidth, t.chart.valueLabels.target.offsetWidth)) {
-				t.chart.labels.target.style.left = targetPosition + 4;
-				t.chart.valueLabels.target.style.left = targetPosition + 4;
+				t.chart.labels.target.style.left = targetPosition + 4 + 'px';
+				t.chart.valueLabels.target.style.left = targetPosition + 4 + 'px';
 			} else {
 				if (t.data.total == t.data.target) {
-					t.chart.labels.target.style.left = targetPosition - t.chart.labels.target.offsetWidth - 4;
-					t.chart.valueLabels.target.style.left = targetPosition - t.chart.valueLabels.target.offsetWidth - 4;
+					t.chart.labels.target.style.left = targetPosition - t.chart.labels.target.offsetWidth - 4 + 'px';
+					t.chart.valueLabels.target.style.left = targetPosition - t.chart.valueLabels.target.offsetWidth - 4 + 'px';
 				} else {
-					t.chart.labels.target.style.left = targetPosition - t.chart.labels.target.offsetWidth;
-					t.chart.valueLabels.target.style.left = targetPosition - t.chart.valueLabels.target.offsetWidth;
+					t.chart.labels.target.style.left = targetPosition - t.chart.labels.target.offsetWidth + 'px';
+					t.chart.valueLabels.target.style.left = targetPosition - t.chart.valueLabels.target.offsetWidth + 'px';
 				}
 			}
 
 			t._showTarget();
-			t.chart.lines.target.style.left = targetPosition;
+			t.chart.lines.target.style.left = targetPosition + 'px';
 
 			if (t.data.target == t.data.total) {
 
@@ -439,9 +439,9 @@ class CragProgress {
 		// Total
 		if (t.options.total.show) {
 			t.chart.valueLabels.total.textContent = t.data.total;
-			t.chart.valueLabels.total.style.right = 4;
-			t.chart.lines.total.style.right = 0;
-			t.chart.labels.total.style.right = 4;
+			t.chart.valueLabels.total.style.right = 4 + 'px';
+			t.chart.lines.total.style.right = 0 + 'px';
+			t.chart.labels.total.style.right = 4 + 'px';
 
 			if (targetPosition > barWidth - Math.max(t.chart.labels.total.offsetWidth, t.chart.valueLabels.total.offsetWidth) - 4) {
 				t._hideTotal();

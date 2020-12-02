@@ -3,7 +3,7 @@ class CragLine {
 	constructor (options) {
 
 		this.data = {
-			series: options.series,
+			series: options.data,
 			max: 0,
 			min: 0
 		};
@@ -248,7 +248,7 @@ class CragLine {
 		for (const [index, elements] of Object.entries(t.hAxis.elements)) {
 
 			elements.label.style.width = seriesItemWidth + 'px';
-			elements.label.style.left = seriesItemWidth * index;
+			elements.label.style.left = seriesItemWidth * index + 'px';
 			elements.label.style.color = pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)];
 
 		}
@@ -269,13 +269,13 @@ class CragLine {
 					label.style.opacity = 0.9;
 				}
 
-				label.style.left = seriesItemWidth * index;
+				label.style.left = seriesItemWidth * index + 'px';
 				label.style.marginLeft = (seriesItemWidth / 2) + 'px';
 
 				if (pointCY + (t.options.line.pointSize * 4) + label.offsetHeight > chartAreaHeight) {
-					label.style.bottom = pointCY - (t.options.line.pointSize * 6);
+					label.style.bottom = pointCY - (t.options.line.pointSize * 6) + 'px';
 				} else {
-					label.style.bottom = pointCY + (t.options.line.pointSize * 4);
+					label.style.bottom = pointCY + (t.options.line.pointSize * 4) + 'px';
 				}
 
 			}
@@ -483,8 +483,8 @@ class CragLine {
 		if (t.vAxis.baseLine == null) {
 			let major = document.createElement('div');
 				major.className = 'cragLineAxisLineMajor';
-				major.style.bottom = 0;
-				major.style.right = 0;
+				major.style.bottom = 0 + 'px';
+				major.style.right = 0 + 'px';
 				major.style.backgroundColor = pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)]
 			if (major != null) {
 				t.chart.gridArea.appendChild(major);
@@ -496,7 +496,7 @@ class CragLine {
 			var label = document.createElement('span');
 				label.className = 'cragLineVAxisLabel';
 				label.textContent = '0';
-				label.style.bottom = 0;
+				label.style.bottom = 0 + 'px';
 				label.style.color = pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)];
 			t.vAxis.area.appendChild(label);
 			t.vAxis.baseValue = label;
@@ -541,7 +541,7 @@ class CragLine {
 					major = document.createElement('div');
 					major.className = 'cragLineAxisLineMajor';
 					major.style.bottom = '100%';
-					major.style.right = 0;
+					major.style.right = 0 + 'px';
 					major.style.backgroundColor = pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)];
 
 					if (t.options.chart.minorLines) {
@@ -617,7 +617,7 @@ class CragLine {
 		}
 
 		t.vAxis.baseValue.textContent = formatLabel(scale.min, t.options.vAxis.format, t.data.max);;
-		t.vAxis.baseValue.style.bottom = t.hAxis.area.offsetHeight - (t.vAxis.baseValue.offsetHeight / 2);
+		t.vAxis.baseValue.style.bottom = t.hAxis.area.offsetHeight - (t.vAxis.baseValue.offsetHeight / 2) + 'px';
 
 		const vAxisMajorLineHeight = (t.vAxis.area.offsetHeight - t.hAxis.area.offsetHeight - t.title.area.offsetHeight) * (scale.maj / (scale.max - scale.min));
 		const vAxisMinorLineHeight = vAxisMajorLineHeight / 2;
@@ -627,14 +627,14 @@ class CragLine {
 			let majorLineHeight = (vAxisMajorLineHeight * (parseInt(index) + 1));
 			let minorLineHeight = majorLineHeight - vAxisMinorLineHeight;
 
-			elems.label.style.bottom = majorLineHeight + t.hAxis.area.offsetHeight - (elems.label.offsetHeight / 2);
+			elems.label.style.bottom = majorLineHeight + t.hAxis.area.offsetHeight - (elems.label.offsetHeight / 2) + 'px';
 			elems.label.textContent = formatLabel((scale.maj * (parseInt(index) + 1)) + scale.min, t.options.vAxis.format, t.data.max);
 
 			if (elems.majorLine != null) {
-				elems.majorLine.style.bottom = majorLineHeight - elems.majorLine.offsetHeight;
+				elems.majorLine.style.bottom = majorLineHeight - elems.majorLine.offsetHeight + 'px';
 			}
 			if (elems.minorLine != null) {
-				elems.minorLine.style.bottom = minorLineHeight - elems.minorLine.offsetHeight;
+				elems.minorLine.style.bottom = minorLineHeight - elems.minorLine.offsetHeight + 'px';
 			}
 
 			if (elems.label.offsetWidth > vAxisWidth) {
@@ -755,20 +755,20 @@ class CragLine {
 		this.toolTip.container.style.opacity = 1;
 
 		if (hAlignment == 1) {
-			this.toolTip.container.style.left = pointLeft + 8 + pointSize;
+			this.toolTip.container.style.left = pointLeft + 8 + pointSize + 'px';
 		} else if (hAlignment == -1) {
-			this.toolTip.container.style.left = pointLeft - tipWidth - 8 - pointSize;
+			this.toolTip.container.style.left = pointLeft - tipWidth - 8 - pointSize + 'px';
 		} else {
-			this.toolTip.container.style.left = pointLeft - (tipWidth / 2) - (pointSize / 2);
+			this.toolTip.container.style.left = pointLeft - (tipWidth / 2) - (pointSize / 2) + 'px';
 		}
 
 		if (vAlignment == 0) {
-			this.toolTip.container.style.bottom = pointHeight - tipHeight;
+			this.toolTip.container.style.bottom = pointHeight - tipHeight + 'px';
 		} else if (vAlignment == -1) {
 			this.toolTip.container.style.opacity = 0.9;
-			this.toolTip.container.style.bottom = chartHeight - tipHeight - 8;
+			this.toolTip.container.style.bottom = chartHeight - tipHeight - 8 + 'px';
 		} else {
-			this.toolTip.container.style.bottom = 8;
+			this.toolTip.container.style.bottom = 8 + 'px';
 		}
 
 		for (const [index, elements] of Object.entries(this.chart.elements)) {

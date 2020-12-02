@@ -1,7 +1,10 @@
-
 let progressTotal = 200;
 let progressCurrent = randomInt(0, progressTotal);
 let progressTarget = randomInt(0, progressTotal);
+
+window.onload = function() {
+	includeNav();
+}
 
 function includeNav() {
 
@@ -39,9 +42,6 @@ function includeNav() {
 
 }
 
-window.onload = function() {
-	includeNav();
-}
 function disableBtn(btn) {
 	const b = btn;
 	btn.disabled = true;
@@ -52,10 +52,7 @@ function disableBtn(btn) {
 function randomInt(min, max) {
 	return Math.floor(Math.random() * (max - min + 1) + min);
 }
-function randomDec(min, max) {
-	return (Math.floor(Math.random() * max) + 1) / 5;
-}
-function makeid(length) {
+function randomId(length) {
 	var result           = '';
 	var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 	var charactersLength = characters.length;
@@ -64,33 +61,44 @@ function makeid(length) {
 	}
 	return result;
 }
-function randomDataSeries() {
+function dataGenerator(maxLen = 20, count = 1, decimal = false) {
 
-	let series = [];
+	let data = [];
+	let minMaxes = [];
+	let factor = randomInt(3, 9);
 
-	const length = randomInt(5, 20);
-	const min1 = randomInt(10, 1000);
-	const max1 = randomInt(min1, Math.max(min1, 1) * randomInt(2, 10));
-	const min2 = randomInt(1, 360);
-	const max2 = randomInt(min2, Math.max(min2, 1) * randomInt(2, 10));
+	const length = randomInt(5, maxLen);
+
+	for (var i = 0; i < count; i++) {
+
+		let x = randomInt(10, 1000);
+
+		minMaxes[i] = [x, randomInt(x, Math.max(x, 1) * randomInt(2, 10))];
+
+	}
+
+	console.log(minMaxes);
 
 	for (var i = 0; i < length; i++) {
-		series.push([makeid(2), randomInt(min1, max1), randomInt(min2, max2)]);
+
+		let series = [randomId(2)];
+
+		for (var j = 0; j < count; j++) {
+
+			let x = randomInt(minMaxes[j][0], minMaxes[j][1]);
+
+			if (decimal) x = x / factor;
+
+			series.push(x);
+
+		}
+
+		data.push(series);
+
 	}
-	return series;
-}
-function randomFractionalDataSeries() {
 
-	let series = [];
+	console.log(data);
 
-	const length = randomInt(5, 20);
-	const min1 = randomDec(100, 10000);
-	const max1 = randomDec(min1, min1 * randomInt(2, 10));
-	const min2 = randomDec(10, 3600);
-	const max2 = randomDec(min2, min2 * randomInt(2, 10));
+	return data;
 
-	for (var i = 0; i < length; i++) {
-		series.push([makeid(2), randomDec(min1, max1), randomDec(min2, max2)]);
-	}
-	return series;
 }

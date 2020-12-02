@@ -6,7 +6,7 @@
 
 		<link href="resources/demo.css?v=1" rel="stylesheet">
 		<link href="resources/prism.css?v=1" rel="stylesheet">
-		<script src="resources/demo.js?v=1"></script>
+		<script src="resources/demo.js?v=2"></script>
 		<script src="resources/prism.js"></script>
 
 		<title>Crag Charts: Line</title>
@@ -38,7 +38,7 @@
 					<li><a href="#examples">Examples</a></li>
 					<li><a href="#config">Configuration</a></li>
 					<ul>
-						<li><a href="#series">series</a></li>
+						<li><a href="#data">data</a></li>
 						<li><a href="#chart">chart</a></li>
 						<li><a href="#line">line</a></li>
 						<li><a href="#vAxis">vAxis</a></li>
@@ -63,14 +63,13 @@
 
 &lt;script src="https://combinatronics.com/Xn1ch1/Crag-Charts/main/crag/crag.charts.loader.js"&gt;&lt;/script&gt;
 &lt;script&gt;
-	let chart;
 	crag.onLoadCallBack(createCharts, ['line']);
 
 	function createCharts() {
 		const options = {
-			series: [['A', 134], ['B', 255], ['C', 100], ['D', 50]];
+			data: [['A', 134], ['B', 255], ['C', 100], ['D', 50]];
 		}
-		chart = new CragLine(options).create('line-chart');
+		const chart = new CragLine(options).create('line-chart');
 	}
 &lt;/script&gt;</code></pre>
 
@@ -87,12 +86,12 @@
 
 				<h3>Update</h3>
 
-				<p>To update the data in the chart, the update function should be called on the chart object. Only one parameter is required, an array of arrays. See <a href="#series">series</a> parameter for more information. The data set can change in size when updated, bars will be automatically added and removed as needed but will still be limited to 20 points and truncated automatically. In addition, this function will automatically call the draw function (below) once the update has been completed.</p>
-
-				<span>Example</span>
+				<p>To update the data in the chart, the update function should be called on the chart object. Only one parameter is required, an array of arrays. See <a href="#data">data</a> parameter for more information. The data set can change in size when updated, bars will be automatically added and removed as needed but will still be limited to 20 points and truncated automatically. In addition, this function will automatically call the draw function (below) once the update has been completed.</p>
 
 <pre><code>let newData = [['A', 160], ['B', 527], ['C', 428]];
 chart.update(newData);</code></pre>
+
+				<hr class="mini-hr">
 
 				<h3>Draw</h3>
 				<p>The draw function will cause a complete redraw of the chart with the pre existing data. This function will be useful where the size of the container object changes size. The below example is calling the draw function on the chart object when the window resizes.</p>
@@ -113,10 +112,12 @@ chart.update(newData);</code></pre>
 
 				<p>Optional paramters can be passed as a single object in the class object call, these are used to style the chart and its elements.</p>
 
+				<h3>Example 1</h3>
+
 				<p>The following example is an object containing the data series and additional paramerters, these parameters set the line width to 5 and the color of the line to red.</p>
 
 <pre><code>let options = {
-	series: [['A', 500], ['B', 436], ['C', 300], ['D', 375]],
+	data: [['A', 500], ['B', 436], ['C', 300], ['D', 375]],
 	line: {
 		width: 5,
 		color: 'red'
@@ -128,11 +129,15 @@ chart.update(newData);</code></pre>
 				<div id="line-chart-partial" class="chart-container"></div>
 				<span class="chart-caption"><button onclick="newDataPartial();disableBtn(this)">Random Data Set</button> Generate and apply a random data set for this chart.</span>
 
-				<p>Another example, the options passed have included vAxis and chart settings, see <a href="labels.html">Labels</a> for more infomration on formatting axes labels. A min seeting of 'auto' will let the chart decide the lower bound value on the vertical axis.</p>
+				<hr class="mini-hr">
+
+				<h3>Example 2</h3>
+
+				<p>In this example, the options passed have included vAxis and chart settings, see <a href="labels.html">Labels</a> for more infomration on formatting axes labels. A min seeting of 'auto' will let the chart decide the lower bound value on the vertical axis.</p>
 				<p>Additionally, a chart title has also been specified in addiditon to smoothing of the line turned off in the line options.</p>
 
 <pre><code>let options = {
-	series: [['A', 2.3], ['B', 3.6], ['C', 1.2], ['D', 5.4], ['E', 4.4], ['F', 3.2]],
+	data: [['A', 2.3], ['B', 3.6], ['C', 1.2], ['D', 5.4], ['E', 4.4], ['F', 3.2]],
 	line: {
 		color: 'teal',
 		pointSize: 1,
@@ -170,16 +175,15 @@ chart.update(newData);</code></pre>
 							</th>
 						</tr>
 						<tr>
-							<td id="series">
-								series <em style="display: inline;">(Required)</em>
+							<td id="data">
+								data <em style="display: inline;">(Required)</em>
 							</td>
 							<td>
 								<p>An array of arrays where each child array has two elements. The first point of the child arrays should be formatted as a string, this will be the name of the data point, the second is the numerical value for this point.</p>
-								<p>A maximum of 20 points can be displayed on the chart, data will be automatically truncated where the array contains more than 20 child arrays.</p>
-								<em>Example</em>
+								<p>A maximum of 20 points can be displayed on the chart, data will be automatically truncated where the array contains more than 20 children.</p>
 
 <pre><code>options = {
-	series: [
+	data: [
 		['A', 5],
 		['B', 10],
 		['C', 15],
@@ -345,7 +349,7 @@ chart.update(newData);</code></pre>
 				<h2>Full Default Configuration</h2>
 
 <pre><code>options = {
-	series: null,
+	data: null,
 	line: {
 		color: 'indigo',
 		width: 4,
@@ -385,12 +389,12 @@ chart.update(newData);</code></pre>
 
 			function createCharts() {
 				let optionsDefault = {
-					series: [['A', 134], ['B', 255], ['C', 100], ['D', 50]],
+					data: [['A', 134], ['B', 255], ['C', 100], ['D', 50]],
 				}
 				chartDefault = new CragLine(optionsDefault).create('line-chart');
 
 				let optionsDefault2 = {
-					series: [['A', 400], ['B', 800], ['C', 650], ['D', 500], ['E', 700]],
+					data: [['A', 400], ['B', 800], ['C', 650], ['D', 500], ['E', 700]],
 					line: {
 						color: 'purple'
 					},
@@ -401,7 +405,7 @@ chart.update(newData);</code></pre>
 				chartDefault2 = new CragLine(optionsDefault2).create('line-chart-2');
 
 				let optionsPartial = {
-					series: [['A', 500], ['B', 436], ['C', 300], ['D', 375]],
+					data: [['A', 500], ['B', 436], ['C', 300], ['D', 375]],
 					line: {
 						width: 5,
 						color: 'red'
@@ -410,7 +414,7 @@ chart.update(newData);</code></pre>
 				chartPartial = new CragLine(optionsPartial).create('line-chart-partial');
 
 				let optionsFull = {
-					series: [['A', 2.3], ['B', 3.6], ['C', 1.2], ['D', 5.4], ['E', 4.4], ['F', 3.2]],
+					data: [['A', 2.3], ['B', 3.6], ['C', 1.2], ['D', 5.4], ['E', 4.4], ['F', 3.2]],
 					line: {
 						color: 'teal',
 						pointSize: 1,
@@ -449,11 +453,11 @@ chart.update(newData);</code></pre>
 			}
 
 			function newDataPartial() {
-				chartPartial.update(randomDataSeries());
+				chartPartial.update(dataGenerator(20));
 			}
 
 			function newDataFull() {
-				chartFull.update(randomFractionalDataSeries());
+				chartFull.update(dataGenerator(20, 1, true));
 			}
 
 		</script>

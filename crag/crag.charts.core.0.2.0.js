@@ -32,6 +32,7 @@ const pallet = {
 	darkbluegrey: '#192841',
 	black: '#000000',
 	almostblack: '#222222',
+	deepgrey: '#333333',
 	darkgrey: '#555555',
 	lightgrey: '#DDDDDD',
 	white: '#FFFFFF',
@@ -278,6 +279,10 @@ function ObjectLength(object) {
 
 function getContrastYIQ(color){
 
+	if (pallet.hasOwnProperty(color)) {
+		color = pallet[color];
+	}
+
 	let r, g, b;
 
 	if (color.includes('rgb')) {
@@ -301,5 +306,37 @@ function getContrastYIQ(color){
 	let yiq = ((r*299)+(g*587)+(b*114))/1000;
 
 	return (yiq >= 128) ? 'darkgrey' : 'white';
+
+}
+
+function getContrastColor(color) {
+
+	if (pallet.hasOwnProperty(color)) {
+		color = pallet[color];
+	}
+
+	let r, g, b;
+
+	if (color.includes('rgb')) {
+
+		color = color.replace('rgb(', '').replace(')', '');
+
+		r = color.split(',')[0].trim();
+		g = color.split(',')[1].trim();
+		b = color.split(',')[2].trim();
+
+	} else {
+
+		color = color.replace("#", "");
+
+		r = parseInt(color.substr(0,2),16);
+		g = parseInt(color.substr(2,2),16);
+		b = parseInt(color.substr(4,2),16);
+
+	}
+
+	let yiq = ((r*299)+(g*587)+(b*114))/1000;
+
+	return (yiq >= 140) ? pallet.deepgrey : pallet.white;
 
 }

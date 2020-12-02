@@ -92,7 +92,7 @@ class CragCombo {
 
 		this.title = {
 			area: null,
-			title: null
+			text: null
 		}
 
 		this.hAxis = {
@@ -135,7 +135,7 @@ class CragCombo {
 				if (option.animated != undefined && typeof option.animated === 'boolean') {
 					this.options.bar.animated = option.animated;
 				}
-				if (option.onClick != undefined) {
+				if (option.onClick != undefined && typeof option.onClick === 'function') {
 					this.options.bar.onClick = option.onClick;
 				}
 
@@ -259,11 +259,11 @@ class CragCombo {
 		this.seriesLine.line = this._createLine();
 
 		if (this.options.chart.title != null) {
-			this.title.title = document.createElement('h1');
-			this.title.title.className = 'cragComboTitleText';
-			this.title.title.textContent = this.options.chart.title;
-			this.title.title.style.color = pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)];
-			this.title.area.appendChild(this.title.title);
+			this.title.text = document.createElement('h1');
+			this.title.text.className = 'cragComboTitleText';
+			this.title.text.textContent = this.options.chart.title;
+			this.title.text.style.color = getContrastColor(this.options.chart.color);
+			this.title.area.appendChild(this.title.text);
 		}
 
 		this.chartContainer.className = 'cragComboChartContainer';
@@ -286,6 +286,7 @@ class CragCombo {
 
 		this.chart.pointArea.setAttribute('width', '100%');
 		this.chart.pointArea.setAttribute('height', '100%');
+		this.chart.pointArea.style.left = '0px';
 		this.chart.pointArea.style.position = 'absolute';
 		this.chart.pointArea.appendChild(this.seriesLine.line);
 
@@ -340,12 +341,12 @@ class CragCombo {
 		const pointHeight = chartAreaHeight / (t.vAxes[1].max - pointMin);
 
 
-		t.toolTip.container.style.backgroundColor = pallet[getContrastYIQ(t.chartContainer.style.backgroundColor)];
-		t.toolTip.title.style.color = pallet[getContrastYIQ(t.toolTip.container.style.backgroundColor)];
-		t.toolTip.values[0].style.color = pallet[getContrastYIQ(t.toolTip.container.style.backgroundColor)];
-		t.toolTip.labels[0].style.color = pallet[getContrastYIQ(t.toolTip.container.style.backgroundColor)];
-		t.toolTip.values[1].style.color = pallet[getContrastYIQ(t.toolTip.container.style.backgroundColor)];
-		t.toolTip.labels[1].style.color = pallet[getContrastYIQ(t.toolTip.container.style.backgroundColor)];
+		t.toolTip.container.style.backgroundColor = getContrastColor(t.options.chart.color);
+		t.toolTip.title.style.color = pallet[t.options.chart.color];
+		t.toolTip.values[0].style.color = pallet[t.options.chart.color];
+		t.toolTip.labels[0].style.color = pallet[t.options.chart.color];
+		t.toolTip.values[1].style.color = pallet[t.options.chart.color];
+		t.toolTip.labels[1].style.color = pallet[t.options.chart.color];
 
 		let seriesLinePoints = [];
 
@@ -355,8 +356,8 @@ class CragCombo {
 		for (const [index, elements] of Object.entries(t.hAxis.elements)) {
 
 			elements.label.style.width = seriesItemWidth + 'px';
-			elements.label.style.left = seriesItemWidth * index;
-			elements.label.style.color = pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)];
+			elements.label.style.left = seriesItemWidth * index + 'px';
+			elements.label.style.color = getContrastColor(t.options.chart.color);
 
 		}
 
@@ -382,7 +383,7 @@ class CragCombo {
 					label.style.opacity = 1;
 				}
 
-				label.style.left = seriesItemWidth * index;
+				label.style.left = seriesItemWidth * index + 'px';
 
 				if (t.options.labels.position == 'inside') {
 					if (barHeight * value < label.offsetHeight) {
@@ -395,7 +396,7 @@ class CragCombo {
 				if (realInside) {
 
 					label.style.width = 'auto';
-					label.style.bottom = barHeight * value - label.offsetHeight;
+					label.style.bottom = barHeight * value - label.offsetHeight + 'px';
 
 					if (label.offsetWidth > barWidth) {
 						label.style.opacity = 0;
@@ -404,15 +405,15 @@ class CragCombo {
 					}
 
 				} else {
-					label.style.bottom = barHeight * value;
+					label.style.bottom = barHeight * value + 'px';
 					label.style.width = seriesItemWidth + 'px';
 				}
 
 				if (t.options.labels.color === 'match') {
 					if (realInside) {
-						label.style.color = getContrastYIQ(pallet.key(index));
+						label.style.color = getContrastColor(pallet.key(index));
 					} else {
-						label.style.color = getContrastYIQ(pallet[t.options.chart.color]);
+						label.style.color = getContrastColor(pallet[t.options.chart.color]);
 					}
 				}
 
@@ -420,7 +421,7 @@ class CragCombo {
 
 			bar.style.width = barWidth + 'px';
 			bar.style.height = barHeight * (value - barMin) + 'px';
-			bar.style.left = (seriesItemWidth * index) + (gapWidth / 2);
+			bar.style.left = (seriesItemWidth * index) + (gapWidth / 2) + 'px';
 
 			seriesLinePoints.push([pointCX, chartAreaHeight - pointCY]);
 
@@ -553,9 +554,11 @@ class CragCombo {
 				t.chart.elements[index].bar.addEventListener('mouseover', function() {
 					t._showToolTip(index);
 					t.chart.barArea.appendChild(this);
+					t.chart.elements[index].point.setAttribute('r', t.options.line.pointSize * 2);
 				});
 				t.chart.elements[index].bar.addEventListener('mouseout', function() {
 					t._hideToolTip();
+					t.chart.elements[index].point.setAttribute('r', t.options.line.pointSize);
 				});
 
 				t.hAxis.elements[index] = {
@@ -625,7 +628,6 @@ class CragCombo {
 				t.chart.elements[i].label.textContent = t.chart.elements[i].texts[0];
 				t.hAxis.elements[i].label.textContent = t.data.series[i][0];
 			}
-
 		}
 
 	}
@@ -650,9 +652,9 @@ class CragCombo {
 		if (t.vAxes[axis].baseLine == null) {
 			let major = document.createElement('div');
 				major.className = 'cragComboAxisLineMajor';
-				major.style.bottom = 0;
-				major.style.right = 0;
-				major.style.backgroundColor = pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)]
+				major.style.bottom = 0 + 'px';
+				major.style.right = 0 + 'px';
+				major.style.backgroundColor = getContrastColor(this.chartContainer.style.backgroundColor);
 			if (major != null) {
 				t.chart.gridArea.appendChild(major);
 			}
@@ -663,8 +665,8 @@ class CragCombo {
 			var label = document.createElement('span');
 				label.className = 'cragComboVAxisLabel' + axis;
 				label.textContent = '0';
-				label.style.bottom = 0;
-				label.style.color = pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)];
+				label.style.bottom = 0 + 'px';
+				label.style.color = getContrastColor(this.chartContainer.style.backgroundColor);
 			t.vAxes[axis].area.appendChild(label);
 			t.vAxes[axis].baseValue = label;
 		}
@@ -708,14 +710,14 @@ class CragCombo {
 					major = document.createElement('div');
 					major.className = 'cragComboAxisLineMajor';
 					major.style.bottom = '100%';
-					major.style.right = 0;
-					major.style.backgroundColor = pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)];
+					major.style.right = 0 + 'px';
+					major.style.backgroundColor = getContrastColor(this.chartContainer.style.backgroundColor);
 
 					if (t.options.chart.minorLines) {
 						minor = document.createElement('div');
 						minor.className = 'cragComboAxisLineMinor';
 						minor.style.bottom = '100%';
-						minor.style.backgroundColor = pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)];
+						minor.style.backgroundColor = getContrastColor(this.chartContainer.style.backgroundColor);
 					}
 				}
 
@@ -723,7 +725,7 @@ class CragCombo {
 					label.className = 'cragComboVAxisLabel' + axis;
 					label.style.bottom = '100%';
 					label.textContent = '0';
-					label.style.color = pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)];
+					label.style.color = getContrastColor(this.chartContainer.style.backgroundColor);
 
 				t.vAxes[axis].elements[b] = {
 					majorLine: major,
@@ -783,8 +785,8 @@ class CragCombo {
 
 		}
 
-		t.vAxes[axis].baseValue.textContent = formatLabel(scale.min, t.options.vAxes[axis].format, t.data.max[axis]);;
-		t.vAxes[axis].baseValue.style.bottom = t.hAxis.area.offsetHeight - (t.vAxes[axis].baseValue.offsetHeight / 2);
+		t.vAxes[axis].baseValue.textContent = formatLabel(scale.min, t.options.vAxes[axis].format, t.data.max[axis]);
+		t.vAxes[axis].baseValue.style.bottom = t.hAxis.area.offsetHeight - (t.vAxes[axis].baseValue.offsetHeight / 2) + 'px';
 
 		const vAxisMajorLineHeight = (t.vAxes[axis].area.offsetHeight - t.hAxis.area.offsetHeight - t.title.area.offsetHeight) * (scale.maj / (scale.max - scale.min));
 		const vAxisMinorLineHeight = vAxisMajorLineHeight / 2;
@@ -794,14 +796,14 @@ class CragCombo {
 			let majorLineHeight = (vAxisMajorLineHeight * (parseInt(index) + 1));
 			let minorLineHeight = majorLineHeight - vAxisMinorLineHeight;
 
-			elems.label.style.bottom = majorLineHeight + t.hAxis.area.offsetHeight - (elems.label.offsetHeight / 2);
+			elems.label.style.bottom = majorLineHeight + t.hAxis.area.offsetHeight - (elems.label.offsetHeight / 2) + 'px';
 			elems.label.textContent = formatLabel((scale.maj * (parseInt(index) + 1)) + scale.min, t.options.vAxes[axis].format, t.data.max[axis]);
 
 			if (elems.majorLine != null) {
-				elems.majorLine.style.bottom = majorLineHeight - elems.majorLine.offsetHeight;
+				elems.majorLine.style.bottom = majorLineHeight - elems.majorLine.offsetHeight + 'px';
 			}
 			if (elems.minorLine != null) {
-				elems.minorLine.style.bottom = minorLineHeight - elems.minorLine.offsetHeight;
+				elems.minorLine.style.bottom = minorLineHeight - elems.minorLine.offsetHeight + 'px';
 			}
 
 			if (elems.label.offsetWidth > vAxisWidth) {
@@ -836,7 +838,7 @@ class CragCombo {
 		circle.setAttribute('cx', '100%');
 		circle.setAttribute('cy', '100%');
 		if (this.options.line.color == null) {
-			circle.setAttribute('fill', pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)]);
+			circle.setAttribute('fill', getContrastColor(this.chartContainer.style.backgroundColor));
 		} else {
 			circle.setAttribute('fill', pallet[this.options.line.color]);
 		}
@@ -853,7 +855,7 @@ class CragCombo {
 		path.setAttribute('fill', 'none');
 
 		if (this.options.line.color == null) {
-			path.setAttribute('stroke', pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)]);
+			path.setAttribute('stroke', getContrastColor(this.chartContainer.style.backgroundColor));
 		} else {
 			path.setAttribute('stroke', pallet[this.options.line.color]);
 		}
@@ -904,8 +906,6 @@ class CragCombo {
 		const barWidth = this.chart.elements[index].bar.offsetWidth;
 		const barHeight = this.chart.elements[index].bar.offsetHeight;
 
-		const pointHeight = parseInt(this.chart.elements[index].point.getAttribute('transform').replace('translate(0, -', '').replace(')', ''));
-
 		const tipHeight = this.toolTip.container.offsetHeight;
 		const tipWidth = this.toolTip.container.offsetWidth;
 
@@ -947,20 +947,20 @@ class CragCombo {
 		this.toolTip.container.style.opacity = 1;
 
 		if (hAlignment == 1) {
-			this.toolTip.container.style.left = barLeft + barWidth + 8;
+			this.toolTip.container.style.left = barLeft + barWidth + 8 + 'px';
 		} else if (hAlignment == -1) {
-			this.toolTip.container.style.left = barLeft - tipWidth - 8;
+			this.toolTip.container.style.left = barLeft - tipWidth - 8 + 'px';
 		} else {
-			this.toolTip.container.style.left = barLeft + (barWidth / 2) - (tipWidth / 2);
+			this.toolTip.container.style.left = barLeft + (barWidth / 2) - (tipWidth / 2) + 'px';
 		}
 
 		if (vAlignment == 0) {
-			this.toolTip.container.style.bottom = barHeight - tipHeight;
+			this.toolTip.container.style.bottom = barHeight - tipHeight + 'px';
 		} else if (vAlignment == -1) {
 			this.toolTip.container.style.opacity = 0.9;
-			this.toolTip.container.style.bottom = chartHeight - tipHeight - 8;
+			this.toolTip.container.style.bottom = chartHeight - tipHeight - 8 + 'px';
 		} else {
-			this.toolTip.container.style.bottom = barHeight + 8;
+			this.toolTip.container.style.bottom = barHeight + 8 + 'px';
 		}
 
 		for (const [index, elements] of Object.entries(this.chart.elements)) {
@@ -968,6 +968,8 @@ class CragCombo {
 			elements.point.style.opacity = 0.3;
 		}
 		this.seriesLine.line.style.opacity = 0.3;
+		this.chart.labelArea.style.opacity = 0.3;
+
 		this.chart.elements[index].bar.style.opacity = 1;
 		this.chart.elements[index].point.style.opacity = 1;
 
@@ -981,6 +983,7 @@ class CragCombo {
 			elements.bar.style.opacity = 1;
 			elements.point.style.opacity = 1;
 		}
+		this.chart.labelArea.style.opacity = 1;
 		this.seriesLine.line.style.opacity = 1;
 
 	}
@@ -1022,6 +1025,34 @@ class CragCombo {
 		this.data.series = data;
 
 		this.draw();
+
+	}
+
+	/**
+	 * @param {any} value
+	 */
+	set newTitle(value) {
+
+		let titleExists = true;
+
+		if (this.title.text == null) {
+
+			titleExists = false;
+			this.title.text = document.createElement('h1');
+			this.title.text.className = 'cragComboTitleText';
+			this.title.text.style.color = getContrastColor(this.options.chart.color);
+			this.title.area.appendChild(this.title.text);
+
+			this.options.chart.title = value;
+
+		}
+
+		this.title.text.textContent = this.options.chart.title;
+
+		if (!titleExists) {
+			this.draw();
+		}
+
 
 	}
 
