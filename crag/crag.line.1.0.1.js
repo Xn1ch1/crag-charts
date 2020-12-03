@@ -23,7 +23,8 @@ class CragLine {
 			},
 			labels: {
 				show: true,
-				color: null
+				color: null,
+				shadow: false
 			},
 			chart: {
 				title: null,
@@ -88,11 +89,16 @@ class CragLine {
 
 			if (options.labels != undefined) {
 
-				if (options.labels.show != undefined && typeof options.labels.show === 'undefined') {
-					this.options.labels.show = options.labels.show;
+				const option = options.labels;
+
+				if (option.show != undefined && typeof option.show === 'undefined') {
+					this.options.labels.show = option.show;
 				}
-				if (options.labels.color != undefined && pallet.hasOwnProperty(options.labels.color)) {
-					this.options.labels.color = options.labels.color;
+				if (option.color != undefined && pallet.hasOwnProperty(option.color)) {
+					this.options.labels.color = option.color;
+				}
+				if (option.shadow != undefined && typeof option.shadow === 'boolean') {
+					this.options.labels.shadow = option.shadow;
 				}
 
 			}
@@ -200,12 +206,13 @@ class CragLine {
 		this.chart.pointArea.setAttribute('width', '100%');
 		this.chart.pointArea.setAttribute('height', '100%');
 		this.chart.pointArea.style.position = 'absolute';
+		this.chart.pointArea.style.overflow = 'visible';
 		this.chart.pointArea.appendChild(this.seriesLine.line);
 
 		this.chart.gridArea.style.pointerEvents = 'none';
 		this.chart.gridArea.style.overflow = 'visible';
 		this.chart.labelArea.style.pointerEvents = 'none';
-		this.toolTip.container.style.backgroundColor = pallet.darkgrey;
+
 		this.chartContainer.style.backgroundColor = pallet[this.options.chart.color];
 
 		this.parent.appendChild(this.chartContainer);
@@ -241,6 +248,11 @@ class CragLine {
 		const pointMin = t.options.vAxis.min == 'auto' ? t.vAxis.min : t.options.vAxis.min;
 		const pointHeight = chartAreaHeight / (t.vAxis.max - pointMin);
 
+		t.toolTip.container.style.backgroundColor = getContrastColor(this.options.chart.color);
+		t.toolTip.title.style.color = pallet[this.options.chart.color];
+		t.toolTip.value.style.color = pallet[this.options.chart.color];
+		t.toolTip.label.style.color = pallet[this.options.chart.color];
+
 		let seriesLinePoints = [];
 
 		t.vAxis.area.style.width = vAxisWidth + 'px';
@@ -249,7 +261,7 @@ class CragLine {
 
 			elements.label.style.width = seriesItemWidth + 'px';
 			elements.label.style.left = seriesItemWidth * index + 'px';
-			elements.label.style.color = pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)];
+			elements.label.style.color = getContrastColor(this.options.chart.color);
 
 		}
 
@@ -390,7 +402,7 @@ class CragLine {
 				t.chart.elements[index] = {
 					val: 0,
 					text: '',
-					label: t._createBarLabel(),
+					label: t._createPointLabel(),
 					point: t._createPoint()
 				}
 
@@ -485,7 +497,7 @@ class CragLine {
 				major.className = 'cragLineAxisLineMajor';
 				major.style.bottom = 0 + 'px';
 				major.style.right = 0 + 'px';
-				major.style.backgroundColor = pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)]
+				major.style.backgroundColor = getContrastColor(this.options.chart.color);;
 			if (major != null) {
 				t.chart.gridArea.appendChild(major);
 			}
@@ -497,7 +509,7 @@ class CragLine {
 				label.className = 'cragLineVAxisLabel';
 				label.textContent = '0';
 				label.style.bottom = 0 + 'px';
-				label.style.color = pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)];
+				label.style.color = getContrastColor(this.options.chart.color);
 			t.vAxis.area.appendChild(label);
 			t.vAxis.baseValue = label;
 		}
@@ -542,13 +554,13 @@ class CragLine {
 					major.className = 'cragLineAxisLineMajor';
 					major.style.bottom = '100%';
 					major.style.right = 0 + 'px';
-					major.style.backgroundColor = pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)];
+					major.style.backgroundColor = getContrastColor(this.options.chart.color);
 
 					if (t.options.chart.minorLines) {
 						minor = document.createElement('div');
 						minor.className = 'cragLineAxisLineMinor';
 						minor.style.bottom = '100%';
-						minor.style.backgroundColor = pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)];
+						minor.style.backgroundColor = getContrastColor(this.options.chart.color);
 					}
 				}
 
@@ -556,7 +568,7 @@ class CragLine {
 					label.className = 'cragLineVAxisLabel';
 					label.style.bottom = '100%';
 					label.textContent = '0';
-					label.style.color = pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)];
+					label.style.color = getContrastColor(this.options.chart.color);
 
 				t.vAxis.elements[b] = {
 					majorLine: major,
@@ -681,20 +693,35 @@ class CragLine {
 
 	}
 
-	_createBarLabel() {
+	_createPointLabel() {
+
+		console.log(this.options);
 
 		if (this.options.labels.position != 'none') {
+
 			const label = document.createElement('span');
+
 			label.className = 'cragLinePointLabel';
-			label.style.backgroundColor = this.options.chart.color;
+			label.style.backgroundColor = pallet[this.options.chart.color];
+
+			console.log(label);
+
 			if (this.options.labels.color != null) {
 				label.style.color = pallet[this.options.labels.color];
 			} else {
-				label.style.color = getContrastYIQ(pallet[this.options.chart.color]);
+				label.style.color = getContrastColor(this.options.chart.color);
 			}
+
+			if (this.options.labels.shadow == true) {
+				label.classList.add('cragLinePointLabelShadow');
+			}
+
 			return label;
+
 		} else {
+
 			return null;
+
 		}
 
 	}
@@ -714,8 +741,6 @@ class CragLine {
 
 		const tipHeight = this.toolTip.container.offsetHeight;
 		const tipWidth = this.toolTip.container.offsetWidth;
-
-		// this.chart.elements[index].point.style.fill = pallet[getContrastYIQ(this.chartContainer.style.backgroundColor)];
 
 		let hAlignment = 0;
 		let vAlignment = 0;

@@ -10,7 +10,7 @@ class CragCombo {
 
 		this.options = {
 			bar: {
-				width: 100,
+				width: 90,
 				color: 'multi',
 				rounded: false,
 				inset: false,

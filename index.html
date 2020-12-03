@@ -20,6 +20,32 @@
 		<meta name="theme-color" content="#ffffff">
 		<meta charset="UTF-8">
 
+		<style>
+			.support-table {
+				width: 100%;
+				table-layout: fixed;
+				border-collapse: collapse;
+			}
+			.support-table th {
+				vertical-align: bottom;
+				padding: 8px 8px 2px 8px;
+				border-bottom-width: 5px;
+			    border-bottom-style: solid;
+			}
+			.support-table td {
+				vertical-align: bottom;
+				padding: 8px;
+				border: 1px solid #DDD;
+				text-align: center;
+				font-size: 18px;
+			}
+			.support-table span {
+				display: block;
+				margin-top: 16px;
+				font-size: 12px;
+			}
+		</style>
+
 	</head>
 
 	<body style="background: #EEE" class="language-js">
@@ -29,6 +55,14 @@
 			<div class="head">Crag Charts</div>
 			<div w3-include-html="nav.html" id="nav" class="nav"></div>
 
+			<div class="subnav">
+				<ul class="toc">
+					<li>Table of Content</li>
+					<li><a href="#overview">Overview</a></li>
+					<li><a href="#support">Browser Support</a></li>
+				</ul>
+			</div>
+
 			<div class="body">
 				<div id="overview"></div>
 				<h1>Crag Charts</h1>
@@ -36,13 +70,40 @@
 				<hr>
 				<h2>Overview</h2>
 
-			</div>
+				<p>Crag Charts is light-weight JavaScript library for modern browsers designed to make the implementation of charts into existing and new websites a simple and easy afair. The main ethos and goal of Crag Charts is minimal code whilst maintaining high customisation and scalability.</p>
 
-			<div class="subnav">
-				<ul class="toc">
-					<li>Table of Content</li>
-					<li><a href="#overview">Overview</a></li>
-				</ul>
+				<p>The library was created from the need for a JavaScript chart library, without the burden of expensive and heavy polyfills supporting long outdated and disused browsers. The result is a lightweight and speedy library with a modern look.</p>
+
+				<p>Charts are rendered in a mixture of HTML elements and SVG where appropriate.</p>
+
+				<div id="support"></div>
+				<hr class="mini-hr">
+
+				<h2>Browser Support</h2>
+
+				<table class="support-table">
+					<tr>
+						<th style="border-color: rgb(56, 88, 132)">IE</th>
+						<th style="border-color: rgb(56, 88, 132)">Edge</th>
+						<th style="border-color: rgb(163, 98, 35)">Firefox</th>
+						<th style="border-color: rgb(63, 119, 187)">Chrome</th>
+						<th style="border-color: rgb(63, 119, 187)">Android Chrome</th>
+						<th style="border-color: rgb(102, 102, 102)">Safari</th>
+						<th style="border-color: rgb(51, 51, 51)">iOS Safari</th>
+						<th style="border-color: rgb(153, 38, 38)">Opera</th>
+					</tr>
+					<tr>
+						<td>n/a<span>n/a</span></td>
+						<td>16 +<span>Oct 17</span></td>
+						<td>52 +<span>Mar 17</span></td>
+						<td>57 +<span>Mar 17</span></td>
+						<td>57 +<span>Mar 17</span></td>
+						<td>11 +<span>Sep 17</span></td>
+						<td>11 +<span>Sep 17</span></td>
+						<td>44 +<span>Mar 17</span></td>
+					</tr>
+				</table>
+
 			</div>
 
 		</div>

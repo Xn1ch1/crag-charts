@@ -118,6 +118,9 @@ chart.update(newData);</code></pre>
 
 <pre><code>let options = {
 	data: [['A', 500], ['B', 436], ['C', 300], ['D', 375]],
+	chart: {
+		color: 'deepgrey'
+	},
 	line: {
 		width: 5,
 		color: 'red'
@@ -126,7 +129,7 @@ chart.update(newData);</code></pre>
 
 				<p>This will generate the below chart. Tip: Use the random data generator button below the chart to generate and apply a new random data set.</p>
 
-				<div id="line-chart-partial" class="chart-container"></div>
+				<div id="line-chart-partial" class="chart-container" style="background-color: #333333"></div>
 				<span class="chart-caption"><button onclick="newDataPartial();disableBtn(this)">Random Data Set</button> Generate and apply a random data set for this chart.</span>
 
 				<hr class="mini-hr">
@@ -150,6 +153,9 @@ chart.update(newData);</code></pre>
 	},
 	chart: {
 		title: 'Score per Player'
+	},
+	label: {
+		shadow: true
 	}
 }</code></pre>
 
@@ -406,6 +412,9 @@ chart.update(newData);</code></pre>
 
 				let optionsPartial = {
 					data: [['A', 500], ['B', 436], ['C', 300], ['D', 375]],
+					chart: {
+						color: 'deepgrey'
+					},
 					line: {
 						width: 5,
 						color: 'red'
@@ -427,6 +436,9 @@ chart.update(newData);</code></pre>
 					},
 					chart: {
 						title: 'Score per Player'
+					},
+					labels: {
+						shadow: true
 					}
 				}
 				chartFull = new CragLine(optionsFull).create('line-chart-full');

@@ -29,6 +29,15 @@
 			<div class="head">Crag Charts</div>
 			<div w3-include-html="nav.html" id="nav" class="nav"></div>
 
+			<div class="subnav">
+				<ul class="toc">
+					<li>Table of Content</li>
+					<li><a href="#loader">Loader</a></li>
+					<li><a href="#create">Chart Creation</a></li>
+					<li><a href="#example">Full Example</a></li>
+				</ul>
+			</div>
+
 			<div class="body">
 				<div id="loader"></div>
 				<h1>How to Use</h1>
@@ -46,21 +55,26 @@
 
 ... ...</code></pre>
 
-				<p>Following the script, a new script tag should be added to host the chart creation and loader callback functions. The first line required is the built in function <em>onLoadCallBack</em>, this has 2 required variables and 1 optional, they are as follows...</p>
+				<p>Following the script, a new script tag should be added to host the chart creation and loader callback functions. The first line required is the built in function <em>onLoadCallBack</em>, this has 2 required variables and 1 optional, they are as follows</p>
 
 <pre><code>crag.onLoadCallBack(<em>callback=function</em>, <em>chartType=Array</em>, <em>src=string[Optional]</em>);</code></pre>
 
 				<br>
 
 				<table class="config-table">
+					<colgroup>
+						<col width="25%" />
+						<col width="75%" />
+					</colgroup>
 					<tbody>
 						<tr>
 							<td>
 								callback
 							</td>
 							<td>
-								The name of the function to be called once the loader has finished loading all of the required resources. This should be input without the function brackets, for example myFunction, not myFunction().
-								<span>Type: function</span>
+								The name of the function to be called once the loader has finished preparing all of the required resources. This should be input without the function brackets, for example myFunction, not myFunction().
+
+								<span class="type">Type: Function</span>
 							</td>
 						</tr>
 						<tr>
@@ -69,12 +83,14 @@
 							</td>
 							<td>
 								A string array of all the charts required for the current page.
+
 								<em>Example</em>
 								<ul>
 									<li>['column'] or</li>
-									<li>['column', 'line']</li>
+									<li>['column', 'progress']</li>
 								</ul>
-								<span>Type: Array[string]</span>
+
+								<span class="type">Type: Array of Strings</span>
 							</td>
 						</tr>
 						<tr>
@@ -82,8 +98,9 @@
 								src
 							</td>
 							<td>
-								A string pointing to a local source for the chart scripts. This should only be used if you want to download the files and use them localally. These files will not get the latest updates as they are released.
-								<span>Type: string</span>
+								Path to a local source for the chart scripts, this should only be used if you want to download the library and use it localally. These files will not get updates as they are released.
+
+								<span class="type">Type: String</span>
 							</td>
 						</tr>
 					</tbody>
@@ -91,13 +108,13 @@
 
 				<p>For example, to load the bar chart resources and call the function createCharts the following would be used</p>
 
-<pre><code>crag.onLoadCallBack(createCharts, ['column'], '/xn1ch1.github.io/crag/');</code></pre>
+<pre><code>crag.onLoadCallBack(createCharts, ['column']);</code></pre>
 
 				<hr id="create">
 
 				<h2>Chart Creation</h2>
 
-				<p>Once the loader has finished and initialisez the call back function, it is time to prepare and create the charts. Each chart created will need a parent element, most commonly a &lt;div&gt;. This element should have an id that will be passed to teh chart creation function.</p>
+				<p>Once the loader has finished and called the call back function, it is time to prepare and create the charts. Each chart created will need a parent element, most commonly a &lt;div&gt;. This element should have an id that will be passed to teh chart creation function.</p>
 
 <pre><code>&lt;div id="bar-chart" style="width: 100%;	height: 500px;"&gt;&lt;/div&gt;</code></pre>
 
@@ -111,7 +128,7 @@
 				<p>In addition to passing the Id of the parent element, the class object will require an object containing specific options. At minimum, each chart will require a data series in this object, for example...</p>
 
 <pre><code>const options = {
-	series: [['A', 500], ['B', 432], ['C', 300]];
+	data: [['A', 500], ['B', 432], ['C', 300]];
 }
 const chart = new CragColumn(options).create('bar-chart');</code></pre>
 
@@ -133,30 +150,21 @@ const chart = new CragColumn(options).create('bar-chart');</code></pre>
 		&lt;script src="https://combinatronics.com/Xn1ch1/Crag-Charts/main/crag/crag.charts.loader.js"&gt;&lt;/script&gt;
 		&lt;script&gt;
 			let chart;
-			crag.onLoadCallBack(createCharts, ['column'], '/xn1ch1.github.io/crag/');
+			crag.onLoadCallBack(createCharts, ['column']);
 
 			function createCharts() {
 				const options = {
-					series: [['A', 500], ['B', 432], ['C', 300]]
+					data: [['A', 500], ['B', 432], ['C', 300]]
 				}
-				chart = new CragColumn(options).create('bar-chart');
+				chart = new CragColumn(options).create('column-chart');
 			}
 		&lt;/script&gt;
 	&lt;/body&gt;
 &lt;/html&gt;</code></pre>
 
 				<p>This will generate the following</p>
-				<div id="bar-chart" style="width: 100%;	height: 500px;"></div>
+				<div id="column-chart" style="width: 100%;	height: 500px;"></div>
 
-			</div>
-
-			<div class="subnav">
-				<ul class="toc">
-					<li>Table of Content</li>
-					<li><a href="#loader">Loader</a></li>
-					<li><a href="#create">Chart Creation</a></li>
-					<li><a href="#example">Full Example</a></li>
-				</ul>
 			</div>
 
 		</div>
@@ -167,9 +175,9 @@ const chart = new CragColumn(options).create('bar-chart');</code></pre>
 
 			function createCharts() {
 				const options = {
-					series: [['A', 500], ['B', 432], ['C', 300]]
+					data: [['A', 500], ['B', 432], ['C', 300]]
 				}
-				chart = new CragColumn(options).create('bar-chart');
+				chart = new CragColumn(options).create('column-chart');
 			}
 		</script>
 
