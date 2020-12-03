@@ -244,7 +244,7 @@ pre code {
             user-select: none;
 }
 .toc {
-	border-left: 4px solid #009688;
+	border-left: 3px solid #009688;
 	list-style-type: none;
 	padding-inline-start: 16px;
 	margin-top: 32px;
@@ -275,25 +275,25 @@ pre code {
   height: 0px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #DDDDDD;
+  background: #009688;;
   border: 0px none #ffffff;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #CCCCCC;
+  background: #008377;
 }
 ::-webkit-scrollbar-thumb:active {
-  background: #CCCCCC;
+  background: #008377;
 }
 ::-webkit-scrollbar-track {
-  background: #FFFFFF;
+  background: #EFEFEF;
   border: 0px none #ffffff;
   border-radius: 50px;
 }
 ::-webkit-scrollbar-track:hover {
-  background: #ffffff;
+  background: #EEEEEE;
 }
 ::-webkit-scrollbar-track:active {
-  background: #ffffff;
+  background: #EEEEEE;
 }
 ::-webkit-scrollbar-corner {
   background: transparent;
