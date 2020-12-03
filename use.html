@@ -98,7 +98,7 @@
 								src
 							</td>
 							<td>
-								Path to a local source for the chart scripts, this should only be used if you want to download the library and use it localally. These files will not get updates as they are released.
+								Path to a local source for the chart scripts, this should only be used if you want to download the library and use it locally. These files will not get updates as they are released.
 
 								<span class="type">Type: String</span>
 							</td>
@@ -114,11 +114,11 @@
 
 				<h2>Chart Creation</h2>
 
-				<p>Once the loader has finished and called the call back function, it is time to prepare and create the charts. Each chart created will need a parent element, most commonly a &lt;div&gt;. This element should have an id that will be passed to teh chart creation function.</p>
+				<p>Once the loader has finished and called the call back function, it is time to prepare and create the charts. Each chart created will need a parent element, most commonly a &lt;div&gt;. This element should have an id that will be passed to the chart creation function.</p>
 
 <pre><code>&lt;div id="bar-chart" style="width: 100%;	height: 500px;"&gt;&lt;/div&gt;</code></pre>
 
-				<p>Every chart class has a built in function of <em>create()</em>, this function requires a single string variable matching the parent element ID. The create function will also return the class object for the chart created to enable addditional functions to be called.</p>
+				<p>Every chart class has a built in function of <em>create()</em>, this function requires a single string variable matching the parent element ID. The create function will also return the class object for the chart created to enable additional functions to be called.</p>
 				<p>In the below example bar chart will be created and assigned to a const variable for future use.</p>
 
 <pre><code>const chart = new CragColumn(options).create('bar-chart');</code></pre>
@@ -132,7 +132,7 @@
 }
 const chart = new CragColumn(options).create('bar-chart');</code></pre>
 
-				<p>See the chart specific pages on formatting and names of the ooptions available</p>
+				<p>See the chart specific pages on formatting and names of the options available</p>
 
 				<hr id="example">
 

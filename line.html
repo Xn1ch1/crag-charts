@@ -55,7 +55,7 @@
 				<hr>
 				<h2>Overview</h2>
 
-				<p>The line chart is rendered in the browser using SVG and HTML. Like all Crag Charts, line charts display tooltips when the user hovers over the series elements. The chart is also limited to 20 data points and data will auomtatically be truncated if there are more points provided.</p>
+				<p>The line chart is rendered in the browser using SVG and HTML. Like all Crag Charts, line charts display tooltips when the user hovers over the series elements. The chart is also limited to 20 data points and data will automatically be truncated if there are more points provided.</p>
 
 				<p>The minimum required code required for invoking a chart is the following</p>
 
@@ -110,11 +110,11 @@ chart.update(newData);</code></pre>
 
 				<h2>Examples</h2>
 
-				<p>Optional paramters can be passed as a single object in the class object call, these are used to style the chart and its elements.</p>
+				<p>Optional parameters can be passed as a single object in the class object call, these are used to style the chart and its elements.</p>
 
 				<h3>Example 1</h3>
 
-				<p>The following example is an object containing the data series and additional paramerters, these parameters set the line width to 5 and the color of the line to red.</p>
+				<p>The following example is an object containing the data series and additional parameters, these parameters set the line width to 5 and the color of the line to red.</p>
 
 <pre><code>let options = {
 	data: [['A', 500], ['B', 436], ['C', 300], ['D', 375]],
@@ -136,8 +136,8 @@ chart.update(newData);</code></pre>
 
 				<h3>Example 2</h3>
 
-				<p>In this example, the options passed have included vAxis and chart settings, see <a href="labels.html">Labels</a> for more infomration on formatting axes labels. A min seeting of 'auto' will let the chart decide the lower bound value on the vertical axis.</p>
-				<p>Additionally, a chart title has also been specified in addiditon to smoothing of the line turned off in the line options.</p>
+				<p>In this example, the options passed have included vAxis and chart settings, see <a href="labels.html">Labels</a> for more infomration on formatting axes labels. A min setting of 'auto' will let the chart decide the lower bound value on the vertical axis.</p>
+				<p>Additionally, a chart title has also been specified in addition to smoothing of the line turned off in the line options.</p>
 
 <pre><code>let options = {
 	data: [['A', 2.3], ['B', 3.6], ['C', 1.2], ['D', 5.4], ['E', 4.4], ['F', 3.2]],
@@ -317,7 +317,7 @@ chart.update(newData);</code></pre>
 								vAxis.min
 							</td>
 							<td>
-								Sets the minimum value of the vertical axis. When left to default, all columsn will start at 0. Optionally the string value 'min' can be passed where the chart will automatically calculate the minimum value and upper value of the vAxis.
+								Sets the minimum value of the vertical axis. When left to default, all columns will start at 0. Optionally the string value 'min' can be passed where the chart will automatically calculate the minimum value and upper value of the vAxis.
 
 								<span class="type">Type: Number or String</span>
 								<span class="default">Default: 0</span>

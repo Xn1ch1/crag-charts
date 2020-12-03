@@ -60,7 +60,7 @@
 
 				<h2>Overview</h2>
 
-				<p>The column chart is a horizontal bar chart rendered in the browser using SVG and HTML. Like all Crag Charts, column charts display tooltips when the user hovers over the series elements. The chart is also limited to 20 data points and data will auomtatically be truncated if there are more points provided.</p>
+				<p>The column chart is a horizontal bar chart rendered in the browser using SVG and HTML. Like all Crag Charts, column charts display tooltips when the user hovers over the series elements. The chart is also limited to 20 data points and data will automatically be truncated if there are more points provided.</p>
 				<p>For a vertical version of this chart, see the bar chart TODO: LINK.</p>
 
 				<p>The minimum required code required for invoking a chart is the following</p>
@@ -92,7 +92,7 @@
 				<h2>Built In Functions</h2>
 
 				<h3 id="function-title">Title Update</h3>
-				<p>The chart title can be updated at any time even if one was not defined in the inital options, should the chart need adjusting for the new space the draw function will be called automatically. The title property should be applied to the chart object.</p>
+				<p>The chart title can be updated at any time even if one was not defined in the initial options, should the chart need adjusting for the new space the draw function will be called automatically. The title property should be applied to the chart object.</p>
 
 <pre><code>chart.title = 'New Chart Title';</code></pre>
 
@@ -196,11 +196,11 @@ myFunction(obj) {
 
 				<h2>Examples</h2>
 
-				<p>Optional paramters can be passed as a single object in the class object call, these are used to style the chart and its elements.</p>
+				<p>Optional parameters can be passed as a single object in the class object call, these are used to style the chart and its elements.</p>
 
 				<h3>Example 1</h3>
 
-				<p>The following example is an object containing the data series and additional paramerters, these parameters set the bar width to 90%, the top of the bars to be rounded and applys an inset shadow.</p>
+				<p>The following example is an object containing the data series and additional parameters, these parameters set the bar width to 90%, the top of the bars to be rounded and applies an inset shadow.</p>
 
 <pre><code>let options = {
 	data: [['A', 500], ['B', 436], ['C', 300], ['D', 375]],
@@ -220,7 +220,7 @@ myFunction(obj) {
 
 				<h3>Example 2</h3>
 
-				<p>In this example, the options passed have included vAxis and chart settings. The two paramters passed in vAxis are min and format. See <a href="labels.html">Labels</a> for more infomration on formatting axes labels. A min seeting of 'auto' will let the chart decide the lower bound value on the vertical axis.</p>
+				<p>In this example, the options passed have included vAxis and chart settings. The two parameters passed in vAxis are min and format. See <a href="labels.html">Labels</a> for more infomration on formatting axes labels. A min setting of 'auto' will let the chart decide the lower bound value on the vertical axis.</p>
 				<p>Additionally, a chart title has also been specified and extra bar options have been passed such as color and a striped overlay.</p>
 
 <pre><code>let options = {
@@ -410,7 +410,7 @@ function myFunction(obj) {
 								bar.animated
 							</td>
 							<td>
-								Animates the stiped overlay of the bars, will have no effect unless bar.stripe is set to true.
+								Animates the striped overlay of the bars, will have no effect unless bar.stripe is set to true.
 
 								<span class="type">Type: Boolean</span>
 								<span class="default">Default: false</span>
@@ -474,7 +474,7 @@ function myFunction(obj) {
 								vAxis.min
 							</td>
 							<td>
-								Sets the minimum value of the vertical axis. When left to default, all columsn will start at 0. Optionally the string value 'min' can be passed where the chart will automatically calculate the minimum value and upper value of the vAxis.
+								Sets the minimum value of the vertical axis. When left to default, all columns will start at 0. Optionally the string value 'min' can be passed where the chart will automatically calculate the minimum value and upper value of the vAxis.
 
 								<span class="type">Type: Number or String</span>
 								<span class="default">Default: 0</span>
