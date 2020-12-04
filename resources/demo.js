@@ -40,6 +40,23 @@ function includeNav() {
 
 	}
 
+	let menuButton = document.createElement('img');
+
+	menuButton.src = 'resources/icons/menu.svg';
+	menuButton.id = 'menu-button';
+
+	menuButton.addEventListener('click', function() {
+		let nav = document.getElementById('nav');
+
+		if (nav.style.display == 'none' || nav.style.display == '') {
+			nav.style.display = 'block';
+		} else {
+			nav.style.display = 'none';
+		}
+	})
+
+	document.body.appendChild(menuButton)
+
 }
 
 function disableBtn(btn) {
@@ -77,8 +94,6 @@ function dataGenerator(maxLen = 20, count = 1, decimal = false) {
 
 	}
 
-	console.log(minMaxes);
-
 	for (var i = 0; i < length; i++) {
 
 		let series = [randomId(2)];
@@ -96,8 +111,6 @@ function dataGenerator(maxLen = 20, count = 1, decimal = false) {
 		data.push(series);
 
 	}
-
-	console.log(data);
 
 	return data;
 

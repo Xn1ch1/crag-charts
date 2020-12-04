@@ -50,11 +50,11 @@
 			</div>
 
 			<div class="body">
-				<div id="overview"></div>
-				<h1>Visualization: Progress Chart</h1>
 
+				<h1>Visualization: Progress Chart</h1>
 				<hr>
-				<h2>Overview</h2>
+
+				<h2 id="overview">Overview</h2>
 
 				<p>The progress chart is a single horizontal bar chart rendered in the browser using SVG and HTML, the bar represents the progress of a single data point against a total with an optional mid point target. The chart takes as minimum one value passed in the class options and requires a parent with a minimum of 250px in height.</p>
 				<p>The below if the minimum code required for a chart</p>
@@ -81,10 +81,7 @@
 				<div id="progress-chart-1" class="chart-container" style="height:300px"></div>
 				<span class="chart-caption">Tip: The default value for the total is 100, when using percentage the total will not need including in the options.</span>
 
-				<div id="functions"></div>
-				<hr>
-
-				<h2>Built In Functions</h2>
+				<h2 id="functions">Built In Functions</h2>
 
 				<h3>Draw</h3>
 				<p>The draw function will cause a complete redraw of the chart with the pre existing data. This function will be useful where the size of the container object changes size. The below example is calling the draw function on the chart object when the window resizes.</p>
@@ -93,9 +90,7 @@
 	chart.draw();
 }</code></pre>
 
-				<hr>
-				<div id="updating"></div>
-				<h2>Updating Values</h2>
+				<h2 id="updating">Updating Values</h2>
 
 				<p>Once the chart has been created, the current target and total value can be updating using the setter functions for each on the chart object. Calling these will cause an automatic redraw of the chart.</p>
 
@@ -130,12 +125,11 @@ function updateTarget(val)
 					<div style="width:33%; display: inline-block;"><button onclick="chart2Minus(2)">-5</button>Total<button onclick="chart2Plus(2)" style="margin-left: 8px">+5</button></div>
 				</span>
 
-				<div id="examples"></div>
-				<hr>
-
-				<h2>Examples</h2>
+				<h2 id="examples">Examples</h2>
 
 				<p>Optional parameters can be passed as a single object in the class object call, these are used to style the chart and its elements.</p>
+
+				<h3>Example 1</h3>
 
 				<p>In the following example, the bar has been stylized with and inset shadow and animated stipes. In addition, a color has been specified for each of the values, this will automatically change the progress bar color when the target is reached and then the total.</p>
 
@@ -168,7 +162,10 @@ function updateTarget(val)
 					<button onclick="chart3.current = 100">100</button>
 				</span>
 
-				<p>Another example, the chart has been given a title, the target, the total has been removed and the current value has been set to percentage and inside. This moves the current value to the center of the bar and removed the indicator line.</p>
+				<hr class="mini-hr">
+				<h3>Example 2</h3>
+
+				<p>In this example, the chart has been given a title, the target, the total has been removed and the current value has been set to percentage and inside. This moves the current value to the center of the bar and removed the indicator line.</p>
 
 <pre><code>const options = {
 	chart: {
@@ -190,10 +187,7 @@ function updateTarget(val)
 				<div class="chart-container" style="height: 300px" id="progress-chart-4"></div>
 				<span class="chart-caption"><button onclick="chart4.current=randomInt(0, 100)">Randomise</button>Use the button here to change the current value.</span>
 
-				<div id="config"></div>
-				<hr>
-
-				<h2>Configuration</h2>
+				<h2 id="config">Configuration</h2>
 
 				<table class="config-table">
 					<colgroup>
@@ -408,10 +402,7 @@ function updateTarget(val)
 					</tbody>
 				</table>
 
-				<div id="default"></div>
-				<hr>
-
-				<h2>Full Default Configuration</h2>
+				<h2 id="default">Full Default Configuration</h2>
 
 <pre><code>options = {
 	chart: {

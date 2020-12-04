@@ -14,7 +14,7 @@ class CragColumn {
 				color: 'multi',
 				rounded: false,
 				inset: false,
-				stripe: false,
+				striped: false,
 				animated: false,
 				onClick: null
 			},

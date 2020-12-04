@@ -54,16 +54,18 @@
 			</div>
 
 			<div class="body">
-				<div id="overview"></div>
+
 				<h1>Visualization: Column Chart</h1>
 				<hr>
 
-				<h2>Overview</h2>
+				<h2 id="overview">Overview</h2>
 
-				<p>The column chart is a horizontal bar chart rendered in the browser using SVG and HTML. Like all Crag Charts, column charts display tooltips when the user hovers over the series elements. The chart is also limited to 20 data points and data will automatically be truncated if there are more points provided.</p>
-				<p>For a vertical version of this chart, see the bar chart TODO: LINK.</p>
+				<p>The column chart is a vertical bar chart rendered in the browser using SVG and HTML. Like all Crag Charts, column charts display tooltips when the user hovers over the series elements. The chart is also limited to 20 data points and data will automatically be truncated if there are more points provided.</p>
 
-				<p>The minimum required code required for invoking a chart is the following</p>
+				<!-- TODO: HORIZONTAL LINK
+				<p>For a horizontal version of this chart, see the bar chart TODO: LINK.</p> -->
+
+				<p>The minimum required code required for creating a column chart is the following</p>
 
 <pre><code>&lt;div id="column-chart" style="width: 100%; height: 500px;"&gt;&lt;/div&gt;
 
@@ -86,10 +88,7 @@
 				<div id="column-chart-1" class="chart-container"></div>
 				<span class="chart-caption">Tip: Hover over the bars to see the tool tip</span>
 
-				<div id="functions"></div>
-				<hr>
-
-				<h2>Built In Functions</h2>
+				<h2 id="functions">Built In Functions</h2>
 
 				<h3 id="function-title">Title Update</h3>
 				<p>The chart title can be updated at any time even if one was not defined in the initial options, should the chart need adjusting for the new space the draw function will be called automatically. The title property should be applied to the chart object.</p>
@@ -191,10 +190,7 @@ myFunction(obj) {
 					</tbody>
 				</table>
 
-				<div id="examples"></div>
-				<hr>
-
-				<h2>Examples</h2>
+				<h2 id="examples">Examples</h2>
 
 				<p>Optional parameters can be passed as a single object in the class object call, these are used to style the chart and its elements.</p>
 
@@ -278,10 +274,7 @@ function myFunction(obj) {
 				<span class="chart-caption"><button onclick="newData4();disableBtn(this)">Random Data Set</button> (Generate a new random data set for this chart)</span>
 				<table style="table-layout: fixed;width: 100%;padding: 4px;border: 1px solid #DDD;"><tr><td>Selected Bar</td><td id="chart-4-name">Name: </td><td id="chart-4-value">Value: </td><td id="chart-4-text">Text: </td></tr></table>
 
-				<div id="config"></div>
-				<hr>
-
-				<h2>Configuration</h2>
+				<h2 id="config">Configuration</h2>
 
 				<table class="config-table">
 					<colgroup>
@@ -357,7 +350,7 @@ function myFunction(obj) {
 								Percentage width of each bar, where 100 means there is no space between bars. This cannot exceed 100.
 
 								<span class="type">Type: Number</span>
-								<span class="default">Default: 100</span>
+								<span class="default">Default: 90</span>
 							</td>
 						</tr>
 						<tr>
@@ -512,19 +505,16 @@ function myFunction(obj) {
 					</tbody>
 				</table>
 
-				<div id="default"></div>
-				<hr>
-
-				<h2>Full Default Configuration</h2>
+				<h2 id="default">Full Default Configuration</h2>
 
 <pre><code>options = {
 	data: null,
 	bar: {
-		width: 100,
+		width: 90,
 		color: 'multi',
 		rounded: false,
 		inset: false,
-		stripe: false,
+		striped: false,
 		animated: false,
 		onClick: null
 	},
@@ -592,7 +582,7 @@ function myFunction(obj) {
 					},
 					chart: {
 						title: 'Time Taken',
-						color: 'deepgrey'
+						color: 'charcoal'
 					}
 				}
 				chart3 = new CragColumn(chart3Options).create('column-chart-3');

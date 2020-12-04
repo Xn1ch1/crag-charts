@@ -35,6 +35,10 @@
 					<li>Table of Content</li>
 					<li><a href="#overview">Overview</a></li>
 					<li><a href="#functions">Functions</a></li>
+					<ul>
+						<li><a href="#function-update">Update</a></li>
+						<li><a href="#function-draw">Draw</a></li>
+					</ul>
 					<li><a href="#examples">Examples</a></li>
 					<li><a href="#config">Configuration</a></li>
 					<ul>
@@ -49,11 +53,11 @@
 			</div>
 
 			<div class="body">
-				<div id="overview"></div>
-				<h1>Visualization: Line Chart</h1>
 
+				<h1>Visualization: Line Chart</h1>
 				<hr>
-				<h2>Overview</h2>
+
+				<h2 id="overview">Overview</h2>
 
 				<p>The line chart is rendered in the browser using SVG and HTML. Like all Crag Charts, line charts display tooltips when the user hovers over the series elements. The chart is also limited to 20 data points and data will automatically be truncated if there are more points provided.</p>
 
@@ -79,12 +83,9 @@
 				<div id="line-chart" class="chart-container"></div>
 				<span class="chart-caption">Tip: Hover over the points to see the tool tip</span>
 
-				<div id="functions"></div>
-				<hr>
+				<h2 id="functions">Built In Functions</h2>
 
-				<h2>Built In Functions</h2>
-
-				<h3>Update</h3>
+				<h3 id="function-update">Update</h3>
 
 				<p>To update the data in the chart, the update function should be called on the chart object. Only one parameter is required, an array of arrays. See <a href="#data">data</a> parameter for more information. The data set can change in size when updated, bars will be automatically added and removed as needed but will still be limited to 20 points and truncated automatically. In addition, this function will automatically call the draw function (below) once the update has been completed.</p>
 
@@ -93,7 +94,7 @@ chart.update(newData);</code></pre>
 
 				<hr class="mini-hr">
 
-				<h3>Draw</h3>
+				<h3 id="function-draw">Draw</h3>
 				<p>The draw function will cause a complete redraw of the chart with the pre existing data. This function will be useful where the size of the container object changes size. The below example is calling the draw function on the chart object when the window resizes.</p>
 
 <pre><code>window.onresize = function() {
@@ -105,10 +106,7 @@ chart.update(newData);</code></pre>
 				</div>
 				<span class="chart-caption">Tip: Drag the tab in the bottom corner of the chart container to resize the chart and see the draw function in action.</span>
 
-				<div id="examples"></div>
-				<hr>
-
-				<h2>Examples</h2>
+				<h2 id="examples">Examples</h2>
 
 				<p>Optional parameters can be passed as a single object in the class object call, these are used to style the chart and its elements.</p>
 
@@ -119,7 +117,7 @@ chart.update(newData);</code></pre>
 <pre><code>let options = {
 	data: [['A', 500], ['B', 436], ['C', 300], ['D', 375]],
 	chart: {
-		color: 'deepgrey'
+		color: 'charcoal'
 	},
 	line: {
 		width: 5,
@@ -164,10 +162,7 @@ chart.update(newData);</code></pre>
 				<div id="line-chart-full" class="chart-container"></div>
 				<span class="chart-caption"><button onclick="newDataFull();disableBtn(this)">Random Data Set</button> (Generate a new random data set for this chart)</span>
 
-				<div id="config"></div>
-				<hr>
-
-				<h2>Configuration</h2>
+				<h2 id="config">Configuration</h2>
 
 				<table class="config-table">
 					<colgroup>
@@ -349,10 +344,7 @@ chart.update(newData);</code></pre>
 
 				</table>
 
-				<div id="default"></div>
-				<hr>
-
-				<h2>Full Default Configuration</h2>
+				<h2 id="default">Full Default Configuration</h2>
 
 <pre><code>options = {
 	data: null,
@@ -413,7 +405,7 @@ chart.update(newData);</code></pre>
 				let optionsPartial = {
 					data: [['A', 500], ['B', 436], ['C', 300], ['D', 375]],
 					chart: {
-						color: 'deepgrey'
+						color: 'charcoal'
 					},
 					line: {
 						width: 5,

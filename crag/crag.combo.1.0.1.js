@@ -3,7 +3,7 @@ class CragCombo {
 	constructor (options) {
 
 		this.data = {
-			series: options.series,
+			series: options.data,
 			max: [0, 0],
 			min: [0, 0]
 		};
@@ -14,7 +14,7 @@ class CragCombo {
 				color: 'multi',
 				rounded: false,
 				inset: false,
-				stripe: false,
+				striped: false,
 				animated: false,
 				onClick: null
 			},

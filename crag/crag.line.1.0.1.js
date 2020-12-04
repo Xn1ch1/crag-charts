@@ -695,16 +695,12 @@ class CragLine {
 
 	_createPointLabel() {
 
-		console.log(this.options);
-
 		if (this.options.labels.position != 'none') {
 
 			const label = document.createElement('span');
 
 			label.className = 'cragLinePointLabel';
 			label.style.backgroundColor = pallet[this.options.chart.color];
-
-			console.log(label);
 
 			if (this.options.labels.color != null) {
 				label.style.color = pallet[this.options.labels.color];

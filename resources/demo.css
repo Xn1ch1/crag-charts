@@ -8,10 +8,25 @@ body {
 body, h1, h2, h3, h4, h5, h6, button, span, p {
 	font-family: 'Roboto';
 	font-weight: 300;
-	color: #333333;
+	color: #555555;
 }
 h1 {
 	margin-top: 0;
+	color: #333333;
+	font-size: 30px;
+}
+h2 {
+	font-size: 26px;
+	background: #EEEEEE;
+    margin: 32px -32px;
+    padding: 32px;
+}
+h3 {
+	font-weight: 400;
+	font-size: 18px;
+}
+p {
+	font-size: 16px;
 }
 button{
 	display:inline-block;
@@ -59,14 +74,16 @@ pre code {
 	display: block;
 	padding: 20px;
 	tab-size: 4;
+	font-size: 14px;
 }
 .mini-hr {
 	margin: 32px 45%;
 }
 .grid-container {
+	height: 100%;
 	display: grid;
-	grid-template-columns: 300px 1000px 1fr;
-	grid-template-rows: min-content 1fr;
+	grid-template-columns: 300px 1fr 300px;
+	grid-template-rows: 60px 1fr;
 	gap: 0px 32px;
 	grid-template-areas:
     "head head head"
@@ -74,14 +91,13 @@ pre code {
 }
 .head {
 	grid-area: head;
-	font-size: 28px;
-	height: 38px;
-    padding: 6px 32px;
+	font-size: 32px;
+    padding: 10px 32px;
 	color: #FFF;
 	background-color: #009688;
 	-webkit-box-shadow: 0px 0px 5px 5px rgba(0,0,0,0.3);
 	box-shadow: 0px 0px 5px 5px rgba(0,0,0,0.3);
-	z-index: 10;
+	z-index: 1;
 }
 .nav {
     grid-area: nav;
@@ -129,7 +145,6 @@ pre code {
 }
 .body {
 	grid-area: body;
-    height: calc(100vh - 50px);
     overflow-y: auto;
 	overflow-x: hidden;
 	box-sizing: border-box;
@@ -142,7 +157,6 @@ pre code {
 .subnav {
 	grid-area: subnav;
     height: calc(100vh - 50px);
-	min-width: 200px;
 	overflow-y: auto;
 	overflow-x: hidden;
 }
@@ -166,11 +180,13 @@ pre code {
 	padding: 8px 16px;
 	font-weight: 300;
 	font-family: 'Roboto';
+	font-size: 1vw;
 }
 .config-table tr td:nth-child(1) {
 	vertical-align: top;
 	text-align: left;
 	background-color: #EEE;
+	font-size: 16px;
 }
 .config-table td .type {
 	padding-top: 24px;
@@ -232,7 +248,7 @@ pre code {
 	width: 100%;
 	display: block;
 	color: #333;
-	background-color: #EEE;
+	background-color: #DDD;
 	border: 1px solid #DDD;
 	padding: 8px;
 	box-sizing: border-box;
@@ -297,4 +313,57 @@ pre code {
 }
 ::-webkit-scrollbar-corner {
   background: transparent;
+}
+
+@media screen and (min-width: 0px) and (max-width: 1024px) {
+
+	.grid-container {
+		grid-template-columns: 0 1fr 0;
+		gap: 0;
+	}
+	.head {
+		padding-left: 72px;
+	}
+	.nav {
+		display: none;
+		position: fixed;
+		left: 0;
+		top: 60px;
+		bottom: 0;
+		width: 250px;
+		z-index: 1;
+	}
+	.subnav {
+		display: none;
+	}
+	#menu-button {
+		display: block !important;
+	}
+
+}
+
+@media screen and (min-width: 1024px) and (max-width: 1400px) {
+	.grid-container {
+		grid-template-columns: 250px 1fr 0;
+		gap: 0;
+	}
+	.nav {
+		display: block;
+	}
+	.subnav {
+		display: none;
+	}
+	#menu-button {
+		display: none;
+	}
+
+}
+#menu-button {
+    position: fixed;
+    z-index: 2;
+    left: 16px;
+    height: 36px;
+    width: 36px;
+    top: 16px;
+	display: none;
 }

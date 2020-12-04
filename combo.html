@@ -29,21 +29,169 @@
 			<div class="head">Crag Charts</div>
 			<div w3-include-html="nav.html" id="nav" class="nav"></div>
 
-			<div class="body">
-				<div id="overview"></div>
-				<h1>Visualization: Combo Chart</h1>
-				<hr>
-				<h2>Overview</h2>
-
-				<div id="combo-chart" class="chart-container"></div>
-
-			</div>
 
 			<div class="subnav">
 				<ul class="toc">
 					<li>Table of Content</li>
 					<li><a href="#overview">Overview</a></li>
+					<li><a href="#functions">Functions</a></li>
+					<ul>
+						<li><a href="#function-title">Title</a></li>
+						<li><a href="#function-update">Update</a></li>
+						<li><a href="#function-draw">Draw</a></li>
+						<li><a href="#function-callback">Callback</a></li>
+					</ul>
+					<li><a href="#examples">Examples</a></li>
+					<li><a href="#config">Configuration</a></
 				</ul>
+			</div>
+
+			<div class="body">
+
+				<h1>Visualization: Combo Chart</h1>
+				<hr>
+
+				<h2 id="overview">Overview</h2>
+
+				<p>The combo chart is a vertical bar combined with a single line chart rendered in the browser using SVG and HTML. Like all Crag Charts, combo charts display tooltips when the user hovers over the series elements. The chart is also limited to 20 data points and data will automatically be truncated if there are more points provided.</p>
+
+				<p>Unlike the column and line chart, each data point in the chart requires 2 values to each label, the first value is for the left side axis, the column, and the second is for the right side axis, the line.</p>
+				<p>The minimum required code required for creating a column chart is the following</p>
+
+<pre><code>&lt;div id="combo-chart" style="width: 100%; height: 500px;"&gt;&lt;/div&gt;
+
+&lt;script src="https://combinatronics.com/Xn1ch1/Crag-Charts/main/crag/crag.charts.loader.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+	let chart;
+	crag.onLoadCallBack(createCharts, ['combo']);
+
+	function createCharts() {
+		const options = {
+			data: [['A', 500, 26], ['B', 369, 30], ['C', 420, 20], ['D', 466, 36]],
+		}
+		chart = new CragCombo(options).create('combo-chart');
+	}
+&lt;/script&gt;</code></pre>
+
+				<p>In the second script tag, the onLoadCallBack is invoked, the function paramater passed should be below this callback that will create the chart. For more detailed information, see <a href="use.html">How to Use</a>.</p>
+				<p>The above code will generate the following chart.</p>
+
+				<div id="chart1" class="chart-container"></div>
+				<span class="chart-caption">Tip: Hover over the bars to see the tool tip</span>
+
+				<h2 id="functions">Built In Functions</h2>
+
+				<h3 id="function-title">Title Update</h3>
+				<p>The chart title can be updated at any time even if one was not defined in the initial options, should the chart need adjusting for the new space the draw function will be called automatically. The title property should be applied to the chart object.</p>
+
+<pre><code>chart.title = 'New Chart Title';</code></pre>
+
+				<hr class="mini-hr">
+
+				<h3 id="function-update">Data Update</h3>
+
+				<p>To update the data in the chart, the update function should be called on the chart object. Only one parameter is required, an array of arrays. See <a href="#data">data</a> parameter for more information. The data set can change in size when updated, bars and line points will be automatically added and removed as needed but will still be limited to a total of 20 points and truncated automatically. In addition, this function will automatically call the draw function (below) once the update has been completed.</p>
+
+<pre><code>let newData = [['A', 160, 100], ['B', 527, 75], ['C', 428, 90]];
+chart.update(newData);</code></pre>
+
+				<hr class="mini-hr">
+
+				<h3 id="function-draw">Draw</h3>
+				<p>The draw function will cause a complete redraw of the chart with the pre existing data. This function will be useful where the size of the container object changes size. The below example is calling the draw function on the chart object when the window resizes.</p>
+
+<pre><code>window.onresize = function() {
+	chart.draw();
+}</code></pre>
+
+				<hr class="mini-hr">
+
+				<h3 id="function-callback">On Click Callback</h3>
+
+				<p>A function can be passed to the onClick property in the options to the bar elements. This function will be called when a series bar is clicked.</p>
+
+<pre><code>let options = {
+	bar: {
+		onClick: myFunction
+	}
+}
+myFunction(obj) {
+	... ...
+}
+</code></pre>
+
+				<p>The function should have one parameter, an object which will be returned by the click listener. This object will contain information on the series point clicked in addition to the elements related to it. The object will contain the following</p>
+
+				<table class="config-table">
+					<colgroup>
+						<col width="25%" />
+						<col width="75%" />
+					  </colgroup>
+					<tbody>
+						<tr>
+							<th colspan="2">
+								Object Parameters
+							</th>
+						</tr>
+						<tr>
+							<td>
+								bar
+							</td>
+							<td>
+								The html element of the bar clicked as an object.
+								<span class="type">Type: HTMLElement</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								label
+							</td>
+							<td>
+								The html element of the label related to the bar clicked as an object. If the label positions are none, this will return null.
+								<span class="type">Type: HTMLElement</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								name
+							</td>
+							<td>
+								The name of the data point, this is the same name used in the hAxis.
+								<span class="type">Type: String</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								point
+							</td>
+							<td>
+								The html element of the point, related to the bar clicked, as an object.
+								<span class="type">Type: HTMLElement</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								texts
+							</td>
+							<td>
+								The formatted strings of the data point value. The format can be defined by the chart options. See <a href="#vAxis">vAxis.format</a> for more information. The array returned will have two values, the first for the left hand axis, the bar, and the second for the right axis.
+								<span class="type">Type: Array of Strings</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								values
+							</td>
+							<td>
+								<p>The numerical values of the data point. The array returned will have two values, the first for the left hand axis, the bar, and the second for the right axis.</p>
+								<span class="type">Type: Array of Numbers</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+
+				<h2 id="examples">Examples</h2>
+
 			</div>
 
 		</div>
@@ -51,24 +199,24 @@
 		<script src="crag/crag.charts.loader.js?v=1"></script>
 		<script>
 
-			let chart;
+			let chart1;
 
 			crag.onLoadCallBack(createCharts, ['combo'], '/crag/');
 
 			function createCharts() {
 				let options = {
-					series: [['A', 500, 26], ['B', 369, 30], ['C', 420, 20], ['D', 466, 36]],
+					data: [['A', 500, 26], ['B', 369, 30], ['C', 420, 20], ['D', 466, 36]],
 				}
-				chart = new CragCombo(options).create('combo-chart');
+				chart1 = new CragCombo(options).create('chart1');
 			}
 
 			window.onresize = function() {
-				chart.draw();
+				chart1.draw();
 			}
 
-			function newData() {
-				chart.update(dataGenerator(20, 2));
-			}
+			// function newData() {
+			// 	chart1.update(dataGenerator(20, 2));
+			// }
 
 		</script>
 

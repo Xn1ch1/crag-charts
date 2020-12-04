@@ -32,7 +32,7 @@ const pallet = {
 	darkbluegrey: '#192841',
 	black: '#000000',
 	almostblack: '#222222',
-	deepgrey: '#333333',
+	charcoal: '#333333',
 	darkgrey: '#555555',
 	lightgrey: '#DDDDDD',
 	white: '#FFFFFF',
@@ -337,6 +337,6 @@ function getContrastColor(color) {
 
 	let yiq = ((r*299)+(g*587)+(b*114))/1000;
 
-	return (yiq >= 140) ? pallet.deepgrey : pallet.white;
+	return (yiq >= 140) ? pallet.charcoal : pallet.white;
 
 }

@@ -29,13 +29,20 @@
 			<div class="head">Crag Charts</div>
 			<div w3-include-html="nav.html" id="nav" class="nav"></div>
 
-			<div class="body">
-				<div id="overview"></div>
-				<h1>Labels</h1>
+			<div class="subnav">
+				<ul class="toc">
+					<li>Table of Content</li>
+					<li><a href="#overview">Overview</a></li>
+					<li><a href="#config">Configuration</a></li>
+				</ul>
+			</div>
 
+			<div class="body">
+
+				<h1>Labels</h1>
 				<hr>
 
-				<h2>Overview</h2>
+				<h2 id="overview">Overview</h2>
 
 				<p>Labels on charts covers vertical axis, horizonal axis and data point labels. Each visualisation can have its labels formatted using the optional parameters, these parameters must be formatted as string such as 'number'.</p>
 
@@ -49,8 +56,7 @@
 
 				<p>In addition to formatting, labels can be given a color. By default, label colors will automatically be determined by the background color of the containing object, the two possible colors are white or almostblack.</p>
 
-				<hr id="config">
-				<h2>Configuration</h2>
+				<h2 id="config">Configuration</h2>
 
 				<table class="config-table">
 					<colgroup>
@@ -89,14 +95,6 @@
 					</tbody>
 				</table>
 
-			</div>
-
-			<div class="subnav">
-				<ul class="toc">
-					<li>Table of Content</li>
-					<li><a href="#overview">Overview</a></li>
-					<li><a href="#config">Configuration</a></li>
-				</ul>
 			</div>
 
 		</div>
