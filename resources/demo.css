@@ -1,9 +1,11 @@
 html {
 	scroll-behavior: smooth;
+	font-size: 16px;
 }
 body {
 	overflow-y: hidden;
 	margin: 0;
+	height: 100vh;
 }
 body, h1, h2, h3, h4, h5, h6, button, span, p {
 	font-family: 'Roboto';
@@ -24,9 +26,6 @@ h2 {
 h3 {
 	font-weight: 400;
 	font-size: 18px;
-}
-p {
-	font-size: 16px;
 }
 button{
 	display:inline-block;
@@ -63,7 +62,8 @@ hr {
 	margin: 32px;
     background: #DDD;
     border: 1px solid #DDD;
-}pre {
+}
+pre {
 	width: 100%;
 	margin: 0 auto;
 	box-sizing: border-box;
@@ -74,7 +74,6 @@ pre code {
 	display: block;
 	padding: 20px;
 	tab-size: 4;
-	font-size: 14px;
 }
 .mini-hr {
 	margin: 32px 45%;
@@ -111,14 +110,12 @@ pre code {
 	margin: 2px 0;
 	padding: 4px 0 4px 32px;
 	font-weight: 400;
-	font-size: 14px;
 }
 .nav a {
 	text-decoration: none;
 	color: #444;
 	margin: 3px 0;
 	padding: 6px 0 4px 32px;
-	font-size: 16px;
 	cursor: pointer;
 	display: block;
 }
@@ -180,13 +177,11 @@ pre code {
 	padding: 8px 16px;
 	font-weight: 300;
 	font-family: 'Roboto';
-	font-size: 16px;
 }
 .config-table tr td:nth-child(1) {
 	vertical-align: top;
 	text-align: left;
 	background-color: #EEE;
-	font-size: 16px;
 }
 .config-table td .type {
 	padding-top: 24px;
@@ -198,6 +193,7 @@ pre code {
 .config-table .default {
 	display: block;
 	font-weight: 400;
+    font-size: 18px;
 }
 .config-table em {
 	margin-top: 16px;
@@ -277,42 +273,39 @@ pre code {
 	list-style-type: none;
     padding-inline-start: 16px;
 }
-.toc ul li {
-	font-size: 14px;
-}
 .toc ul li a {
 	font-size: 14px;
 	color: #555555;
 }
-::-webkit-scrollbar {
+div::-webkit-scrollbar {
   width: 6px;
 }
-::-webkit-scrollbar-button {
+div::-webkit-scrollbar-button {
   width: 0px;
   height: 0px;
 }
-::-webkit-scrollbar-thumb {
+div::-webkit-scrollbar-thumb {
   background: #009688;;
   border: 0px none #ffffff;
 }
-::-webkit-scrollbar-thumb:hover {
+div::-webkit-scrollbar-thumb:hover {
   background: #008377;
 }
-::-webkit-scrollbar-thumb:active {
+div::-webkit-scrollbar-thumb:active {
   background: #008377;
 }
-::-webkit-scrollbar-track {
+div::-webkit-scrollbar-track {
   background: #EFEFEF;
   border: 0px none #ffffff;
   border-radius: 50px;
 }
-::-webkit-scrollbar-track:hover {
+div::-webkit-scrollbar-track:hover {
   background: #EEEEEE;
 }
-::-webkit-scrollbar-track:active {
+div::-webkit-scrollbar-track:active {
   background: #EEEEEE;
 }
-::-webkit-scrollbar-corner {
+div::-webkit-scrollbar-corner {
   background: transparent;
 }
 
