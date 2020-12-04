@@ -290,9 +290,7 @@ class CragCombo {
 		this.chart.pointArea.style.position = 'absolute';
 		this.chart.pointArea.appendChild(this.seriesLine.line);
 
-		this.chart.gridArea.style.pointerEvents = 'none';
 		this.chart.gridArea.style.overflow = 'visible';
-		this.chart.labelArea.style.pointerEvents = 'none';
 		this.chart.pointArea.style.pointerEvents = 'none';
 		this.toolTip.container.style.backgroundColor = pallet.darkgrey;
 
@@ -558,6 +556,18 @@ class CragCombo {
 				});
 				t.chart.elements[index].bar.addEventListener('mouseout', function() {
 					t._hideToolTip();
+					t.chart.elements[index].point.setAttribute('r', t.options.line.pointSize);
+				});
+
+				t.chart.elements[index].point.addEventListener('mouseover', function() {
+					t._showToolTip(index);
+					t.chart.barArea.appendChild(t.chart.elements[index].bar);
+					t.chart.elements[index].point.setAttribute('r', t.options.line.pointSize * 2);
+					t.chart.elements[index].bar.classList.add('cragComboBarHover');
+				});
+				t.chart.elements[index].point.addEventListener('mouseout', function() {
+					t._hideToolTip();
+					t.chart.elements[index].bar.classList.remove('cragComboBarHover');
 					t.chart.elements[index].point.setAttribute('r', t.options.line.pointSize);
 				});
 

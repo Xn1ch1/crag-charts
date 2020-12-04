@@ -180,7 +180,7 @@ pre code {
 	padding: 8px 16px;
 	font-weight: 300;
 	font-family: 'Roboto';
-	font-size: 1vw;
+	font-size: 16px;
 }
 .config-table tr td:nth-child(1) {
 	vertical-align: top;
@@ -193,6 +193,7 @@ pre code {
 	padding-bottom: 6px;
 	display: block;
 	font-weight: 400;
+    font-size: 18px;
 }
 .config-table .default {
 	display: block;
@@ -319,18 +320,21 @@ pre code {
 
 	.grid-container {
 		grid-template-columns: 0 1fr 0;
+		grid-template-rows: 80px 1fr;
 		gap: 0;
 	}
 	.head {
-		padding-left: 72px;
+		padding-left: 82px;
+		font-size: 44px;
 	}
 	.nav {
 		display: none;
 		position: fixed;
 		left: 0;
-		top: 60px;
+		top: 80px;
+		box-sizing: border-box;
 		bottom: 0;
-		width: 250px;
+		width: 400px;
 		z-index: 1;
 	}
 	.subnav {
@@ -338,8 +342,14 @@ pre code {
 	}
 	#menu-button {
 		display: block !important;
+		padding: 8px !important;
 	}
-
+	.nav a {
+		font-size: 24px;
+	}
+	.nav h3 {
+		font-size: 28px;
+	}
 }
 
 @media screen and (min-width: 1024px) and (max-width: 1400px) {
@@ -366,4 +376,5 @@ pre code {
     width: 36px;
     top: 16px;
 	display: none;
+	padding: 0;
 }

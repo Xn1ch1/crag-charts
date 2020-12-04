@@ -55,7 +55,10 @@ function includeNav() {
 		}
 	})
 
-	document.body.appendChild(menuButton)
+	document.body.appendChild(menuButton);
+	window.onresize = function() {
+		nav.style.display = '';
+	}
 
 }
 
