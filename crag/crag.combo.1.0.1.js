@@ -58,6 +58,8 @@ class CragCombo {
 			labelArea: null,
 			barArea: null,
 			pointArea: null,
+			titleArea: null,
+			title: null,
 			elements: {}
 		}
 
@@ -88,11 +90,6 @@ class CragCombo {
 				max: 0,
 				min: 0
 			}
-		}
-
-		this.title = {
-			area: null,
-			text: null
 		}
 
 		this.hAxis = {
@@ -241,7 +238,7 @@ class CragCombo {
 		this.vAxes[0].area = document.createElement('div');
 		this.vAxes[1].area = document.createElement('div');
 		this.hAxis.area = document.createElement('div');
-		this.title.area = document.createElement('div');
+		this.chart.titleArea = document.createElement('div');
 		this.chart.area = document.createElement('div');
 		this.chart.gridArea = document.createElement('div');
 		this.chart.barArea = document.createElement('div');
@@ -259,18 +256,18 @@ class CragCombo {
 		this.seriesLine.line = this._createLine();
 
 		if (this.options.chart.title != null) {
-			this.title.text = document.createElement('h1');
-			this.title.text.className = 'cragComboTitleText';
-			this.title.text.textContent = this.options.chart.title;
-			this.title.text.style.color = getContrastColor(this.options.chart.color);
-			this.title.area.appendChild(this.title.text);
+			this.chart.title = document.createElement('h1');
+			this.chart.title.className = 'cragComboTitleText';
+			this.chart.title.textContent = this.options.chart.title;
+			this.chart.title.style.color = getContrastColor(this.options.chart.color);
+			this.chart.titleArea.appendChild(this.chart.title);
 		}
 
 		this.chartContainer.className = 'cragComboChartContainer';
 		this.vAxes[0].area.className = 'cragComboVAxis';
 		this.vAxes[1].area.className = 'cragComboVAxis2';
 		this.hAxis.area.className = 'cragComboHAxis';
-		this.title.area.className = 'cragComboTitle';
+		this.chart.titleArea.className = 'cragComboTitle';
 		this.chart.area.className = 'cragComboChartArea';
 		this.chart.gridArea.className = 'cragComboCharSubArea';
 		this.chart.labelArea.className = 'cragComboCharSubArea';
@@ -296,7 +293,7 @@ class CragCombo {
 
 		this.parent.appendChild(this.chartContainer);
 		this.chartContainer.appendChild(this.vAxes[0].area);
-		this.chartContainer.appendChild(this.title.area);
+		this.chartContainer.appendChild(this.chart.titleArea);
 		this.chartContainer.appendChild(this.hAxis.area);
 		this.chartContainer.appendChild(this.chart.area);
 		this.chartContainer.appendChild(this.vAxes[1].area);
@@ -798,7 +795,7 @@ class CragCombo {
 		t.vAxes[axis].baseValue.textContent = formatLabel(scale.min, t.options.vAxes[axis].format, t.data.max[axis]);
 		t.vAxes[axis].baseValue.style.bottom = t.hAxis.area.offsetHeight - (t.vAxes[axis].baseValue.offsetHeight / 2) + 'px';
 
-		const vAxisMajorLineHeight = (t.vAxes[axis].area.offsetHeight - t.hAxis.area.offsetHeight - t.title.area.offsetHeight) * (scale.maj / (scale.max - scale.min));
+		const vAxisMajorLineHeight = (t.vAxes[axis].area.offsetHeight - t.hAxis.area.offsetHeight - t.chart.titleArea.offsetHeight) * (scale.maj / (scale.max - scale.min));
 		const vAxisMinorLineHeight = vAxisMajorLineHeight / 2;
 
 		for (const [index, elems] of Object.entries(t.vAxes[axis].elements)) {
@@ -1041,23 +1038,23 @@ class CragCombo {
 	/**
 	 * @param {any} value
 	 */
-	set newTitle(value) {
+	set title(value) {
 
 		let titleExists = true;
 
-		if (this.title.text == null) {
+		if (this.chart.title == null) {
 
 			titleExists = false;
-			this.title.text = document.createElement('h1');
-			this.title.text.className = 'cragComboTitleText';
-			this.title.text.style.color = getContrastColor(this.options.chart.color);
-			this.title.area.appendChild(this.title.text);
+			this.chart.title = document.createElement('h1');
+			this.chart.title.className = 'cragComboTitleText';
+			this.chart.title.style.color = getContrastColor(this.options.chart.color);
+			this.chart.titleArea.appendChild(this.chart.title);
 
 			this.options.chart.title = value;
 
 		}
 
-		this.title.text.textContent = this.options.chart.title;
+		this.chart.titleContent = this.options.chart.title;
 
 		if (!titleExists) {
 			this.draw();

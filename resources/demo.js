@@ -40,12 +40,14 @@ function includeNav() {
 
 	}
 
-	let h1 = document.createElement('h1');
-	h1.style.color = '#FFFFFF';
-	h1.style.margin = '0';
-	h1.textContent = 'Crag Charts';
+	if (document.getElementById('head')) {
+		let h1 = document.createElement('h1');
+		h1.style.color = '#FFFFFF';
+		h1.style.margin = '0';
+		h1.textContent = 'Crag Charts';
 
-	document.getElementById('head').appendChild(h1);
+		document.getElementById('head').appendChild(h1);
+		}
 
 }
 

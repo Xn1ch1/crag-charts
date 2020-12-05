@@ -36,13 +36,22 @@
 					<li><a href="#overview">Overview</a></li>
 					<li><a href="#functions">Functions</a></li>
 					<ul>
-						<li><a href="#function-title">Title</a></li>
-						<li><a href="#function-update">Update</a></li>
-						<li><a href="#function-draw">Draw</a></li>
-						<li><a href="#function-callback">Callback</a></li>
+						<li><a href="#function-title">title</a></li>
+						<li><a href="#function-update">update</a></li>
+						<li><a href="#function-draw">draw</a></li>
+						<li><a href="#function-callback">onClick</a></li>
 					</ul>
 					<li><a href="#examples">Examples</a></li>
-					<li><a href="#config">Configuration</a></
+					<li><a href="#config">Configuration</a></li>
+					<ul>
+						<li><a href="#data">data</a></li>
+						<li><a href="#chart">chart</a></li>
+						<li><a href="#bar">bar</a></li>
+						<li><a href="#line">line</a></li>
+						<li><a href="#vAxes">vAxes</a></li>
+						<li><a href="#labels">labels</a></li>
+					</ul>
+					<li><a href="#default">Full Defaults</a></li>
 				</ul>
 			</div>
 
@@ -192,6 +201,417 @@ myFunction(obj) {
 
 				<h2 id="examples">Examples</h2>
 
+				<p>Optional parameters can be passed as a single object in the class object call, these are used to style the chart and its elements.</p>
+
+				<h3>Example 1</h3>
+
+				<p>The following example is an object containing the data series and additional parameters, these parameters set the bar width to 70%, the top of the bars to be rounded and applies an inset shadow.</p>
+
+<pre><code>let options = {
+	data: [['A', 500, 21], ['B', 436, 25], ['C', 300, 19], ['D', 375, 12]],
+	bar: {
+		width: 70,
+		rounded: true,
+		inset: true
+	}
+}</code></pre>
+
+				<p>This will generate the below chart. Tip: Use the random data generator button below the chart to generate and apply a new random data set.</p>
+
+				<div id="chart2" class="chart-container"></div>
+				<span class="chart-caption"><button onclick="newData2();disableBtn(this)">Random Data Set</button> Generate and apply a random data set for this chart.</span>
+
+				<hr class="mini-hr">
+
+				<h3>Example 2</h3>
+
+				<p>In addition to passing options for the bar, there are options available for the line and points. the below example shows some of these options.</p>
+
+<pre><code>let options = {
+	data: [['A', 500, 21], ['B', 436, 25], ['C', 300, 19], ['D', 375, 12], ['E', 300, 30]],
+	bar: {
+		width: 70,
+		color: 'lightgrey',
+		rounded: true
+	},
+	line: {
+		width: 4,
+		color: 'deeporange',
+		pointSize: 0
+	}
+}</code></pre>
+
+				<p>This will generate the below chart. Tip: Use the random data generator button below the chart to generate and apply a new random data set.</p>
+
+				<div id="chart3" class="chart-container"></div>
+				<span class="chart-caption"><button onclick="newData3();disableBtn(this)">Random Data Set</button> Generate and apply a random data set for this chart.</span>
+
+				<hr class="mini-hr">
+
+				<h3>Example 3</h3>
+
+				<p>The options also include vAxes, individual axis settings are seperated within as 0 and 1. 0 represents the left side axis, the bars. Each axis can be adjusted seperately such as formatting and minimum.</p>
+
+<pre><code>let options = {
+	data: [['A', 500, 21], ['B', 436, 25], ['C', 300, 19], ['D', 375, 12], ['E', 300, 30]],
+	bar: {
+		width: 60,
+		rounded: true
+	},
+	line: {
+		width: 2,
+	},
+	vAxes: {
+		0: {
+			min: 'auto'
+		},
+		1: {
+			format: 'time'
+		}
+	}
+}</code></pre>
+
+				<p>This will generate the below chart. Tip: Use the random data generator button below the chart to generate and apply a new random data set.</p>
+
+				<div id="chart4" class="chart-container"></div>
+				<span class="chart-caption"><button onclick="newData4();disableBtn(this)">Random Data Set</button> Top: Both the bar and the point have hover triggers that will show the tooltip.</span>
+
+
+				<h2 id="config">Configuration</h2>
+
+				<table class="config-table">
+					<colgroup>
+						<col width="25%" />
+						<col width="75%" />
+					  </colgroup>
+					<tbody>
+						<tr>
+							<th colspan="2">
+								Options
+							</th>
+						</tr>
+						<tr>
+							<td id="data">
+								data
+							</td>
+							<td>
+								An array of arrays where each child array has three elements. The first point of the child arrays should be formatted as a string, this will be the name of the data point, the second is the numerical value for the left axis, the bars. The thrid will be a numerical value for the right axis, the line.
+								<br><br>
+								A maximum of 20 points can be displayed on the chart, data will be automatically truncated where the array contains more than 20 child arrays.
+
+
+<pre><code>options = {
+	data: [
+		['A', 5, 12],
+		['B', 10, 14],
+		['C', 15, 16],
+		['D', 20, 20],
+	]
+}</code></pre>
+
+								<span class="config-type">Type: Array of Arrays</span>
+								<span class="config-default">Default: null</span>
+							</td>
+						</tr>
+						<tr id="chart">
+							<td>
+								chart.title
+							</td>
+							<td>
+								The title to appear above the chart, when not specified, the chart will expand to fill the height of the parent element automatically.
+
+								<span class="config-type">Type: String</span>
+								<span class="config-default">Default: null</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								chart.color
+							</td>
+							<td>
+								The background color of the chart.
+
+								<span class="config-type">Type: String</span>
+								<span class="config-default">Default: white</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								chart.minorLines
+							</td>
+							<td>
+								Enables or disables minor gridlines on the vertical axis.
+
+								<span class="config-type">Type: Boolean</span>
+								<span class="config-default">Default: false</span>
+							</td>
+						</tr>
+						<tr id="bar">
+							<td>
+								bar.width
+							</td>
+							<td>
+								Percentage width of each bar, where 100 means there is no space between bars. This cannot exceed 100.
+
+								<span class="config-type">Type: Number</span>
+								<span class="config-default">Default: 90</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								bar.color
+							</td>
+							<td>
+								The base color of the bars, when not specified the bars will take the default array of colors.
+								<br>See <a href="pallet.html">Pallet</a> options for a list of available colors, these should be passed as strings.
+
+								<span class="config-type">Type: String</span>
+								<span class="config-default">Default: multi</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								bar.rounded
+							</td>
+							<td>
+								Sets the top of the bars to have rounded corners.
+
+								<span class="config-type">Type: Boolean</span>
+								<span class="config-default">Default: false</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								bar.inset
+							</td>
+							<td>
+								Sets the bars to have an inset drop shadow.
+
+								<span class="config-type">Type: Boolean</span>
+								<span class="config-default">Default: false</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								bar.stripe
+							</td>
+							<td>
+								Applies a striped overlay on the bars, this will not affect the specified color.
+
+								<span class="config-type">Type: Boolean</span>
+								<span class="config-default">Default: false</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								bar.animated
+							</td>
+							<td>
+								Animates the striped overlay of the bars, will have no effect unless bar.stripe is set to true.
+
+								<span class="config-type">Type: Boolean</span>
+								<span class="config-default">Default: false</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								bar.onClick
+							</td>
+							<td>
+								A function to be called when a bar in the chart is clicked. The function will return a single object containing elements and data related to the bar clicked, see <a href="#functions">Functions</a> for more information.
+
+<pre><code>obj = {
+	bar: HTMLElement,
+	label: HTMLElement,
+	name: String,
+	text: String,
+	value: Number
+}</code></pre>
+
+								<span class="config-type">Type: Function</span>
+								<span class="config-default">Default: null</span>
+							</td>
+						</tr>
+						<tr id="line">
+							<td>
+								line.width
+							</td>
+							<td>
+								Width in pixles of the series line, this value should be a whole number between 1 and 21 inclusive.
+
+								<span class="config-type">Type: Number</span>
+								<span class="config-default">Default: 4</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								line.pointSize
+							</td>
+							<td>
+								Radius in pixles of the series point markers, this value should be a whole number between 0 and 15 inclusive. When set to 0, the markers will not be visible.
+
+								<span class="config-type">Type: Number</span>
+								<span class="config-default">Default: 6</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								line.color
+							</td>
+							<td>
+								The base color of the line, when not specified the bars will take the default of indigo.
+								<br>See <a href="pallet.html">Pallet</a> options for a list of available colors, these should be passed as strings.
+
+								<span class="config-type">Type: String</span>
+								<span class="config-default">Default: 'indigo</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								line.smooth
+							</td>
+							<td>
+								Sets the line to be smoothed out at each series point. When set to false the lines will be straight and have shap angles at each point. A smooth line may exceed the chart bound on the curve depending on the difference and value of each series point.
+
+								<span class="config-type">Type: Boolean</span>
+								<span class="config-default">Default: true</span>
+							</td>
+						</tr>
+						<tr id="vAxes">
+							<td>
+								vAxes
+							</td>
+							<td>
+								vAxes does not take direct parameters, each axis should have it's own parameters specifies within this object. The left axis, relating to the bars is at index 0, the right is at index 1.
+<pre><code>vAxes: {
+	0: {
+		... ...
+	},
+	1: {
+		... ...
+	}
+}</code></pre>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								vAxes.label
+							</td>
+							<td>
+								The name of the vertical axis values, this name will show inside the tool tip along side the value for the data points.
+
+								<span class="config-type">Type: String</span>
+								<span class="config-default">Default: Series</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								vAxes.lines
+							</td>
+							<td>
+								Enables or disables horizontal major and minor gridlines on the chart for the vertical axis points
+
+								<span class="config-type">Type: String</span>
+								<span class="config-default">Default: true</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								vAxes.format
+							</td>
+							<td>
+								Formatting of the axis labels and the tool tip value label. See the <a href="labels.html">Labels</a> for a guide of the available formats.
+
+								<span class="config-type">Type: String</span>
+								<span class="config-default">Default: number</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								vAxes.min
+							</td>
+							<td>
+								Sets the minimum value of the vertical axis. When left to default, all columns will start at 0. Optionally the string value 'min' can be passed where the chart will automatically calculate the minimum value and upper value of the vAxis.
+
+								<span class="config-type">Type: Number or String</span>
+								<span class="config-default">Default: 0</span>
+							</td>
+						</tr>
+						<tr id="labels">
+							<td>
+								labels.position
+							</td>
+							<td>
+								Sets the default position of the bar value labels. The position will automatically switch where the label cannot fit in the defined position. In addition, if each label will not fit within the series width, the labels will automatically hide.
+
+								<ul>
+									<li>none: labels will not be displayed</li>
+									<li>outside: labels will appear above the bars</li>
+									<li>inside: labels will appear inside the bars</li>
+								</ul>
+
+								<span class="config-type">Type: String</span>
+								<span class="config-default">Default: none</span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								labels.color
+							</td>
+							<td>
+								Sets the text color of the labels. See <a href="pallet.html">Pallet</a> for a list of the available colors. By default, the labels will automatically switch between black and white depending on the background color.
+
+								<span class="config-type">Type: String</span>
+								<span class="config-default">Default: match</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+
+				<h2 id="default">Full Default Configuration</h2>
+
+<pre><code>options = {
+	data: null,
+	bar: {
+		width: 90,
+		color: 'multi',
+		rounded: false,
+		inset: false,
+		striped: false,
+		animated: false,
+		onClick: null
+	},
+	line: {
+		color: null,
+		width: 2,
+		pointSize: 4,
+		smooth: true
+	},
+	vAxes: {
+		0: {
+			label: 'Series 1',
+			lines: true,
+			format: 'number',
+			min: 0
+		},
+		1: {
+			label: 'Series 2',
+			lines: false,
+			format: 'number',
+			min: 0
+		}
+	},
+	labels: {
+		position: 'none',
+		color: 'match'
+	},
+	chart: {
+		title: null,
+		color: 'white',
+		minorLines: true
+	}
+}</code></pre>
+
 			</div>
 
 		</div>
@@ -200,23 +620,79 @@ myFunction(obj) {
 		<script>
 
 			let chart1;
+			let chart2;
 
 			crag.onLoadCallBack(createCharts, ['combo'], '/crag/');
 
 			function createCharts() {
-				let options = {
+				let options1 = {
 					data: [['A', 500, 26], ['B', 369, 30], ['C', 420, 20], ['D', 466, 36]],
 				}
-				chart1 = new CragCombo(options).create('chart1');
+				chart1 = new CragCombo(options1).create('chart1');
+
+				let options2 = {
+					data: [['A', 500, 21], ['B', 436, 25], ['C', 300, 19], ['D', 375, 8]],
+					bar: {
+						width: 70,
+						rounded: true,
+						inset: true
+					}
+				}
+				chart2 = new CragCombo(options2).create('chart2');
+
+				let options3 = {
+					data: [['A', 500, 21], ['B', 436, 25], ['C', 300, 19], ['D', 375, 12], ['E', 300, 30]],
+					bar: {
+						width: 70,
+						color: 'lightgrey',
+						rounded: true
+					},
+					line: {
+						width: 4,
+						color: 'deeporange',
+						pointSize: 0
+					}
+				}
+				chart3 = new CragCombo(options3).create('chart3');
+
+				let options4 = {
+					data: [['A', 500, 21], ['B', 436, 25], ['C', 300, 19], ['D', 375, 12], ['E', 300, 30]],
+					bar: {
+						width: 60,
+						rounded: true
+					},
+					line: {
+						width: 2,
+					},
+					vAxes: {
+						0: {
+							min: 'auto'
+						},
+						1: {
+							format: 'time'
+						}
+					}
+				}
+				chart4 = new CragCombo(options4).create('chart4');
+
 			}
 
 			window.onresize = function() {
 				chart1.draw();
+				chart2.draw();
+				chart3.draw();
+				chart4.draw();
 			}
 
-			// function newData() {
-			// 	chart1.update(dataGenerator(10, 2));
-			// }
+			function newData2() {
+				chart2.update(dataGenerator(12, 2));
+			}
+			function newData3() {
+				chart3.update(dataGenerator(12, 2));
+			}
+			function newData4() {
+				chart4.update(dataGenerator(12, 2));
+			}
 
 		</script>
 

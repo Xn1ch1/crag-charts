@@ -1,6 +1,6 @@
 .body {
 	-webkit-box-shadow: 0 0 5px 0 rgba(0,0,0,0.3);
-	background: #FFF;
+	background: #FFFFFF;
 	box-shadow: 0 0 5px 0 rgba(0,0,0,0.3);
 	box-sizing: border-box;
 	grid-area: body;
@@ -19,7 +19,7 @@
 	background-color: #DDD;
 	border: 1px solid #DDD;
 	box-sizing: border-box;
-	color: #333;
+	color: #333333;
 	display: block;
 	margin-top: 0;
 	padding: 8px;
@@ -28,7 +28,7 @@
 }
 
 .chart-container {
-	border: 1px solid #DDD;
+	border: 1px solid #DDDDDD;
 	box-sizing: border-box;
 	height: 500px;
 	margin: 16px auto 0;
@@ -65,12 +65,16 @@
 }
 
 .config-table {
-	border: 1px solid #DDD;
+	border: 1px solid #DDDDDD;
 	border-collapse: collapse;
 	width: 100%;
 }
 
-.config-table em {
+.config-table pre {
+	margin: 16px 0 !important;
+}
+
+.config-table>em {
 	display: block;
 	margin-top: 16px;
 }
@@ -82,8 +86,8 @@
 }
 
 .config-table th {
-	background-color: #CCC;
-	color: #333;
+	background-color: #CCCCCC;
+	color: #333333;
 	font-family: Roboto;
 	font-weight: 300;
 	padding: 8px 16px;
@@ -95,7 +99,7 @@
 }
 
 .config-table tr td:nth-child(1) {
-	background-color: #EEE;
+	background-color: #EEEEEE;
 	text-align: left;
 	vertical-align: top;
 }
@@ -124,7 +128,7 @@
 	-webkit-box-shadow: 0 0 5px 5px rgba(0,0,0,0.3);
 	background-color: #009688;
 	box-shadow: 0 0 5px 5px rgba(0,0,0,0.3);
-	color: #FFF;
+	color: #FFFFFF;
 	grid-area: head;
 	padding: 16px 32px;
 	z-index: 1;
@@ -138,7 +142,7 @@
     height: 5px;
     width: 50px;
     border-radius: 10px;
-    background: #EFEFEF;
+    background: #EEEEEE;
     transform: translate(-25px, 0px);
     margin: 32px 50%;
     border: none;
@@ -146,11 +150,15 @@
 
 .navigation {
 	-webkit-box-shadow: 0 0 5px 0 rgba(0,0,0,0.3);
-	background: #FFF;
+	background: #FFFFFF;
 	box-shadow: 0 0 5px 0 rgba(0,0,0,0.3);
 	grid-area: navigation;
 	overflow-x: hidden;
 	overflow-y: auto;
+}
+
+.navigation>hr {
+	margin: 16px 32px;
 }
 
 .navigation-active {
@@ -158,7 +166,7 @@
 	-webkit-border-radius: 0 20px 20px 0;
 	background: #009688!important;
 	border-radius: 0 20px 20px 0;
-	color: white!important;
+	color: #FFFFFF!important;
 	cursor: default;
 	display: block;
 	pointer-events: none;
@@ -172,7 +180,7 @@
 }
 
 .navigation-link {
-	color: #444;
+	color: #444444;
 	cursor: pointer;
 	display: block;
 	margin: 3px 0;
@@ -183,7 +191,7 @@
 .navigation-link:hover {
 	-moz-border-radius: 0 20px 20px 0;
 	-webkit-border-radius: 0 20px 20px 0;
-	background: #EEE;
+	background: #EEEEEE;
 	border-radius: 0 20px 20px 0;
 	width: 80%;
 }
@@ -192,7 +200,7 @@
 	-webkit-transform: rotate(-45deg);
 	border-left: 20px solid transparent;
 	border-right: 20px solid transparent;
-	border-top: 20px solid #666;
+	border-top: 20px solid #666666;
 	bottom: -3px;
 	height: 0;
 	pointer-events: none;
@@ -214,14 +222,18 @@
 	padding: 4px 0;
 }
 
-.toc li a {
+.toc a {
 	color: #222222;
 	text-decoration: none;
 }
 
-.toc ul {
+.toc>ul {
 	list-style-type: none;
-	padding-inline-start: 16px;
+	padding-inline-start: 24px;
+}
+
+a:hover {
+	opacity: 0.7;
 }
 
 body {
@@ -285,7 +297,7 @@ div::-webkit-scrollbar-corner {
 
 div::-webkit-scrollbar-thumb {
 	background: #009688;
-	border: 0 none #ffffff;
+	border: 0 none #FFFFFF;
 }
 
 div::-webkit-scrollbar-thumb:hover,
@@ -294,8 +306,8 @@ div::-webkit-scrollbar-thumb:active {
 }
 
 div::-webkit-scrollbar-track {
-	background: #EFEFEF;
-	border: 0 none #ffffff;
+	background: #EEEEEE;
+	border: 0 none #FFFFFF;
 	border-radius: 50px;
 }
 
@@ -312,7 +324,7 @@ h2 {
 	background: #EEEEEE;
 	margin: 32px -32px;
 	padding: 32px;
-    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.2);
+    box-shadow: 0 3px 3px 0px rgba(0, 0, 0, 0.15);
 }
 
 h3 {
@@ -320,8 +332,8 @@ h3 {
 }
 
 hr {
-		background: #DDD;
-		border: 1px solid #DDD;
+		background: #DDDDDD;
+		border: 1px solid #DDDDDD;
 		margin: 32px;
 }
 
@@ -330,7 +342,7 @@ html {
 }
 
 pre {
-	border: 1px solid #999;
+	border: 1px solid #999999;
 	box-sizing: border-box;
 	margin: 0 !important;
 	width: 100%;
@@ -348,7 +360,7 @@ pre {
 		display: 'none';
 	}
 }
-@media screen and (min-width: 1250px) {
+@media screen and (min-width: 1150px) {
 	.grid-container {
 		grid-template-columns: 250px 1fr 0;
 		gap: 0 16px;
@@ -360,9 +372,9 @@ pre {
 		display: 'block';
 	}
 }
-@media screen and (min-width: 1500px) {
+@media screen and (min-width: 1400px) {
 	.grid-container {
-		grid-template-columns: 250px minmax(auto, 1000px) minmax(250px, auto);
+		grid-template-columns: 250px minmax(auto, 1100px) minmax(250px, auto);
 		gap: 0 32px;
 	}
 	.content-table {

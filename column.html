@@ -35,10 +35,10 @@
 					<li><a href="#overview">Overview</a></li>
 					<li><a href="#functions">Functions</a></li>
 					<ul>
-						<li><a href="#function-title">Title</a></li>
-						<li><a href="#function-update">Update</a></li>
-						<li><a href="#function-draw">Draw</a></li>
-						<li><a href="#function-callback">Callback</a></li>
+						<li><a href="#function-title">title</a></li>
+						<li><a href="#function-update">update</a></li>
+						<li><a href="#function-draw">draw</a></li>
+						<li><a href="#function-callback">onClick</a></li>
 					</ul>
 					<li><a href="#examples">Examples</a></li>
 					<li><a href="#config">Configuration</a></li>
@@ -117,7 +117,7 @@ chart.update(newData);</code></pre>
 
 				<h3 id="function-callback">On Click Callback</h3>
 
-				<p>A function can be passed to the onClick property in the options to the bar elements. This function will be called when a series bar is clicked.</p>
+				<p>A function can be assigned to the onClick property of the bar elements. This function will be called when a series bar is clicked.</p>
 
 <pre><code>let options = {
 	bar: {
@@ -289,12 +289,13 @@ function myFunction(obj) {
 						</tr>
 						<tr>
 							<td id="data">
-								data <em style="display: inline;">(Required)</em>
+								data
 							</td>
 							<td>
-								<p>An array of arrays where each child array has two elements. The first point of the child arrays should be formatted as a string, this will be the name of the data point, the second is the numerical value for this point.</p>
-								<p>A maximum of 20 points can be displayed on the chart, data will be automatically truncated where the array contains more than 20 child arrays.</p>
-								<em>Example</em>
+								An array of arrays where each child array has two elements. The first point of the child arrays should be formatted as a string, this will be the name of the data point, the second is the numerical value for this point.
+								<br>	<br>
+								A maximum of 20 points can be displayed on the chart, data will be automatically truncated where the array contains more than 20 child arrays.
+								<br><br>
 
 <pre><code>options = {
 	data: [
@@ -415,7 +416,6 @@ function myFunction(obj) {
 							</td>
 							<td>
 								A function to be called when a bar in the chart is clicked. The function will return a single object containing elements and data related to the bar clicked, see <a href="#functions">Functions</a> for more information.
-								<em>The return object looks as follows.</em>
 
 <pre><code>obj = {
 	bar: HTMLElement,
@@ -480,7 +480,6 @@ function myFunction(obj) {
 							<td>
 								Sets the default position of the bar value labels. The position will automatically switch where the label cannot fit in the defined position. In addition, if each label will not fit within the series width, the labels will automatically hide.
 
-								<em>Option</em>
 								<ul>
 									<li>none: labels will not be displayed</li>
 									<li>outside: labels will appear above the bars</li>
@@ -611,10 +610,10 @@ function myFunction(obj) {
 			}
 
 			function newData2() {
-				chart2.update(dataGenerator(10));
+				chart2.update(dataGenerator(15));
 			}
 			function newData3() {
-				chart3.update(dataGenerator(10));
+				chart3.update(dataGenerator(15));
 			}
 			function newData4() {
 				document.getElementById('chart-4-name').textContent = 'Name: ';
