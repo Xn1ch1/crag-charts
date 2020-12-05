@@ -26,11 +26,11 @@
 
 		<div class="grid-container">
 
-			<div class="head">Crag Charts</div>
-			<div w3-include-html="nav.html" id="nav" class="nav"></div>
+			<div class="head" id="head"></div>
+			<div w3-include-html="navigation.html" id="navigation" class="navigation"></div>
 
 
-			<div class="subnav">
+			<div class="content-table">
 				<ul class="toc">
 					<li>Table of Content</li>
 					<li><a href="#overview">Overview</a></li>
@@ -139,7 +139,7 @@ myFunction(obj) {
 							</td>
 							<td>
 								The html element of the bar clicked as an object.
-								<span class="type">Type: HTMLElement</span>
+								<span class="config-type">Type: HTMLElement</span>
 							</td>
 						</tr>
 						<tr>
@@ -148,7 +148,7 @@ myFunction(obj) {
 							</td>
 							<td>
 								The html element of the label related to the bar clicked as an object. If the label positions are none, this will return null.
-								<span class="type">Type: HTMLElement</span>
+								<span class="config-type">Type: HTMLElement</span>
 							</td>
 						</tr>
 						<tr>
@@ -157,7 +157,7 @@ myFunction(obj) {
 							</td>
 							<td>
 								The name of the data point, this is the same name used in the hAxis.
-								<span class="type">Type: String</span>
+								<span class="config-type">Type: String</span>
 							</td>
 						</tr>
 						<tr>
@@ -166,7 +166,7 @@ myFunction(obj) {
 							</td>
 							<td>
 								The html element of the point, related to the bar clicked, as an object.
-								<span class="type">Type: HTMLElement</span>
+								<span class="config-type">Type: HTMLElement</span>
 							</td>
 						</tr>
 						<tr>
@@ -175,7 +175,7 @@ myFunction(obj) {
 							</td>
 							<td>
 								The formatted strings of the data point value. The format can be defined by the chart options. See <a href="#vAxis">vAxis.format</a> for more information. The array returned will have two values, the first for the left hand axis, the bar, and the second for the right axis.
-								<span class="type">Type: Array of Strings</span>
+								<span class="config-type">Type: Array of Strings</span>
 							</td>
 						</tr>
 						<tr>
@@ -184,7 +184,7 @@ myFunction(obj) {
 							</td>
 							<td>
 								The numerical values of the data point. The array returned will have two values, the first for the left hand axis, the bar, and the second for the right axis.
-								<span class="type">Type: Array of Numbers</span>
+								<span class="config-type">Type: Array of Numbers</span>
 							</td>
 						</tr>
 					</tbody>
@@ -215,7 +215,7 @@ myFunction(obj) {
 			}
 
 			// function newData() {
-			// 	chart1.update(dataGenerator(20, 2));
+			// 	chart1.update(dataGenerator(10, 2));
 			// }
 
 		</script>

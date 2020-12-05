@@ -8,10 +8,10 @@ window.onload = function() {
 
 function includeNav() {
 
-	if (document.getElementById('nav')) {
+	if (document.getElementById('navigation')) {
 
 		var elmnt, file, xhttp;
-		elmnt = document.getElementById('nav');
+		elmnt = document.getElementById('navigation');
 		file = elmnt.getAttribute("w3-include-html");
 
 		xhttp = new XMLHttpRequest();
@@ -28,7 +28,7 @@ function includeNav() {
 					page = 'index'
 				}
 
-				document.getElementsByClassName('nav-'+page)[0].classList.add('nav-active');
+				document.getElementsByClassName('navigation-'+page)[0].classList.add('navigation-active');
 
 			}
 			if (this.status == 404) {elmnt.innerHTML = 'Page not found.';}
@@ -40,25 +40,12 @@ function includeNav() {
 
 	}
 
-	let menuButton = document.createElement('img');
+	let h1 = document.createElement('h1');
+	h1.style.color = '#FFFFFF';
+	h1.style.margin = '0';
+	h1.textContent = 'Crag Charts';
 
-	menuButton.src = 'resources/icons/menu.svg';
-	menuButton.id = 'menu-button';
-
-	menuButton.addEventListener('click', function() {
-		let nav = document.getElementById('nav');
-
-		if (nav.style.display == 'none' || nav.style.display == '') {
-			nav.style.display = 'block';
-		} else {
-			nav.style.display = 'none';
-		}
-	})
-
-	document.body.appendChild(menuButton);
-	window.onresize = function() {
-		nav.style.display = '';
-	}
+	document.getElementById('head').appendChild(h1);
 
 }
 

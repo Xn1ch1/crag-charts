@@ -27,10 +27,11 @@
 
 		<div class="grid-container">
 
-			<div class="head">Crag Charts</div>
-			<div w3-include-html="nav.html" id="nav" class="nav"></div>
+			<div class="head" id="head"></div>
 
-			<div class="subnav">
+			<div w3-include-html="navigation.html" id="navigation" class="navigation"></div>
+
+			<div class="content-table">
 				<ul class="toc">
 					<li>Table of Content</li>
 					<li><a href="#loader">Loader</a></li>
@@ -67,6 +68,13 @@
 						<col width="25%" />
 						<col width="75%" />
 					</colgroup>
+					<thead>
+						<tr>
+							<th colspan="2">
+								Parameters
+							</th>
+						</tr>
+					</thead>
 					<tbody>
 						<tr>
 							<td>
@@ -75,7 +83,7 @@
 							<td>
 								The name of the function to be called once the loader has finished preparing all of the required resources. This should be input without the function brackets, for example myFunction, not myFunction().
 
-								<span class="type">Type: Function</span>
+								<span class="config-type">Type: Function</span>
 							</td>
 						</tr>
 						<tr>
@@ -91,7 +99,7 @@
 									<li>['column', 'progress']</li>
 								</ul>
 
-								<span class="type">Type: Array of Strings</span>
+								<span class="config-type">Type: Array of Strings</span>
 							</td>
 						</tr>
 						<tr>
@@ -101,7 +109,7 @@
 							<td>
 								Path to a local source for the chart scripts, this should only be used if you want to download the library and use it locally. These files will not get updates as they are released.
 
-								<span class="type">Type: String</span>
+								<span class="config-type">Type: String</span>
 							</td>
 						</tr>
 					</tbody>
@@ -176,6 +184,11 @@ const chart = new CragColumn(options).create('bar-chart');</code></pre>
 				}
 				chart = new CragColumn(options).create('column-chart');
 			}
+
+			window.onresize = function() {
+				chart.draw();
+			}
+
 		</script>
 
 	</body>
