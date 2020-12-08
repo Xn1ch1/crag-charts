@@ -4,52 +4,37 @@
 		<script src="resources/demo.js?v=2"></script>
 	</head>
 
+	<!-- <body style="background-color: rgb(34, 34, 34);"> -->
 	<body>
-		<div id="chart" style="width: 90%; height: 500px; margin: 0 auto;"></div>
+
+		<div id="chart" style="width: 90%; height: 90%; margin: 0 auto;"></div>
+
+		<button onclick="chart.update(dataGenerator(10, 1, false, true, 12))">Random Data</button>
+
 	</body>
 
 	<script src="crag/crag.charts.loader.js?v=1"></script>
 		<script>
 
 			let chart;
-			crag.onLoadCallBack(createCharts, ['combo'], '/crag/');
+			crag.onLoadCallBack(createCharts, ['pie'], '/crag/');
 
 			function createCharts() {
 				const options = {
-					data: dataGenerator(10, 2),
+					data: [['A', 5], ['B', 25], ['C', 10], ['D', 1], ['E', 1]],
 					chart: {
-						title: 'My Chart'
+						color: 'white'
 					},
-					bar: {
-						width: 90,
-						rounded: true,
-						inset: true,
-						striped: true,
-						animated: true,
-						onClick: myCallBack,
-						color: 'multi'
-					},
-					vAxes: {
-						0: {
-							min: 'auto'
-						},
-						1: {
-							format: 'time',
-							min: 'auto'
-						}
+					pie: {
+						hole: 0
 					}
 				}
-				chart = new CragCombo(options).create('chart');
+				chart = new CragPie(options).create('chart');
 			}
 
 
 			window.onresize = function() {
 				chart.draw();
-			}
-
-			function myCallBack(obj) {
-				let str = 'Data point: ' + obj.name + '\nValues: ' + obj.values + '\nTexts: ' + obj.texts;
-				alert(str);
 			}
 
 		</script>

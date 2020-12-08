@@ -834,7 +834,7 @@ class CragLine {
 	update(data) {
 
 		if (data.length > 20) {
-			data = val.slice(0, 20);
+			data = data.slice(0, 20);
 		}
 
 		this.data.series = data;

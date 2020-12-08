@@ -19,6 +19,10 @@ const resources = {
 	combo: {
 		js: 'crag.combo.1.0.1.js',
 		css: 'crag.combo.1.0.1.css'
+	},
+	pie: {
+		js: 'crag.pie.0.0.0.js',
+		css: 'crag.pie.0.0.0.css'
 	}
 };
 
@@ -74,6 +78,10 @@ async function attachResources(res) {
 			case 'line':
 				js = resources.line.js;
 				css = resources.line.css;
+				break;
+			case 'pie':
+				js = resources.pie.js;
+				css = resources.pie.css;
 				break;
 			default:
 				js = resources.core.js;

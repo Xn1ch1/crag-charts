@@ -1,0 +1,85 @@
+.cragPieChartContainer {
+	display: grid;
+	grid-template-columns: minmax(5%, auto) 1fr auto;
+	grid-template-rows: minmax(5%, auto) 1fr minmax(5%, auto);
+	gap: 0px 0px;
+	grid-template-areas:
+	  "cragPieTitle cragPieTitle cragPieTitle"
+	  "cragPieLeftKey cragPieChart cragPieRightKey"
+	  "cragPieBottomKey cragPieBottomKey cragPieBottomKey";
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+}
+
+.cragPieTitle {
+	grid-area: cragPieTitle;
+}
+.cragPieBottomKey {
+	grid-area: cragPieBottomKey;
+	padding-top: 8px;
+	transition: width 0.66s ease-out;
+}
+.cragPieLeftKey {
+	grid-area: cragPieLeftKey;
+	padding-right: 8px;
+	transition: width 0.66s ease-out;
+}
+.cragPieRightKey {
+	grid-area: cragPieRightKey;
+	padding-left: 8px;
+	position: relative;
+	transition: width 0.66s ease-out;
+}
+.cragPieChart {
+	grid-area: cragPieChart;
+	overflow: visible;
+	transition: width 0.66s ease-out;
+}
+.cragPieChartArea {
+	transform: rotate(-90deg);
+}
+.cragPieWedge {
+	transition: opacity 0.5s, transform 0.3s;
+	-webkit-transition: opacity 0.5s, transform 0.3s;
+	cursor: pointer;
+}
+.cragPieWedge:hover {
+    transform: scale(1.05);
+}
+.cragPieWedgeHover {
+    transform: scale(1.05);
+}
+.cragPieKey {
+	-webkit-transition: all 0.7s, opacity 0.5s, transform 0.3s;
+	transition: all 0.7s, opacity 0.5s, transform 0.3s;
+	text-align: right;
+	position: absolute;
+    top: 100%;
+    right: 0;
+	display: flex;
+}
+.cragPieKeyMarker {
+	-webkit-transition: all 0.7s, opacity 0.5s, transform 0.3s;
+	transition: all 0.7s, opacity 0.5s, transform 0.3s;
+    height: 20px;
+    width: 20px;
+	border-radius: 10px;
+	cursor: pointer;
+}
+.cragPieKeyLabel {
+    transition: opacity 0.5s;
+    -webkit-transition: opacity 0.5s;
+	padding-right: 8px;
+    font-family: 'Roboto';
+    white-space: nowrap;
+	font-size: 16px;
+	opacity: 0;
+}
+.cragPieWedgeLabel {
+	font-size: 1px;
+    transform: scale(0.09);
+    font-family: 'Roboto';
+    fill: #FFF;
+    font-weight: 200;
+}
