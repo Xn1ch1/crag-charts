@@ -19,7 +19,7 @@ class CragPie {
 				position: 'right'
 			}
 		}
-;
+
 		this.parent = null;
 		this.chartContainer = null;
 
@@ -45,8 +45,9 @@ class CragPie {
 		this.animationSpeed = 500;
 
 		this.keyHoverActive = false;
-		this.mouseMoving = false;
 		this.keyHoverDelay;
+		this.stoppedOn = null;
+		this.toolTipVisible = false;
 
 		// if (getContrastColor(this.options.chart.color) == '#FFFFFF') {
 		// 	this.palletOffset = 0;
@@ -115,6 +116,23 @@ class CragPie {
 		this.toolTip.label = document.createElement('h6');
 
 		this.chart.area.setAttribute('viewBox', '-1 -1 2 2');
+
+		self = this;
+
+		this.chart.area.addEventListener('mousemove', function() {
+			clearTimeout(self.stoppedMoving);
+			self.stoppedMoving = setTimeout(function() {
+				if (self.stoppedOn != null) {
+					self._showToolTip(self.stoppedOn);
+					self.toolTipVisible = true;
+				}
+			}, 300);
+			if (self.toolTipVisible) {
+				self.toolTipVisible = false;
+				clearTimeout(self.stoppedMoving);
+				self._hideToolTip(self.stoppedOn);
+			}
+		});
 
 		this.chartContainer.style.backgroundColor = pallet[this.options.chart.color];
 
@@ -261,19 +279,21 @@ class CragPie {
 				const key = this.chart.elements[index].key;
 
 				wedge.addEventListener('mouseover', function() {
-					clearTimeout(self.keyHoverDelay);
-					self.keyHoverActive = false;
-					self.keyHoverDelay = setTimeout(function() {
-						self.keyHoverActive = true;
-						self._showToolTip(index);
-					}, 350);
+					// clearTimeout(self.keyHoverDelay);
+					self.stoppedOn = index;
+					// self.keyHoverActive = false;
+					// self.keyHoverDelay = setTimeout(function() {
+					// 	self.keyHoverActive = true;
+					// 	self._showToolTip(index);
+					// }, 350);
 				});
 				wedge.addEventListener('mouseout', function() {
-					if (self.keyHoverActive) {
-						self._hideToolTip(index);
-					}
-					clearTimeout(self.keyHoverDelay);
-					self.keyHoverActive = false;
+					self.stoppedOn = null;
+					// if (self.keyHoverActive) {
+					// 	self._hideToolTip(index);
+					// }
+					// clearTimeout(self.keyHoverDelay);
+					// self.keyHoverActive = false;
 				});
 				// wedge.addEventListener('mousemove', function() {
 				// 	if (self.keyHoverActive) {
