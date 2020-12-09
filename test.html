@@ -7,9 +7,9 @@
 	<body style="background-color: rgb(34, 34, 34);">
 	<!-- <body> -->
 
+		<button onclick="chart.update(dataGenerator(10, 1, false, true, 12))">Random Data</button>
 		<div id="chart" style="width: 90%; height: 90%; margin: 0 auto;"></div>
 
-		<button onclick="chart.update(dataGenerator(10, 1, false, true, 12))">Random Data</button>
 
 	</body>
 
@@ -21,7 +21,7 @@
 
 			function createCharts() {
 				const options = {
-					data: [['A', 5], ['B', 25], ['C', 10], ['D', 1], ['E', 1]],
+					data: dataGenerator(10, 1, false, true, 12),
 					chart: {
 						color: 'almostblack'
 					}
