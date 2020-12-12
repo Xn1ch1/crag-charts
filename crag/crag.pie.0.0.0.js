@@ -49,13 +49,11 @@ class CragPie {
 		this.stoppedOn = null;
 		this.toolTipVisible = false;
 
-		// if (getContrastColor(this.options.chart.color) == '#FFFFFF') {
-		// 	this.palletOffset = 0;
-		// } else {
-		// 	this.palletOffset = 6;
-		// }
-
-		this.palletOffset = 0;
+		if (getContrastColor(this.options.chart.color) == '#FFFFFF') {
+			this.palletOffset = 6;
+		} else {
+			this.palletOffset = 0;
+		}
 
 		if (this.data.length > this.dataLimit) {
 			this.data = this.data.slice(0, this.dataLimit);
@@ -134,14 +132,11 @@ class CragPie {
 			}
 		});
 
-		this.chartContainer.style.backgroundColor = pallet[this.options.chart.color];
-
 		if (this.options.chart.title != null) {
 			this.chart.title = document.createElement('h1');
 			this.chart.title.className = 'cragPieTitleText';
 			this.chart.title.textContent = this.options.chart.title;
 			this.chart.titleArea.appendChild(this.chart.title);
-			this.chart.title.style.color = getContrastColor(this.options.chart.color);
 		}
 
 		this.chart.area.setAttribute('class', 'cragPieChart');
@@ -183,9 +178,21 @@ class CragPie {
 		let maxLabelLen = 0;
 		let cumulativeValue = 0;
 
-		this.toolTip.title.style.color = pallet[this.options.chart.color];
-		this.toolTip.value.style.color = pallet[this.options.chart.color];
-		this.toolTip.label.style.color = pallet[this.options.chart.color];
+		if (this.options.chart.title != null) {
+			this.chart.title.style.color = getContrastColor(this.options.chart.color);
+		}
+
+		this.chartContainer.style.backgroundColor = pallet[this.options.chart.color];
+
+		if (this.options.pie.hole == 0) {
+			this.toolTip.title.style.color = pallet[this.options.chart.color];
+			this.toolTip.value.style.color = pallet[this.options.chart.color];
+			this.toolTip.label.style.color = pallet[this.options.chart.color];
+		} else {
+			this.toolTip.title.style.color = getContrastColor(this.options.chart.color);
+			this.toolTip.value.style.color = getContrastColor(this.options.chart.color);
+			this.toolTip.label.style.color = getContrastColor(this.options.chart.color);
+		}
 
 		for (const [_, elements] of Object.entries(this.chart.elements)) {
 
@@ -214,10 +221,12 @@ class CragPie {
 		// setTimeout(function() {
 
 			for (const [_, element] of Object.entries(this.chart.elements)) {
-
-				element.wedge.setAttribute('fill', pallet.key(_));
-				element.key.marker.style.backgroundColor = pallet.key(_);
+				console.log(_ + this.palletOffset);
+				element.wedge.setAttribute('fill', pallet.key(parseInt(_) + this.palletOffset));
+				element.wedge.setAttribute('stroke',  pallet[this.options.chart.color]);
 				element.key.marker.style.opacity = 1;
+
+				element.key.marker.style.backgroundColor = pallet.key(parseInt(_) + this.palletOffset);
 
 				this._animateSector(element.degrees.start, element.degrees.end, element.degrees.oldStart, element.degrees.oldEnd, element.wedge, this.animationSpeed, this.options.pie.hole, 1);
 
@@ -231,6 +240,8 @@ class CragPie {
 
 				element.label.style.top = coords.y + (chartAreaHeight / 2) - (element.label.offsetHeight / 2) +  'px';
 				element.label.style.left = coords.x + (chartAreaWidth / 2) - (element.label.offsetWidth / 2) +  'px';
+				
+				element.label.style.color = pallet[this.options.chart.color];
 
 				if (element.percentage < 2) {
 					element.label.style.opacity = 0;
@@ -279,31 +290,11 @@ class CragPie {
 				const key = this.chart.elements[index].key;
 
 				wedge.addEventListener('mouseover', function() {
-					// clearTimeout(self.keyHoverDelay);
 					self.stoppedOn = index;
-					// self.keyHoverActive = false;
-					// self.keyHoverDelay = setTimeout(function() {
-					// 	self.keyHoverActive = true;
-					// 	self._showToolTip(index);
-					// }, 350);
 				});
 				wedge.addEventListener('mouseout', function() {
 					self.stoppedOn = null;
-					// if (self.keyHoverActive) {
-					// 	self._hideToolTip(index);
-					// }
-					// clearTimeout(self.keyHoverDelay);
-					// self.keyHoverActive = false;
 				});
-				// wedge.addEventListener('mousemove', function() {
-				// 	if (self.keyHoverActive) {
-				// 		setTimeout(function() {
-				// 			self.keyHoverActive = false;
-				// 			clearTimeout(self.keyHoverDelay);
-				// 			self._hideToolTip(index);
-				// 		}, 50);
-				// 	}
-				// });
 
 				key.key.addEventListener('mouseover', function() {
 					clearTimeout(self.keyHoverDelay);
@@ -318,7 +309,7 @@ class CragPie {
 						self._hideToolTip(index);
 					}
 					clearTimeout(self.keyHoverDelay);
-					self.keyHoverActive = false;
+					self.keyHoverActive = false;cragPieWedgeHover
 				});
 
 			}
@@ -363,7 +354,6 @@ class CragPie {
 			element.degrees.end = 360 / total * (sum + element.val);
 
 			element.label.textContent = (100 / total * element.val).toFixed(0) + '%';
-			element.label.style.color = getContrastColor(pallet.key(index));
 
 			element.key.label.style.color = getContrastColor(this.options.chart.color);
 
@@ -442,7 +432,6 @@ class CragPie {
 		const label = document.createElement('span');
 
 		label.classList.add('cragPieLabel');
-		label.style.color = pallet[this.options.chart.color];
 		label.style.opacity = 0;
 		label.textContent = 0;
 
@@ -462,7 +451,6 @@ class CragPie {
 
 		wedge.classList = 'cragPieWedge';
 		wedge.setAttribute("d", arc);
-		wedge.setAttribute('stroke',  pallet[this.options.chart.color]);
 		wedge.setAttribute('stroke-width', this.options.pie.gap);
 
 		this.chart.area.insertChildAtIndex(wedge, 0);
@@ -515,6 +503,9 @@ class CragPie {
 
 				setTimeout(function() {
 					element.wedge.classList.add('cragPieWedgeHover');
+					if (this.options.pie.hole == 0) {
+						element.wedge.style.transform = 'scale(1.05)';
+					}
 				}.bind(this), 0);
 
 			}
@@ -540,6 +531,9 @@ class CragPie {
 
 			if (index == i) {
 				element.wedge.classList.remove('cragPieWedgeHover');
+				if (this.options.pie.hole == 0) {
+					element.wedge.style.transform = 'scale(1)';
+				}
 				element.label.style.background = '';
 				this._animateSector(element.degrees.start, element.degrees.end, 0.001, 360, element.wedge, this.animationSpeed / 2, this.options.pie.hole, 1);
 			}
@@ -603,7 +597,6 @@ class CragPie {
 			titleExists = false;
 			this.chart.title = document.createElement('h1');
 			this.chart.title.className = 'cragComboTitleText';
-			this.chart.title.style.color = getContrastColor(this.options.chart.color);
 			this.chart.titleArea.appendChild(this.chart.title);
 
 			this.options.chart.title = value;
@@ -616,6 +609,22 @@ class CragPie {
 			this.draw();
 		}
 
+	}
+
+	/**
+	 * @param {any} value
+	 */
+	set color(value) {
+		if (pallet.hasOwnProperty(value)) {
+			this.options.chart.color = value;
+			console.log(getContrastColor(value));
+			if (getContrastColor(value) == '#FFFFFF') {
+				this.palletOffset = 6;
+			} else {
+				this.palletOffset = 0;
+			}
+			this.draw();
+		}
 	}
 
 }

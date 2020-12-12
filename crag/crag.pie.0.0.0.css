@@ -6,6 +6,7 @@
 	height: 100%;
 	width: 100%;
 	overflow: hidden;
+	transition: background-color 0.5s;
 }
 .cragPieTitle { grid-area: 1 / 1 / 2 / 4; }
 .cragPieLeftKey { grid-area: 2 / 1 / 4 / 2; }
@@ -38,12 +39,12 @@
 	height: 100%;
 }
 .cragPieWedge {
-	transition: opacity 0.5s, transform 0.5s;
-	-webkit-transition: opacity 0.5s, transform 0.5s;
+	transition: opacity 0.5s, transform 0.5s, fill 0.5s, stroke 0.5s;
+	-webkit-transition: opacity 0.5s, transform 0.5s, fill 0.5s, stroke 0.5s;
 	cursor: pointer;
 }
 .cragPieWedgeHover {
-	transform: scale(1.05);
+	/* transform: scale(1.05); */
 	stroke-width: 0 !important;
 	opacity: 0.9;
 }
@@ -81,7 +82,7 @@
 	color: #fff;
 	font-family: 'Roboto';
 	font-size: 14px;
-    font-weight: 200;
+    font-weight: 400;
 	transition: all 0.4s;
 }
 .cragPieToolTip {
