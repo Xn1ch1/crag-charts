@@ -1,7 +1,7 @@
 .cragPieChartContainer {
 	display: grid;
 	grid-template-columns: minmax(5%, auto) 1fr auto;
-	grid-template-rows: minmax(5%, auto) 1fr minmax(5%, auto);
+	grid-template-rows: minmax(5%, auto) minmax(0, 1fr) minmax(5%, auto);
 	gap: 0px 0px;
 	height: 100%;
 	width: 100%;

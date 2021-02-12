@@ -221,7 +221,6 @@ class CragPie {
 		// setTimeout(function() {
 
 			for (const [_, element] of Object.entries(this.chart.elements)) {
-				console.log(_ + this.palletOffset);
 				element.wedge.setAttribute('fill', pallet.key(parseInt(_) + this.palletOffset));
 				element.wedge.setAttribute('stroke',  pallet[this.options.chart.color]);
 				element.key.marker.style.opacity = 1;
@@ -617,7 +616,6 @@ class CragPie {
 	set color(value) {
 		if (pallet.hasOwnProperty(value)) {
 			this.options.chart.color = value;
-			console.log(getContrastColor(value));
 			if (getContrastColor(value) == '#FFFFFF') {
 				this.palletOffset = 6;
 			} else {
