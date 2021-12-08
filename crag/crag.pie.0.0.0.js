@@ -308,7 +308,7 @@ class CragPie {
 						self._hideToolTip(index);
 					}
 					clearTimeout(self.keyHoverDelay);
-					self.keyHoverActive = false;cragPieWedgeHover
+					self.keyHoverActive = false;
 				});
 
 			}

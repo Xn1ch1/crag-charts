@@ -1,0 +1,96 @@
+<html>
+
+	<head>
+
+		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+
+		<script src="resources/demo.js?v=2"></script>
+
+		<title>Crag Charts: Column</title>
+
+		<style>
+			body {
+				background-color: #FFFFFF;
+			}
+			button {
+				height: 25px;
+			}
+			.chart-container {
+				height: calc(100% - 25px);
+			}
+
+			@media screen and (prefers-color-scheme: dark) {
+				body {
+					background-color: #081b33;
+				}
+			}
+
+		</style>
+
+	</head>
+
+	<body>
+
+		<button onclick="newData()">Random Data</button>
+		<button onclick="newTitle()">Random Title</button>
+
+		<div id="column-chart" class="chart-container"></div>
+		
+		<script src="crag/crag.charts.loader.js?v=1"></script>
+		<script>
+
+			const themeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+			let chart;
+
+			crag.onLoadCallBack(createChart, ['column'], '/crag/');
+
+			function createChart() {
+
+				const background = themeQuery.matches ? '#081b33' : '#FFFFFF';
+
+				const options = {
+					data: [['A', -400], ['B', 500], ['C', 300], ['D', -25]],
+					bar: {
+						width: 95,
+						rounded: true
+					},
+					chart: {
+						title: 'Time Taken',
+						color: background
+					}
+				}
+				chart = new CragColumn(options).create('column-chart');
+
+			}
+
+			function newData() {
+
+				chart.update(dataGenerator(15));
+
+			}
+			
+			function newTitle() {
+
+				chart.title = randomName(20);
+
+			}
+
+			themeQuery.addEventListener('change', event => {
+				
+				if (themeQuery.matches) {
+
+					chart.chartColor = '#081b33';
+
+				} else {
+					
+					chart.chartColor = '#FFFFFF';
+
+				}
+				
+			});
+
+		</script>
+
+	</body>
+
+</html>

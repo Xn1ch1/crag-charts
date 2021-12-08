@@ -80,11 +80,13 @@ function dataGenerator(maxLen = 20, count = 1, decimal = false, drastic = false,
 
 	for (var i = 0; i < count; i++) {
 
-		let x = randomInt(10, 1000);
+		let x = randomInt(-1000, 1000);
 
-		minMaxes[i] = [x, randomInt(x, Math.max(x, 1) * randomInt(2, 10))];
+		minMaxes[i] = [randomInt(-2000, 2000), randomInt(-2000, 2000)];
 
 	}
+
+	console.log(minMaxes);
 
 	for (var i = 0; i < length; i++) {
 
@@ -96,7 +98,7 @@ function dataGenerator(maxLen = 20, count = 1, decimal = false, drastic = false,
 
 			if (decimal) x = x / factor;
 
-			if (drastic) x = x * randomInt(1, 20);
+			if (drastic) x = x * randomInt(2, 20);
 
 			series.push(x);
 

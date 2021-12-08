@@ -22,7 +22,7 @@ class CragColumn {
 				label: 'Series',
 				lines: true,
 				format: 'number',
-				min: 0
+				min: 'auto'
 			},
 			labels: {
 				position: 'none',
@@ -88,7 +88,7 @@ class CragColumn {
 				if (option.width != undefined && option.width > 0 && option.width < 101) {
 					this.options.bar.width = option.width;
 				}
-				if (option.color != undefined && pallet.hasOwnProperty(option.color)) {
+				if (option.color != undefined && isValidColor(option.color)) {
 					this.options.bar.color = option.color;
 				}
 				if (option.rounded != undefined && typeof option.rounded === 'boolean') {
@@ -128,7 +128,7 @@ class CragColumn {
 				if (option.title != undefined) {
 					this.options.chart.title = option.title;
 				}
-				if (option.color != undefined && pallet.hasOwnProperty(option.color)) {
+				if (option.color != undefined && isValidColor(option.color)) {
 					this.options.chart.color = option.color;
 				}
 				if (option.minorLines != undefined && typeof option.minorLines === 'boolean') {
@@ -179,8 +179,6 @@ class CragColumn {
 		this.toolTip.value = document.createElement('h6');
 		this.toolTip.label = document.createElement('h6');
 
-		this.chartContainer.style.backgroundColor = pallet[this.options.chart.color];
-
 		if (this.options.chart.title != null) {
 			this.chart.title = document.createElement('h1');
 			this.chart.title.className = 'cragColumnTitleText';
@@ -223,8 +221,18 @@ class CragColumn {
 
 		setTimeout(this.draw.bind(this), 500);
 
+		this.applyListeners();
+
 		return this;
 
+	}
+
+	applyListeners() {
+
+		const self = this;
+
+		window.addEventListener('resize', () => self.draw());
+	
 	}
 
 	draw() {
@@ -243,6 +251,10 @@ class CragColumn {
 		const barMin = t.options.vAxis.min == 'auto' ? t.vAxis.min : t.options.vAxis.min;
 		const barHeight = chartAreaHeight / (t.vAxis.max - barMin);
 
+		const zeroLine = t.vAxis.min >= 0 ? 0 : chartAreaHeight * Math.abs(t.vAxis.min / (t.vAxis.max - t.vAxis.min));
+
+		const spaceAboveZero = chartAreaHeight - zeroLine;
+
 		t.vAxis.area.style.width = vAxisWidth + 'px';
 
 		for (const [index, elements] of Object.entries(t.hAxis.elements)) {
@@ -254,9 +266,9 @@ class CragColumn {
 		}
 
 		t.toolTip.container.style.backgroundColor = getContrastColor(this.options.chart.color);
-		t.toolTip.title.style.color = pallet[this.options.chart.color];
-		t.toolTip.value.style.color = pallet[this.options.chart.color];
-		t.toolTip.label.style.color = pallet[this.options.chart.color];
+		t.toolTip.title.style.color = resolveColor(this.options.chart.color);
+		t.toolTip.value.style.color = resolveColor(this.options.chart.color);
+		t.toolTip.label.style.color = resolveColor(this.options.chart.color);
 
 		for (const [index, elements] of Object.entries(t.chart.elements)) {
 
@@ -312,11 +324,36 @@ class CragColumn {
 
 			}
 
+			bar.style.bottom = zeroLine + 'px';
 			bar.style.width = barWidth + 'px';
-			bar.style.height = barHeight * (value - barMin) + 'px';
 			bar.style.left = (seriesItemWidth * index) + (gapWidth / 2) + 'px';
 
+			if (value < 0) {
+		
+				/**
+				 * Negative bars, invert the bar on the bottom of the element so it points down
+				 */
+				bar.style.height = `${(value / barMin) * zeroLine}px`;
+				bar.style.transformOrigin = 'bottom';
+				bar.style.transform = 'scaleY(-1)';
+
+			} else {
+				
+				// bar.style.height = `${value / t.vAxis.max * (chartAreaHeight - zeroLine)}px`;
+				bar.style.height = `${(1 - (t.vAxis.max - value) / (t.vAxis.max - Math.max(t.vAxis.min, 0))) * spaceAboveZero}px`;
+				// bar.style.height = barHeight * (value - barMin) + 'px';
+				bar.style.transform = 'scaleY(1)';
+			
+			}
+
 		}
+
+	}
+
+	colorize() {
+
+		this.chartContainer.style.backgroundColor = resolveColor(this.options.chart.color);
+		this.chart.title.style.color = getContrastColor(this.options.chart.color);
 
 	}
 
@@ -374,6 +411,7 @@ class CragColumn {
 			}
 
 		} else if (sE > sL) {
+			
 			for (let i = 0; i < sE - sL; i++) {
 
 				const index = i + sL;
@@ -407,15 +445,21 @@ class CragColumn {
 		}
 
 		for (let i = 0; i < t.data.series.length; i++) {
+			
 			t.chart.elements[i].name = t.data.series[i][0];
 			t.chart.elements[i].value = t.data.series[i][1];
 			t.chart.elements[i].text = formatLabel(t.data.series[i][1], t.options.vAxis.format, t.data.max);
+			
 			t.hAxis.elements[i].label.textContent = t.data.series[i][0];
 			t.hAxis.elements[i].text = t.data.series[i][0];
+
 			if (t.chart.elements[i].label != null) {
+			
 				t.chart.elements[i].label.textContent = t.chart.elements[i].text;
 				t.hAxis.elements[i].label.textContent = t.data.series[i][0];
+			
 			}
+
 		}
 
 	}
@@ -438,18 +482,20 @@ class CragColumn {
 		}
 
 		if (t.vAxis.baseLine == null) {
+
 			let major = document.createElement('div');
 				major.className = 'cragColumnAxisLineMajor';
 				major.style.bottom = 0 + 'px';
 				major.style.right = 0 + 'px';
 				major.style.backgroundColor = getContrastColor(this.options.chart.color);
-			if (major != null) {
-				t.chart.gridArea.appendChild(major);
-			}
+				
+			if (major != null) t.chart.gridArea.appendChild(major);
+		
 			t.vAxis.baseLine = major;
 		}
 
 		if (t.vAxis.baseValue == null) {
+
 			var label = document.createElement('span');
 				label.className = 'cragColumnVAxisLabel';
 				label.textContent = '0';
@@ -457,6 +503,7 @@ class CragColumn {
 				label.style.color = getContrastColor(this.options.chart.color);
 			t.vAxis.area.appendChild(label);
 			t.vAxis.baseValue = label;
+		
 		}
 
 		if (t.options.vAxis.format == 'time') {
@@ -495,6 +542,7 @@ class CragColumn {
 				let minor = null;
 
 				if (t.options.vAxis.lines) {
+
 					major = document.createElement('div');
 					major.className = 'cragColumnAxisLineMajor';
 					major.style.bottom = '100%';
@@ -579,23 +627,57 @@ class CragColumn {
 		const vAxisMajorLineHeight = (t.vAxis.area.offsetHeight - t.hAxis.area.offsetHeight - t.chart.titleArea.offsetHeight) * (scale.maj / (scale.max - scale.min));
 		const vAxisMinorLineHeight = vAxisMajorLineHeight / 2;
 
+		if (t.vAxis.min >= 0) {
+
+			t.vAxis.baseLine.style.opacity = "1";
+			t.vAxis.baseLine.style.height = "2px";
+	
+		} else {
+	
+			t.vAxis.baseLine.style.opacity = "";
+			t.vAxis.baseLine.style.height = "";
+	
+		}
+
 		for (const [index, elems] of Object.entries(t.vAxis.elements)) {
 
 			let majorLineHeight = (vAxisMajorLineHeight * (parseInt(index) + 1));
 			let minorLineHeight = majorLineHeight - vAxisMinorLineHeight;
 
+			elems.label.style.color = getContrastColor(this.options.chart.color);
 			elems.label.style.bottom = majorLineHeight + t.hAxis.area.offsetHeight - (elems.label.offsetHeight / 2) + 'px';
 			elems.label.textContent = formatLabel((scale.maj * (parseInt(index) + 1)) + scale.min, t.options.vAxis.format, t.data.max);
 
 			if (elems.majorLine != null) {
+
+				elems.majorLine.style.backgroundColor = getContrastColor(this.options.chart.color);
 				elems.majorLine.style.bottom = majorLineHeight - elems.majorLine.offsetHeight + 'px';
+
+				if ((scale.maj * (parseInt(index) + 1) + scale.min) == 0) {
+
+					elems.majorLine.style.height = "2px";
+					elems.majorLine.style.opacity = "1";
+
+				} else {
+
+					elems.majorLine.style.height = "";
+					elems.majorLine.style.opacity = "";
+
+				}
+			
 			}
+
 			if (elems.minorLine != null) {
+
+				elems.minorLine.style.backgroundColor = getContrastColor(this.options.chart.color);
 				elems.minorLine.style.bottom = minorLineHeight - elems.minorLine.offsetHeight + 'px';
+
 			}
 
 			if (elems.label.offsetWidth > vAxisWidth) {
+
 				vAxisWidth = elems.label.offsetWidth;
+
 			}
 
 		}
@@ -755,6 +837,9 @@ class CragColumn {
 
 	}
 
+	/**
+	 * @param {any} data
+	 */
 	update(data) {
 
 		if (data.length > 20) {
@@ -768,30 +853,36 @@ class CragColumn {
 	}
 
 	/**
-	 * @param {any} value
+	 * @description Sets a new title in the chart. Creates the title element if not already present.
+	 * @param {string} value
 	 */
 	set title(value) {
 
-		let titleExists = true;
-
 		if (this.chart.title == null) {
 
-			titleExists = false;
 			this.chart.title = document.createElement('h1');
 			this.chart.title.className = 'cragComboTitleText';
 			this.chart.title.style.color = getContrastColor(this.options.chart.color);
 			this.chart.titleArea.appendChild(this.chart.title);
 
-			this.options.chart.title = value;
-
 		}
+		
+		this.options.chart.title = value;
 
-		this.title.textContent = this.options.chart.title;
+		this.chart.title.textContent = this.options.chart.title;
 
-		if (!titleExists) {
-			this.draw();
-		}
+		this.draw();
 
+	}
+
+	/**
+	 * @param {string} color
+	 */
+	set chartColor(color) {
+
+		if (isValidColor(color)) this.options.chart.color = color;
+
+		this.draw();
 
 	}
 

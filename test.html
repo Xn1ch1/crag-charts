@@ -13,38 +13,35 @@
 		<button onClick="chart.color='almostblack';document.body.style.backgroundColor='#222222'"on>Dark</button>
 		<div id="chart" style="width: 90%; height: 90%; margin: 0 auto;"></div>
 
-		<style>
-			body {
-				transition: background-color 0.5s;
-			}
-		</style>
+<style>
+	body {
+		transition: background-color 0.5s;
+	}
+</style>
 
 	</body>
 
 	<script src="crag/crag.charts.loader.js?v=1"></script>
-		<script>
+	<script>
 
-			let chart;
-			crag.onLoadCallBack(createCharts, ['pie'], '/crag/');
+		let chart;
+		crag.onLoadCallBack(createCharts, ['pie'], '/crag/');
 
-			function createCharts() {
-				const options = {
-					data: dataGenerator(10, 1, false, true, 12),
-					chart: {
-						color: 'white'
-					},
-					pie: {
-						hole: 0
-					}
+		function createCharts() {
+			const options = {
+				data: dataGenerator(10, 1, false, true, 12),
+				pie: {
+					// hole: 50
 				}
-				chart = new CragPie(options).create('chart');
 			}
+			chart = new CragPie(options).create('chart');
+		}
 
 
-			window.onresize = function() {
-				chart.draw();
-			}
+		window.onresize = function() {
+			chart.draw();
+		}
 
-		</script>
+	</script>
 
 </html>

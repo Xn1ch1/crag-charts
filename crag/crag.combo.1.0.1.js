@@ -196,7 +196,7 @@ class CragCombo {
 					if (option.lines != undefined && typeof option.lines === 'boolean') {
 						this.options.vAxes[0].lines = option.lines;
 					}
-					if (option.format != undefined && ['number', 'decimal', 'time'].indexOf(option.format) >= 0) {
+					if (option.format != undefined && ['number', 'decimal', 'time', 'currency'].indexOf(option.format) >= 0) {
 						this.options.vAxes[0].format = option.format;
 					}
 					if (option.min != undefined && (option.min == 'auto' || !isNaN(option.min))) {
@@ -214,10 +214,10 @@ class CragCombo {
 					if (option.lines != undefined && typeof option.lines === 'boolean') {
 						this.options.vAxes[1].lines = option.lines;
 					}
-					if (option.format != undefined && ['number', 'decimal', 'time'].indexOf(option.format) >= 0) {
+					if (option.format != undefined && ['number', 'decimal', 'time', 'currency'].indexOf(option.format) >= 0) {
 						this.options.vAxes[1].format = option.format;
 					}
-					if (option.min != undefined && (option.min == 'auto' || !isNaN(option.min))) {
+					if (option.min != undefined && (['auto', 'normalize'].indexOf(option.min) >= 0 || !isNaN(option.min))) {
 						this.options.vAxes[1].min = option.min;
 					}
 
@@ -320,20 +320,39 @@ class CragCombo {
 
 		t._addRemoveSeriesElems();
 
-		let vAxisWidth = [0, 0]
-
-		vAxisWidth[0] = t._createVAxis(0);
-		vAxisWidth[1] = t._createVAxis(1);
+		const vAxisWidth = [t._createVAxis(0), t._createVAxis(1, t.options.vAxes[1].min != 'normalize')];
 
 		const chartAreaWidth = t.chartContainer.offsetWidth - vAxisWidth[0] - vAxisWidth[1];
 		const chartAreaHeight = t.chart.area.offsetHeight;
 		const seriesItemWidth = chartAreaWidth / t.data.series.length;
 		const barWidth = seriesItemWidth * (t.options.bar.width / 100);
 		const gapWidth = seriesItemWidth - barWidth;
-		const barMin = t.options.vAxes[0].min == 'auto' ? t.vAxes[0].min : t.options.vAxes[0].min;
-		const pointMin = t.options.vAxes[1].min == 'auto' ? t.vAxes[1].min : t.options.vAxes[1].min;
-		const barHeight = chartAreaHeight / (t.vAxes[0].max - barMin);
-		const pointHeight = chartAreaHeight / (t.vAxes[1].max - pointMin);
+
+		let barMin;
+		let pointMin;
+		let barHeight;
+		let pointHeight;
+
+		if (t.options.vAxes[1].min == 'normalize') {
+
+			const normalMin = Math.min(
+				t.options.vAxes[0].min == 'auto' ? t.vAxes[0].min : t.options.vAxes[0].min,
+				t.options.vAxes[1].min == 'auto' || t.options.vAxes[1].min == 'normalize' ? t.vAxes[1].min : t.options.vAxes[1].min
+			)
+
+			barMin = normalMin;
+			pointMin = normalMin;
+			barHeight = chartAreaHeight / (t.vAxes[0].max - normalMin);
+			pointHeight = chartAreaHeight / (t.vAxes[1].max - normalMin);
+
+		} else {
+
+			barMin = t.options.vAxes[0].min == 'auto' ? t.vAxes[0].min : t.options.vAxes[0].min;
+			pointMin = t.options.vAxes[1].min == 'auto' ? t.vAxes[1].min : t.options.vAxes[1].min == 'normalize' ? barMin : t.options.vAxes[1].min;
+			barHeight = chartAreaHeight / (t.vAxes[0].max - barMin);
+			pointHeight = t.options.vAxes[1].min == 'normalize' ? barHeight : chartAreaHeight / (t.vAxes[1].max - pointMin);
+
+		}
 
 
 		t.toolTip.container.style.backgroundColor = getContrastColor(t.options.chart.color);
@@ -635,11 +654,12 @@ class CragCombo {
 				t.chart.elements[i].label.textContent = t.chart.elements[i].texts[0];
 				t.hAxis.elements[i].label.textContent = t.data.series[i][0];
 			}
+
 		}
 
 	}
 
-	_createVAxis(axis) {
+	_createVAxis(axis, showAxis = true) {
 
 		const t = this;
 		const aE = ObjectLength(t.vAxes[axis].elements);
@@ -650,8 +670,8 @@ class CragCombo {
 
 		t._setMax();
 
-		if (t.options.vAxes[axis].min == 'auto') {
-			axisMin = this.data.min[axis];
+		if (t.options.vAxes[axis].min == 'auto' || t.options.vAxes[1].min == 'normalize') {
+			axisMin = Math.min(this.data.min[0], this.data.min[1]);
 		} else {
 			axisMin = t.options.vAxes[axis].min
 		}
@@ -692,134 +712,146 @@ class CragCombo {
 				timeRounding = 86400;
 			}
 
-			scale = calculateScale(axisMin, t.data.max[axis], timeRounding);
+			if (t.options.vAxes[1].min == 'normalize') {
+				scale = calculateScale(axisMin, Math.max(t.data.max[0], t.data.max[1]), timeRounding);
+			} else {
+				scale = calculateScale(axisMin, t.data.max[axis], timeRounding);
+			}
 
 		} else {
 
-			scale = calculateScale(axisMin, t.data.max[axis], 10);
+			if (t.options.vAxes[1].min == 'normalize') {
+				scale = calculateScale(axisMin, Math.max(t.data.max[0], t.data.max[1]), 10);
+			} else {
+				scale = calculateScale(axisMin, t.data.max[axis], 10);
+			}
 
 		}
 
 		t.vAxes[axis].max = scale.max;
 		t.vAxes[axis].min = scale.min;
 
-		if (scale.steps > aE) {
+		if (showAxis) {
+			if (scale.steps > aE) {
 
-			let x = scale.steps - aE;
+				let x = scale.steps - aE;
 
-			for (let i = 0; i < x; i++) {
+				for (let i = 0; i < x; i++) {
 
-				let b = i + aE;
-				let major = null;
-				let minor = null;
+					let b = i + aE;
+					let major = null;
+					let minor = null;
 
-				if (t.options.vAxes[axis].lines) {
-					major = document.createElement('div');
-					major.className = 'cragComboAxisLineMajor';
-					major.style.bottom = '100%';
-					major.style.right = 0 + 'px';
-					major.style.backgroundColor = getContrastColor(this.chartContainer.style.backgroundColor);
+					if (t.options.vAxes[axis].lines) {
+						major = document.createElement('div');
+						major.className = 'cragComboAxisLineMajor';
+						major.style.bottom = '100%';
+						major.style.right = 0 + 'px';
+						major.style.backgroundColor = getContrastColor(this.chartContainer.style.backgroundColor);
 
-					if (t.options.chart.minorLines) {
-						minor = document.createElement('div');
-						minor.className = 'cragComboAxisLineMinor';
-						minor.style.bottom = '100%';
-						minor.style.backgroundColor = getContrastColor(this.chartContainer.style.backgroundColor);
+						if (t.options.chart.minorLines) {
+							minor = document.createElement('div');
+							minor.className = 'cragComboAxisLineMinor';
+							minor.style.bottom = '100%';
+							minor.style.backgroundColor = getContrastColor(this.chartContainer.style.backgroundColor);
+						}
 					}
-				}
 
-				var label = document.createElement('span');
-					label.className = 'cragComboVAxisLabel' + axis;
-					label.style.bottom = '100%';
-					label.textContent = '0';
-					label.style.color = getContrastColor(this.chartContainer.style.backgroundColor);
+					var label = document.createElement('span');
+						label.className = 'cragComboVAxisLabel' + axis;
+						label.style.bottom = '100%';
+						label.textContent = '0';
+						label.style.color = getContrastColor(this.chartContainer.style.backgroundColor);
 
-				t.vAxes[axis].elements[b] = {
-					majorLine: major,
-					minorLine: minor,
-					label: label
-				};
+					t.vAxes[axis].elements[b] = {
+						majorLine: major,
+						minorLine: minor,
+						label: label
+					};
 
-				if (major != null) {
-					t.chart.gridArea.appendChild(major);
-				}
-				if (minor != null) {
-					t.chart.gridArea.appendChild(minor);
-				}
-
-				t.vAxes[axis].area.appendChild(label);
-
-			}
-
-		} else if (scale.steps < aE) {
-
-			let x = aE - scale.steps;
-
-			for (let i = 0; i < x; i++) {
-
-				let b = i + scale.steps;
-
-				let major = t.vAxes[axis].elements[b].majorLine;
-				let minor = t.vAxes[axis].elements[b].minorLine;
-				let label = t.vAxes[axis].elements[b].label;
-
-				label.style.opacity = 0;
-				label.style.bottom = '100%';
-
-				if (major != null) {
-					major.style.opacity = 0;
-					major.style.bottom = '100%';
-				}
-
-				if (minor != null) {
-					minor.style.opacity = 0;
-					minor.style.bottom = '100%';
-				}
-
-				setTimeout(function() {
-					label.remove();
 					if (major != null) {
-						major.remove();
+						t.chart.gridArea.appendChild(major);
 					}
 					if (minor != null) {
-						minor.remove();
+						t.chart.gridArea.appendChild(minor);
 					}
-				}, 700);
 
-				delete t.vAxes[axis].elements[b];
+					t.vAxes[axis].area.appendChild(label);
+
+				}
+
+			} else if (scale.steps < aE) {
+
+				let x = aE - scale.steps;
+
+				for (let i = 0; i < x; i++) {
+
+					let b = i + scale.steps;
+
+					let major = t.vAxes[axis].elements[b].majorLine;
+					let minor = t.vAxes[axis].elements[b].minorLine;
+					let label = t.vAxes[axis].elements[b].label;
+
+					label.style.opacity = 0;
+					label.style.bottom = '100%';
+
+					if (major != null) {
+						major.style.opacity = 0;
+						major.style.bottom = '100%';
+					}
+
+					if (minor != null) {
+						minor.style.opacity = 0;
+						minor.style.bottom = '100%';
+					}
+
+					setTimeout(function() {
+						label.remove();
+						if (major != null) {
+							major.remove();
+						}
+						if (minor != null) {
+							minor.remove();
+						}
+					}, 700);
+
+					delete t.vAxes[axis].elements[b];
+
+				}
+			}
+
+			t.vAxes[axis].baseValue.textContent = formatLabel(scale.min, t.options.vAxes[axis].format, t.data.max[axis]);
+			t.vAxes[axis].baseValue.style.bottom = t.hAxis.area.offsetHeight - (t.vAxes[axis].baseValue.offsetHeight / 2) + 'px';
+
+			const vAxisMajorLineHeight = (t.vAxes[axis].area.offsetHeight - t.hAxis.area.offsetHeight - t.chart.titleArea.offsetHeight) * (scale.maj / (scale.max - scale.min));
+			const vAxisMinorLineHeight = vAxisMajorLineHeight / 2;
+
+			for (const [index, elems] of Object.entries(t.vAxes[axis].elements)) {
+
+				let majorLineHeight = (vAxisMajorLineHeight * (parseInt(index) + 1));
+				let minorLineHeight = majorLineHeight - vAxisMinorLineHeight;
+
+				elems.label.style.bottom = majorLineHeight + t.hAxis.area.offsetHeight - (elems.label.offsetHeight / 2) + 'px';
+				elems.label.textContent = formatLabel((scale.maj * (parseInt(index) + 1)) + scale.min, t.options.vAxes[axis].format, t.data.max[axis]);
+
+				if (elems.majorLine != null) {
+					elems.majorLine.style.bottom = majorLineHeight - elems.majorLine.offsetHeight + 'px';
+				}
+				if (elems.minorLine != null) {
+					elems.minorLine.style.bottom = minorLineHeight - elems.minorLine.offsetHeight + 'px';
+				}
+
+				if (elems.label.offsetWidth > vAxisWidth) {
+					vAxisWidth = elems.label.offsetWidth;
+				}
 
 			}
+
+			return vAxisWidth + 2;
 
 		}
 
-		t.vAxes[axis].baseValue.textContent = formatLabel(scale.min, t.options.vAxes[axis].format, t.data.max[axis]);
-		t.vAxes[axis].baseValue.style.bottom = t.hAxis.area.offsetHeight - (t.vAxes[axis].baseValue.offsetHeight / 2) + 'px';
-
-		const vAxisMajorLineHeight = (t.vAxes[axis].area.offsetHeight - t.hAxis.area.offsetHeight - t.chart.titleArea.offsetHeight) * (scale.maj / (scale.max - scale.min));
-		const vAxisMinorLineHeight = vAxisMajorLineHeight / 2;
-
-		for (const [index, elems] of Object.entries(t.vAxes[axis].elements)) {
-
-			let majorLineHeight = (vAxisMajorLineHeight * (parseInt(index) + 1));
-			let minorLineHeight = majorLineHeight - vAxisMinorLineHeight;
-
-			elems.label.style.bottom = majorLineHeight + t.hAxis.area.offsetHeight - (elems.label.offsetHeight / 2) + 'px';
-			elems.label.textContent = formatLabel((scale.maj * (parseInt(index) + 1)) + scale.min, t.options.vAxes[axis].format, t.data.max[axis]);
-
-			if (elems.majorLine != null) {
-				elems.majorLine.style.bottom = majorLineHeight - elems.majorLine.offsetHeight + 'px';
-			}
-			if (elems.minorLine != null) {
-				elems.minorLine.style.bottom = minorLineHeight - elems.minorLine.offsetHeight + 'px';
-			}
-
-			if (elems.label.offsetWidth > vAxisWidth) {
-				vAxisWidth = elems.label.offsetWidth;
-			}
-
-		}
-
-		return vAxisWidth + 2;
+		return 0;
 
 	}
 
@@ -1062,5 +1094,23 @@ class CragCombo {
 
 
 	}
+
+	/**
+	 * @param {any} value
+	 */
+	 set primaryLabel(label) {
+
+		this.options.vAxes[0].label = label;
+
+	}
+
+	/**
+	* @param {any} value
+	*/
+   set secondaryLabel(label) {
+
+	   this.options.vAxes[1].label = label;
+
+   }
 
 }

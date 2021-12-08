@@ -43,8 +43,33 @@ const pallet = {
 	}
 };
 
-function validColor(col) {
+function isPalletColor(col) {
 	return pallet.hasOwnProperty(col);
+}
+
+function isValidHexColor(hexCode) {
+
+	return /^#[0-9A-F]{6}$/i.test(hexCode);
+
+}
+
+function isValidColor(colorValue) {
+
+	if (isPalletColor(colorValue)) return true;
+	if (isValidHexColor(colorValue)) return true;
+
+	return false;
+
+}
+
+function resolveColor(value) {
+
+	if (isPalletColor(value)) return pallet[value];
+
+	if (isValidHexColor(value)) return value;
+	
+	return '#FFFFFF';
+
 }
 
 function formatLabel(value, type = 'number', max = 0) {
@@ -311,9 +336,7 @@ function getContrastYIQ(color){
 
 function getContrastColor(color) {
 
-	if (pallet.hasOwnProperty(color)) {
-		color = pallet[color];
-	}
+	color = resolveColor(color);
 
 	let r, g, b;
 
