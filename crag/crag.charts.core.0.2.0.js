@@ -38,7 +38,7 @@ const pallet = {
 	white: '#FFFFFF',
 	multi: null,
 	match: null,
-	positiveNeagative: null,
+	positiveNegative: null,
 	key: function(n) {
 		return this[Object.keys(this)[n]];
 	}
@@ -58,10 +58,7 @@ function isValidColor(colorValue) {
 
 	if (isPalletColor(colorValue)) return true;
 
-	console.log(colorValue);
-	if (isValidHexColor(colorValue)) return true;
-
-	return false;
+	return isValidHexColor(colorValue);
 
 }
 
