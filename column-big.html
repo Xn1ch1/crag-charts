@@ -1,4 +1,4 @@
-<html>
+<html lang="">
 
 	<head>
 
@@ -12,7 +12,7 @@
 			body {
 				background-color: #FFFFFF;
 			}
-			button {
+			button, select {
 				height: 25px;
 			}
 			.chart-container {
@@ -33,6 +33,18 @@
 
 		<button onclick="newData()">Random Data</button>
 		<button onclick="newTitle()">Random Title</button>
+		<select onchange="newBarColor(this)">
+			<option value="multi">Bar Color (Default: Multi)</option>
+			<option value="positiveNegative">Red/Green</option>
+			<option value="orange">Orange</option>
+			<option value="green">Green</option>
+			<option value="blue">Blue</option>
+		</select>
+		<select onchange="newLabelPos(this)">
+			<option value="none">Column Label Position (Default: None)</option>
+			<option value="inside">Inside</option>
+			<option value="outside">Outside</option>
+		</select>
 
 		<div id="column-chart" class="chart-container"></div>
 		
@@ -42,7 +54,7 @@
 			const themeQuery = window.matchMedia('(prefers-color-scheme: dark)');
 			let chart;
 
-			crag.onLoadCallBack(createChart, ['column'], '/crag/');
+			new CragLoader(['column'], '/crag/', createChart);
 
 			function createChart() {
 
@@ -52,16 +64,25 @@
 					data: [['A', -400], ['B', 500], ['C', 300], ['D', -25]],
 					bar: {
 						width: 95,
-						color: 'positiveNeagative',
 						rounded: true,
 						inset: true,
 					},
+					labels: {
+						color: 'match'
+					},
 					chart: {
-						title: 'Time Taken',
 						color: background
 					}
 				}
 				chart = new CragColumn(options).create('column-chart');
+
+				console.log(chart);
+
+			}
+
+			function newBarColor(elem) {
+
+				chart.barColor = elem.value;
 
 			}
 
@@ -70,10 +91,16 @@
 				chart.update(dataGenerator(15));
 
 			}
-			
+
 			function newTitle() {
 
 				chart.title = randomName(20);
+
+			}
+
+			function newLabelPos(elem) {
+
+				chart.labelPosition = elem.value;
 
 			}
 
