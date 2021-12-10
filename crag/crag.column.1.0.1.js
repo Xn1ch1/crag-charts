@@ -171,15 +171,14 @@ class DataPoint {
 	positionColumn(bottom, left, width) {
 
 		/**
-		 * Subtract 1 from the bottom property when the bar is negative. This will allow it to sit below the zero line
+		 * Only set bottom on positive values as negative columns are done after height
 		 */
-		if (this.value < 0) {
+		if (this.value >= 0) {
 
-			this.column.style.bottom = `${bottom + 1.5}px`;
-
-		} else {
-
-			this.column.style.bottom = `${bottom}px`;
+			/**
+			 * Adding 2px to cover the height of the zero line on the vAxis
+			 */
+			this.column.style.bottom = `${bottom + 2}px`;
 
 		}
 
@@ -192,12 +191,23 @@ class DataPoint {
 
 		if (this.value < 0) {
 
-			this.columnProperties.height = negativeSpace / min * this.value - 1;
+			this.columnProperties.height = negativeSpace / min * this.value;
+
+			/**
+			 * When value is negative, the bottom is the height less the negative space
+			 * This will put it just below the zero line. It is then inverted to compensate
+			 * for rounded bars TODO: Invert rounding maybe?
+			 */
+			this.column.style.bottom = `${negativeSpace - this.columnProperties.height}px`;
 			this.column.style.transform = 'scaleY(-1)';
 
 		} else {
 
-			this.columnProperties.height = positiveSpace / max * this.value - 1;
+			/**
+			 * Subtract 2 from the height on positive to compensate for the two added in
+			 * bottom property. Also reset invert in case bar was previously inverted
+			 */
+			this.columnProperties.height = positiveSpace / max * this.value - 2;
 			this.column.style.transform = 'scaleY(1)';
 
 		}
