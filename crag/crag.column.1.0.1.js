@@ -64,6 +64,8 @@ class DataPoint {
 
 	_positionColumnLabel(width, zeroLine, positiveSpace, negativeSpace, max, min) {
 
+		console.log(width, this.columnLabel.offsetWidth);
+
 		this.columnLabel.style.width = 'auto';
 
 		/**
@@ -76,7 +78,15 @@ class DataPoint {
 
 		} else {
 
-			this.columnLabel.style.opacity = '1';
+			if (this.columnLabelOption.position === 'none') {
+
+				this.columnLabel.style.opacity = '0';
+
+			} else {
+
+				this.columnLabel.style.opacity = '1';
+
+			}
 
 		}
 
@@ -226,12 +236,8 @@ class DataPoint {
 		this.axisLabel.style.opacity = '0';
 		this.axisLabel.style.left = '100%';
 
-		if (this.columnLabel != null) {
-
-			this.columnLabel.style.opacity = '0';
-			this.columnLabel.style.left = '100%';
-
-		}
+		this.columnLabel.style.opacity = '0';
+		this.columnLabel.style.left = '100%';
 
 		setTimeout(() => {
 
@@ -711,7 +717,7 @@ class CragColumn extends CragCore {
 		this._colorize();
 
 	}
-	
+
 	/**
 	 * Applies coloring to the chart
 	 * @private
@@ -753,17 +759,6 @@ class CragColumn extends CragCore {
 			} else {
 
 				point.columnColor = this._getColorByMode('match', this.options.columns.color);
-
-			}
-
-			if (this.options.labels.position === 'none') {
-
-				point.columnLabel.style.opacity = '0';
-				continue;
-
-			} else {
-
-				point.columnLabel.style.opacity = '1';
 
 			}
 
@@ -874,10 +869,14 @@ class CragColumn extends CragCore {
 			/**
 			 * Append elements to DOM
 			 */
-			if (point.columnLabel != null) this.chart.labelArea.appendChild(point.columnLabel);
-
 			this.chart.columnArea.appendChild(point.column);
 			this.hAxis.area.appendChild(point.axisLabel);
+			this.chart.labelArea.appendChild(point.columnLabel);
+
+			/**
+			 * Apply formatting to column label and append
+			 */
+			point.columnLabel.textContent = formatLabel(point.value, this.options.vAxis.format, this.vAxis.max);
 
 		}
 
