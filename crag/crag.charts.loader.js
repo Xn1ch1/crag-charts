@@ -35,7 +35,7 @@ class CragLoader {
 	 * @param path
 	 * @param _callback
 	 */
-	constructor(charts, path, _callback) {
+	constructor(charts, _callback, path) {
 
 		/**
 		 * Use specified path if provided
