@@ -38,7 +38,7 @@ const pallet = {
 	white: '#FFFFFF',
 	multi: null,
 	match: null,
-	positiveNeagative: null,
+	positiveNegative: null,
 	key: function(n) {
 		return this[Object.keys(this)[n]];
 	}
@@ -58,10 +58,7 @@ function isValidColor(colorValue) {
 
 	if (isPalletColor(colorValue)) return true;
 
-	console.log(colorValue);
-	if (isValidHexColor(colorValue)) return true;
-
-	return false;
+	return isValidHexColor(colorValue);
 
 }
 
@@ -110,146 +107,205 @@ function calculateScale(min, max, base) {
 	let scalar = 0.2;
 	let xSteps = 0;
 
-	if (min == max) {
-		min--;
-	}
+	if (min === max) min--;
 
-	if (min == 0) {
+	if (min === 0) {
+
 		pMin = 0;
+
 	} else if (min > 0) {
-		pMin = Math.max(0, min - (max - min) / 100).toFixed(5);
+
+		pMin = Math.max(0, min - (max - min) / 100)
+
 	} else {
-		pMin = (min - (max-min) / 100).toFixed(5);
-	}
-	if (max == 0) {
-		if (min == 0) {
-			pMax = 1;
-		} else {
-			pMax = 0;
-		}
-	} else if (max < 0) {
-		pMax = Math.min(max + (max - min) / 100).toFixed(5);
-	} else {
-		pMax = (max + (max - min) / 100).toFixed(5);
+
+		pMin = min - (max-min) / 100;
+
 	}
 
-	power = (Math.log(pMax - pMin) / Math.log(base)).toFixed(5);
-	factor = (Math.pow(base, (power - Math.floor(power)))).toFixed(5);
+	if (max === 0) {
+
+		if (min === 0) {
+
+			pMax = 1;
+
+		} else {
+
+			pMax = 0;
+
+		}
+
+	} else if (max < 0) {
+
+		pMax = Math.min(max + (max - min) / 100).toFixed(5);
+
+	} else {
+
+		pMax = (max + (max - min) / 100).toFixed(5);
+
+	}
+
+	power = Math.log(pMax - pMin) / Math.log(base);
+	factor = Math.pow(base, (power - Math.floor(power)));
 
 	switch (true) {
-		case (base == 10):
+
+		case (base === 10):
+
 			switch (true) {
 				case (factor < 2.5):
 					scalar = 0.2;
 					break;
+
 				case (factor < 5):
 					scalar = 0.5;
 					break;
+
 				case (factor < 10):
 					scalar = 1;
 					break;
+
 				default:
 					scalar = 2;
 					break;
 			}
+
 			break;
-		case (base == 60):
+
+		case (base === 60):
+
 			switch (true) {
 				case (factor < 2.5):
 					scalar = 0.5;
 					break;
+
 				case (factor < 10):
 					scalar = 1;
 					break;
+
 				case (factor < 100):
 					scalar = 10;
 					break;
+
 				case (factor < 1000):
 					scalar = 100;
 					break;
+
 				case (factor < 10000):
 					scalar = 1000;
 					break;
+
 				default:
 					scalar = 10000;
 					break;
+
 			}
+
 			break;
-		case (base == 3600):
+
+		case (base === 3600):
+
 			switch (true) {
 				case (factor < 1.25):
 					scalar = 0.25;
 					break;
+
 				case (factor < 2.5):
 					scalar = 1;
 					break;
+
 				case (factor < 10):
 					scalar = 2;
 					break;
+
 				case (factor < 100):
 					scalar = 60;
 					break;
+
 				case (factor < 1000):
 					scalar = 120;
 					break;
+
 				case (factor < 10000):
 					scalar = 600;
 					break;
+
 				default:
 					scalar = 600;
 					break;
 			}
+
 			break;
-		case (base == 42300):
+
+		case (base === 42300):
+
 			switch (true) {
 				case (factor < 1.25):
 					scalar = 0.25;
 					break;
+
 				case (factor < 2.5):
 					scalar = 1;
 					break;
+
 				case (factor < 10):
 					scalar = 2;
 					break;
+
 				case (factor < 100):
 					scalar = 60;
 					break;
+
 				case (factor < 1000):
 					scalar = 120;
 					break;
+
 				case (factor < 10000):
 					scalar = 600;
 					break;
+
 				default:
 					scalar = 600;
 					break;
 			}
+
 			break;
+
 		default:
+
 			switch (true) {
+
 				case (factor < 1.25):
 					scalar = 0.25;
 					break;
+
 				case (factor < 2.5):
 					scalar = 1;
 					break;
+
 				case (factor < 10):
 					scalar = 2;
 					break;
+
 				case (factor < 100):
 					scalar = 120;
 					break;
+
 				case (factor < 1000):
 					scalar = 300;
 					break;
+
 				case (factor < 10000):
 					scalar = 1800;
 					break;
+
 				default:
 					scalar = 7200;
 					break;
 			}
+
 			break;
+
 	}
 
 	xMaj = scalar * Math.pow(base, Math.floor(power));

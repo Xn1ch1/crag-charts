@@ -1,4 +1,4 @@
-<html>
+<html lang="">
 
 	<head>
 
@@ -9,21 +9,28 @@
 		<title>Crag Charts: Column</title>
 
 		<style>
-			body {
-				background-color: #FFFFFF;
+
+			:root {
+				--bg: #FFFFFF;
+				--on-bg: #081b33;
 			}
-			button {
+			@media screen and (prefers-color-scheme: dark) {
+				:root {
+					--bg: #081b33;
+					--on-bg: #FFFFFF;
+				}
+			}
+
+			body {
+				background-color: var(--bg);
+			}
+			button, select {
 				height: 25px;
 			}
 			.chart-container {
 				height: calc(100% - 25px);
 			}
 
-			@media screen and (prefers-color-scheme: dark) {
-				body {
-					background-color: #081b33;
-				}
-			}
 
 		</style>
 
@@ -31,8 +38,30 @@
 
 	<body>
 
-		<button onclick="newData()">Random Data</button>
-		<button onclick="newTitle()">Random Title</button>
+		<div>
+
+			<button onclick="newData()">Random Data</button>
+			<button onclick="newTitle()">Random Title</button>
+			<select onchange="newBarColor(this)">
+				<option value="multi">Bar Color (Default: Multi)</option>
+				<option value="positiveNegative">Red/Green</option>
+				<option value="orange">Orange</option>
+				<option value="green">Green</option>
+				<option value="blue">Blue</option>
+			</select>
+			<select onchange="newLabelPos(this)">
+				<option value="none">Column Label Position (Default: None)</option>
+				<option value="inside">Inside</option>
+				<option value="outside">Outside</option>
+			</select>
+			<select onchange="newLabelColor(this)">
+				<option value="auto">Column Label Color (Default: Auto)</option>
+				<option value="match">Match Label</option>
+				<option value="blue">Blue</option>
+				<option value="green">Green</option>
+			</select>
+
+		</div>
 
 		<div id="column-chart" class="chart-container"></div>
 		
@@ -42,26 +71,33 @@
 			const themeQuery = window.matchMedia('(prefers-color-scheme: dark)');
 			let chart;
 
-			crag.onLoadCallBack(createChart, ['column'], '/crag/');
+			new CragLoader(['column'], '/crag/', createChart);
 
 			function createChart() {
 
-				const background = themeQuery.matches ? '#081b33' : '#FFFFFF';
-
 				const options = {
-					data: [['A', -400], ['B', 500], ['C', 300], ['D', -25]],
+					data: dataGenerator(5),
 					bar: {
 						width: 95,
-						color: 'positiveNeagative',
 						rounded: true,
 						inset: true,
 					},
+					vAxis: {
+						label: 'Something Interesting'
+					},
 					chart: {
-						title: 'Time Taken',
-						color: background
+						color: cssVar('bg')
 					}
 				}
 				chart = new CragColumn(options).create('column-chart');
+
+				console.log(chart);
+
+			}
+
+			function newBarColor(elem) {
+
+				chart.barColor = elem.value;
 
 			}
 
@@ -70,25 +106,29 @@
 				chart.update(dataGenerator(15));
 
 			}
-			
+
 			function newTitle() {
 
 				chart.title = randomName(20);
 
 			}
 
+			function newLabelPos(elem) {
+
+				chart.labelPosition = elem.value;
+
+			}
+
+			function newLabelColor(elem) {
+
+				chart.labelColor = elem.value;
+
+			}
+
 			themeQuery.addEventListener('change', event => {
-				
-				if (themeQuery.matches) {
 
-					chart.chartColor = '#081b33';
+				chart.chartColor = cssVar('bg')
 
-				} else {
-					
-					chart.chartColor = '#FFFFFF';
-
-				}
-				
 			});
 
 		</script>
