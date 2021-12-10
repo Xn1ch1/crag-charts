@@ -546,7 +546,7 @@ function myFunction(obj) {
 			let chart3;
 			let chart4;
 
-			crag.onLoadCallBack(createCharts, ['column'], '/crag/');
+			new CragLoader(['column'], createCharts, '/crag/');
 
 			function createCharts() {
 
