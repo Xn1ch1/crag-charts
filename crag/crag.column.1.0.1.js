@@ -4,8 +4,13 @@ class DataPoint {
 	realValue = 0;
 	realName = null;
 
+	/** @type {HTMLDivElement} */
 	column = null;
+
+	/** @type {HTMLSpanElement} */
 	columnLabel = null;
+
+	/** @type {HTMLSpanElement} */
 	axisLabel = null;
 
 	columnLabelOption = {
@@ -18,7 +23,8 @@ class DataPoint {
 	}
 	columnProperties = {
 		height: 0,
-		width: 0
+		width: 0,
+		color: null
 	}
 
 	constructor (index, value, name, chartOptions) {
@@ -50,19 +56,13 @@ class DataPoint {
 
 		this.columnLabelOption = chartOptions.labels;
 
-		// if (chartOptions.labels.position !== 'none') {
-
-			this.columnLabel = document.createElement('span');
-			this.columnLabel.className = 'cragColumnBarLabel';
-			this.columnLabel.textContent = formatLabel(this.realValue, chartOptions.vAxis.format, 99999);
-
-		// }
+		this.columnLabel = document.createElement('span');
+		this.columnLabel.className = 'cragColumnBarLabel';
+		this.columnLabel.textContent = formatLabel(this.realValue, chartOptions.vAxis.format, 99999);
 
 	}
 
 	positionColumnLabel(width, zeroLine, positiveSpace, negativeSpace, max, min) {
-		//
-		// if (this.columnLabelOption.position === 'none') return;
 
 		this.columnLabel.style.width = 'auto';
 
@@ -162,7 +162,7 @@ class DataPoint {
 	}
 
 	positionAxisLabel(width) {
-		
+
 		this.axisLabel.style.width = `${width}px`;
 		this.axisLabel.style.left = `${width * this.index}px`;
 
@@ -170,7 +170,19 @@ class DataPoint {
 
 	positionColumn(bottom, left, width) {
 
-		this.column.style.bottom = `${bottom}px`;
+		/**
+		 * Subtract 1 from the bottom property when the bar is negative. This will allow it to sit below the zero line
+		 */
+		if (this.value < 0) {
+
+			this.column.style.bottom = `${bottom + 1.5}px`;
+
+		} else {
+
+			this.column.style.bottom = `${bottom}px`;
+
+		}
+
 		this.column.style.left = `${left}px`;
 		this.column.style.width = `${width}px`;
 
@@ -180,12 +192,12 @@ class DataPoint {
 
 		if (this.value < 0) {
 
-			this.columnProperties.height = negativeSpace / min * this.value;
+			this.columnProperties.height = negativeSpace / min * this.value - 1;
 			this.column.style.transform = 'scaleY(-1)';
 
 		} else {
 
-			this.columnProperties.height = positiveSpace / max * this.value;
+			this.columnProperties.height = positiveSpace / max * this.value - 1;
 			this.column.style.transform = 'scaleY(1)';
 
 		}
@@ -245,6 +257,125 @@ class DataPoint {
 		return this.realName;
 	}
 
+	set columnColor(color) {
+
+		this.columnProperties.color	= color;
+		this.column.style.backgroundColor = color;
+
+	}
+
+}
+
+class VAxisLine {
+
+	/** @param {HTMLDivElement} */
+	majorLine = null;
+
+	/** @param {HTMLDivElement} */
+	minorLine = null;
+
+	/** @param {HTMLSpanElement} */
+	label = null;
+
+	realValue = 0;
+	step = 0;
+	ofSteps = 0;
+
+	isZeroPoint = false;
+
+	constructor(value, step, ofSteps) {
+
+		this.realValue = value;
+		this.step = step;
+		this.ofSteps = ofSteps;
+
+		this._createLines();
+		this._createLabel();
+
+	}
+
+	_createLines() {
+
+		this.majorLine = document.createElement('div');
+
+		this.majorLine.className = 'cragColumnAxisLineMajor';
+		this.majorLine.style.bottom = '100%';
+		this.majorLine.style.right = '0px';
+
+		this.minorLine = document.createElement('div');
+
+		this.minorLine.className = 'cragColumnAxisLineMinor';
+		this.minorLine.style.bottom = '100%';
+
+	}
+
+	_createLabel() {
+
+		this.label = document.createElement('span');
+
+		this.label.className = 'cragColumnVAxisLabel';
+		this.label.style.bottom = '100%';
+		this.label.textContent = this.realValue;
+
+	}
+
+	positionMajor(space) {
+
+		this.majorLine.style.bottom = `${space / this.ofSteps * this.step}px`;
+
+	}
+
+	positionMinor(space) {
+
+		if (this.step === this.ofSteps) {
+
+			this.minorLine.style.opacity = '0';
+
+		} else {
+
+			this.minorLine.style.opacity = '';
+
+		}
+
+		this.minorLine.style.bottom = `${(space / this.ofSteps * this.step) + (space / this.ofSteps / 2)}px`;
+
+	}
+
+	positionLabel(space, hAxisOffset) {
+
+		this.label.style.bottom = `${space / this.ofSteps * this.step + hAxisOffset - (this.label.offsetHeight / 2)}px`;
+
+	}
+
+	_destroy() {
+
+		this.label.style.opacity = '0';
+		this.label.style.bottom = '100%';
+
+		this.majorLine.style.opacity = '0';
+		this.majorLine.style.bottom = '100%';
+
+		this.minorLine.style.opacity = '0';
+		this.minorLine.style.bottom = '100%';
+
+		setTimeout(() => {
+
+			this.label.remove();
+			this.majorLine.remove();
+			this.minorLine.remove();
+
+		}, 700);
+
+	}
+
+	set value(value) {
+
+		this.realValue = value;
+
+		this.label.textContent = value;
+
+	}
+
 }
 
 class CragColumn {
@@ -252,6 +383,7 @@ class CragColumn {
 	constructor (options) {
 
 		this.dataPoints = {};
+		this.vAxisLines = {};
 
 		this.data = {
 			series: options.data,
@@ -277,7 +409,7 @@ class CragColumn {
 			},
 			labels: {
 				position: 'none',
-				color: 'match'
+				color: 'auto'
 			},
 			chart: {
 				title: null,
@@ -302,16 +434,11 @@ class CragColumn {
 		this.vAxis = {
 			area: null,
 			elements: {},
-			max: 0,
-		}
-
-		this.vAxis = {
-			area: null,
-			elements: {},
 			baseValue: null,
 			baseLine: null,
 			max: 0,
-			min: 0
+			min: 0,
+			calculatedWidth: 0,
 		}
 
 		this.hAxis = {
@@ -361,10 +488,15 @@ class CragColumn {
 		if (options.labels !== undefined) {
 
 			if (options.labels.position !== undefined && ['inside', 'outside', 'none'].indexOf(options.labels.position) >= 0) {
+
 				this.options.labels.position = options.labels.position;
+
 			}
+
 			if (options.labels.color !== undefined && pallet.hasOwnProperty(options.labels.color)) {
+
 				this.options.labels.color = options.labels.color;
+
 			}
 
 		}
@@ -486,22 +618,19 @@ class CragColumn {
 	draw() {
 
 		/**
+		 * Updates vAxis to match the current data set.
+		 */
+		this._refactorVAxisLines();
+
+		/**
 		 * Updates data points to match the current data set.
 		 */
 		this._refactorDataPoints();
 
 		/**
-		 * Return teh calculated final width of the vAxis.
-		 * This is done to cover that the actual width will
-		 * not be accurate when called due to css animations
-		 */
-		const vAxisWidth = this._createVAxis();
-		this.vAxis.area.style.width = `${vAxisWidth}px`;
-
-		/**
 		 * width and height for the chart area that holds the columns
 		 */
-		const chartAreaWidth = this.chartContainer.offsetWidth - vAxisWidth;
+		const chartAreaWidth = this.chartContainer.offsetWidth - this.vAxis.calculatedWidth;
 		const chartAreaHeight = this.chart.area.offsetHeight;
 
 		/**
@@ -535,66 +664,13 @@ class CragColumn {
 
 		}
 
+		for (const line of Object.values(this.vAxisLines)) {
 
-		// for (const [index, elements] of Object.entries(t.chart.elements)) {
-		//
-		// 	let realInside = true;
-		//
-		// 	const label = elements.label;
-		// 	const value = elements.value;
-		//
-		// 	if (t.options.labels.position !== 'none') {
-		//
-		// 		label.style.width = 'auto';
-		//
-		// 		if (label.offsetWidth > seriesItemWidth) {
-		// 			label.style.opacity = '0';
-		// 		} else {
-		// 			label.style.opacity = '1';
-		// 		}
-		//
-		// 		label.style.left = seriesItemWidth * index + 'px';
-		//
-		// 		if (t.options.labels.position === 'inside') {
-		//
-		// 			if (barHeight * value < label.offsetHeight) {
-		//
-		// 				realInside = false;
-		//
-		// 			}
-		//
-		// 		} else if (chartAreaHeight - (barHeight * value) >= label.offsetHeight) {
-		//
-		// 			realInside = false;
-		//
-		// 		}
-		//
-		// 		if (realInside) {
-		//
-		// 			label.style.width = 'auto';
-		// 			label.style.bottom = `${barHeight * value - label.offsetHeight}px`;
-		//
-		// 			if (label.offsetWidth > barWidth) {
-		//
-		// 				label.style.opacity = '0';
-		//
-		// 			} else {
-		//
-		// 				label.style.width = `${seriesItemWidth}px`;
-		//
-		// 			}
-		//
-		// 		} else {
-		//
-		// 			label.style.bottom = `${barHeight * value}px`;
-		// 			label.style.width = `${seriesItemWidth}px`;
-		//
-		// 		}
-		//
-		// 	}
-		//
-		//
-		// }
+			line.positionMajor(chartAreaHeight);
+			line.positionMinor(chartAreaHeight);
+			line.positionLabel(chartAreaHeight, this.hAxis.area.offsetHeight);
+
+		}
 
 		this.colorize();
 
@@ -602,15 +678,23 @@ class CragColumn {
 
 	colorize() {
 
+		/**
+		 * Core chart components
+		 */
 		this.chartContainer.style.backgroundColor = resolveColor(this.options.chart.color);
+		if (this.chart.title) this.chart.title.style.color = getContrastColor(this.options.chart.color);
 
+		/**
+		 * Tool tip
+		 */
 		this.toolTip.container.style.backgroundColor = getContrastColor(this.options.chart.color);
 		this.toolTip.title.style.color = resolveColor(this.options.chart.color);
 		this.toolTip.value.style.color = resolveColor(this.options.chart.color);
 		this.toolTip.label.style.color = resolveColor(this.options.chart.color);
 
-		if (this.chart.title) this.chart.title.style.color = getContrastColor(this.options.chart.color);
-
+		/**
+		 * Each of the data point objects
+		 */
 		for (const point of Object.values(this.dataPoints)) {
 
 			/**
@@ -620,23 +704,23 @@ class CragColumn {
 
 			if (this.options.bar.color === 'multi') {
 
-				point.column.style.backgroundColor = pallet.key(point.index);
+				point.columnColor = pallet.key(point.index);
 
 			} else if (this.options.bar.color === 'positiveNegative') {
 			
 				if (point.value < 0) {
 
-					point.column.style.backgroundColor = pallet.red;
+					point.columnColor = pallet.red;
 
 				} else {
-					
-					point.column.style.backgroundColor = pallet.green;
+
+					point.columnColor = pallet.green;
 
 				}
 				
 			} else {
 
-				point.column.style.backgroundColor = resolveColor(this.options.bar.color);
+				point.columnColor = resolveColor(this.options.bar.color);
 
 			}
 
@@ -657,36 +741,24 @@ class CragColumn {
 			 */
 			if (point.columnLabelProperties.actualPosition === 'inside') {
 
-				point.columnLabel.style.color = getContrastColor(pallet.key(point.index));
+				point.columnLabel.style.color = getContrastColor(point.columnProperties.color);
 
 			} else {
 
 				/**
-				 * Color in the bar labels
+				 * Color in the bar labels based on an outside position
 				 */
 				if (this.options.labels.color === 'match') {
 
-					if (this.options.bar.color === 'positiveNegative') {
+					point.columnLabel.style.color = point.columnProperties.color;
 
-						if (point.value < 0) {
+				} else if (this.options.labels.color === 'auto') {
 
-							point.columnLabel.style.color = pallet.red;
-
-						} else {
-
-							point.columnLabel.style.color = pallet.green;
-
-						}
-
-					} else {
-
-						point.columnLabel.style.color = pallet.key(point.index);
-
-					}
+					point.columnLabel.style.color = getContrastColor(this.options.chart.color);
 
 				} else {
 
-					point.columnLabel.style.color = getContrastColor(this.options.chart.color);
+					point.columnLabel.style.color = this.options.labels.color;
 
 				}
 
@@ -694,20 +766,22 @@ class CragColumn {
 
 		}
 
+		for (const line of Object.values(this.vAxisLines)) {
 
-		for (const [index, elems] of Object.entries(this.vAxis.elements)) {
+			line.majorLine.style.backgroundColor = getContrastColor(this.options.chart.color);
+			line.minorLine.style.backgroundColor = getContrastColor(this.options.chart.color);
 
-			elems.label.style.color = getContrastColor(this.options.chart.color);
+			line.label.style.color = getContrastColor(this.options.chart.color);
 
-			if (elems.majorLine != null) {
+			if (line.isZeroPoint) {
 
-				elems.majorLine.style.backgroundColor = getContrastColor(this.options.chart.color);
+				line.majorLine.style.opacity = '1';
+				line.majorLine.style.height = '2px';
 
-			}
+			} else {
 
-			if (elems.minorLine != null) {
-
-				elems.minorLine.style.backgroundColor = getContrastColor(this.options.chart.color);
+				line.majorLine.style.opacity = '';
+				line.majorLine.style.height = '1px';
 
 			}
 
@@ -740,13 +814,17 @@ class CragColumn {
 				 */
 				this.dataPoints[i] = new DataPoint(i, this.data.series[i][1], this.data.series[i][0], this.options);
 
+				this.dataPoints[i].column.onmouseover = () => this._showToolTip(this.dataPoints[i]);
+				this.dataPoints[i].column.onmouseout = () => this._hideToolTip();
+				this.dataPoints[i].column.onclick = () => this.options.bar.onClick(this.dataPoints[i]);
+
 			}
 
 		}
 
 		/**
 		 * Remove any DataPoints that are beyond the current data set length.
-		 * This will happen when a new data set is loaded that is smaller in length than the old data set
+		 * This will happen when a new data set is loaded that is smaller than the old data set
 		 */
 		for (let i = Object.values(this.dataPoints).length + 1; i >= this.data.series.length; i--) {
 
@@ -759,33 +837,13 @@ class CragColumn {
 
 		}
 
-		/**
-		 * Add in event listeners & insert into DOM
-		 */
 		for (const point of Object.values(this.dataPoints)) {
-			
-			point.column.onmouseover = () => {
-			
-				this._showToolTip(point.index);
-				
-				/**
-				 * Reinsert the column into the column area, this will force it to the top of the other elements.
-				 */
-				this.chart.barArea.appendChild(point.column);
-			
-			}
-			point.column.onmouseout = () => {
-
-				this._hideToolTip();
-
-			}
-
-			point.column.onclick = () => this.options.bar.onClick(point);
 
 			/**
 			 * Append elements to DOM
 			 */
 			if (point.columnLabel != null) this.chart.labelArea.appendChild(point.columnLabel);
+
 			this.chart.barArea.appendChild(point.column);
 			this.hAxis.area.appendChild(point.axisLabel);
 
@@ -793,279 +851,141 @@ class CragColumn {
 
 	}
 
-	_createVAxis() {
+	_refactorVAxisLines() {
 
-		const t = this;
-		const aE = ObjectLength(t.vAxis.elements);
+		this._getDataMinMax();
 
-		let scale;
-		let vAxisWidth = 0;
-		let axisMin = 0;
+		const min = this.options.vAxis.min === 'auto' ? this.data.min : this.options.vAxis.min;
+		const scale = this._calculateAxisScale(min);
 
-		t._setMax();
+		/**
+		 * Set the vAxis min and max based on the calculated scale
+		 */
+		this.vAxis.min = scale.min;
+		this.vAxis.max = scale.max;
 
-		if (t.options.vAxis.min == 'auto') {
-			axisMin = this.data.min;
-		} else {
-			axisMin = t.options.vAxis.min
+		for (let i = 0; i <= scale.steps; i++) {
+
+			if (this.vAxisLines[i]) {
+
+				this.vAxisLines[i].value = scale.min + (i * scale.maj);
+				this.vAxisLines[i].step = i;
+				this.vAxisLines[i].ofSteps = scale.steps;
+
+			} else {
+
+				this.vAxisLines[i] = new VAxisLine(scale.min + (i * scale.maj), i, scale.steps);
+
+			}
+
+			/**
+			 * Determine which of the lines is the zero point.
+			 * Zero point is either the bottom line or the middle line where the
+			 * scale goes from negative to positive
+			 */
+			this.vAxisLines[i].isZeroPoint = (i === 0 && scale.min >= 0) || (i > 0 && this.vAxisLines[i].realValue === 0);
+
 		}
 
-		if (t.vAxis.baseLine == null) {
+		/**
+		 * Remove any VAxisLines that are beyond the current scale length.
+		 * This will happen when a new data set is loaded that has a different scale
+		 */
+		for (let i = Object.values(this.vAxisLines).length + 1; i > scale.steps; i--) {
 
-			let major = document.createElement('div');
-				major.className = 'cragColumnAxisLineMajor';
-				major.style.bottom = 0 + 'px';
-				major.style.right = 0 + 'px';
-				// major.style.backgroundColor = getContrastColor(this.options.chart.color);
-				
-			if (major != null) t.chart.gridArea.appendChild(major);
-		
-			t.vAxis.baseLine = major;
+			if (!this.vAxisLines[i]) continue;
+
+			this.vAxisLines[i]._destroy();
+			this.vAxisLines[i] = null;
+
+			delete this.vAxisLines[i];
+
 		}
 
-		if (t.vAxis.baseValue == null) {
+		/**
+		 * Reset the calculated width of the vAxis ready for new labels
+		 */
+		let vAxisCalculatedWidth = 0;
 
-			var label = document.createElement('span');
-				label.className = 'cragColumnVAxisLabel';
-				label.textContent = '0';
-				label.style.bottom = 0 + 'px';
-				// label.style.color = getContrastColor(this.options.chart.color);
-			t.vAxis.area.appendChild(label);
-			t.vAxis.baseValue = label;
-		
+		for (const line of Object.values(this.vAxisLines)) {
+
+			/**
+			 * Append elements to DOM
+			 */
+
+			this.chart.gridArea.appendChild(line.majorLine);
+			this.chart.gridArea.appendChild(line.minorLine);
+
+			this.vAxis.area.appendChild(line.label);
+
+			if (line.label.offsetWidth > vAxisCalculatedWidth) vAxisCalculatedWidth = line.label.offsetWidth;
+
 		}
 
-		if (t.options.vAxis.format == 'time') {
+		/**
+		 * Set the new vAxis are width
+		 */
+		this.vAxis.area.style.width = `${vAxisCalculatedWidth}px`;
+
+		this.vAxis.calculatedWidth = vAxisCalculatedWidth;
+
+	}
+
+	/**
+	 * Sets the min and max of the vAxis based on the min and max value in the data set
+	 * @param min The minimum value for the vAxis
+	 * @return {{min: number, max: number, maj: number, steps: number}}
+	 * @private
+	 */
+	_calculateAxisScale(min) {
+
+		if (this.options.vAxis.format === 'time') {
+
+			/**
+			 * Time scales will be rounded based on the largest value in the data set
+			 * The scales are seconds, minutes, hours then days
+			 */
 
 			let timeRounding;
 
-			if (t.data.max < 60) {
+			if (this.data.max < 60) {
 				timeRounding = 60
-			} else if (t.data.max < 3600) {
+			} else if (this.data.max < 3600) {
 				timeRounding = 3600;
-			} else if (t.data.max < 43200) {
+			} else if (this.data.max < 43200) {
 				timeRounding = 43200;
 			} else {
 				timeRounding = 86400;
 			}
 
-			scale = calculateScale(axisMin, t.data.max, timeRounding);
+			return calculateScale(min, this.data.max, timeRounding);
 
 		} else {
 
-			scale = calculateScale(axisMin, t.data.max, 10);
+			return calculateScale(min, this.data.max, 10);
 
 		}
 
-		t.vAxis.max = scale.max;
-		t.vAxis.min = scale.min;
-
-		if (scale.steps > aE) {
-
-			let x = scale.steps - aE;
-
-			for (let i = 0; i < x; i++) {
-
-				let b = i + aE;
-				let major = null;
-				let minor = null;
-
-				if (t.options.vAxis.lines) {
-
-					major = document.createElement('div');
-					major.className = 'cragColumnAxisLineMajor';
-					major.style.bottom = '100%';
-					major.style.right = 0 + 'px';
-					// major.style.backgroundColor = getContrastColor(this.options.chart.color);
-
-					if (t.options.chart.minorLines) {
-						minor = document.createElement('div');
-						minor.className = 'cragColumnAxisLineMinor';
-						minor.style.bottom = '100%';
-						// minor.style.backgroundColor = getContrastColor(this.options.chart.color);
-					}
-				}
-
-				var label = document.createElement('span');
-					label.className = 'cragColumnVAxisLabel';
-					label.style.bottom = '100%';
-					label.textContent = '0';
-					// label.style.color = getContrastColor(this.options.chart.color);
-
-				t.vAxis.elements[b] = {
-					majorLine: major,
-					minorLine: minor,
-					label: label
-				};
-
-				if (major != null) {
-					t.chart.gridArea.appendChild(major);
-				}
-				if (minor != null) {
-					t.chart.gridArea.appendChild(minor);
-				}
-
-				t.vAxis.area.appendChild(label);
-
-			}
-
-		} else if (scale.steps < aE) {
-
-			let x = aE - scale.steps;
-
-			for (let i = 0; i < x; i++) {
-
-				let b = i + scale.steps;
-
-				let major = t.vAxis.elements[b].majorLine;
-				let minor = t.vAxis.elements[b].minorLine;
-				let label = t.vAxis.elements[b].label;
-
-				label.style.opacity = 0;
-				label.style.bottom = '100%';
-
-				if (major != null) {
-					major.style.opacity = 0;
-					major.style.bottom = '100%';
-				}
-
-				if (minor != null) {
-					minor.style.opacity = 0;
-					minor.style.bottom = '100%';
-				}
-
-				setTimeout(function() {
-					label.remove();
-					if (major != null) {
-						major.remove();
-					}
-					if (minor != null) {
-						minor.remove();
-					}
-				}, 700);
-
-				delete t.vAxis.elements[b];
-
-			}
-
-		}
-
-		t.vAxis.baseValue.textContent = formatLabel(scale.min, t.options.vAxis.format, t.data.max);
-		t.vAxis.baseValue.style.bottom = t.hAxis.area.offsetHeight - (t.vAxis.baseValue.offsetHeight / 2) + 'px';
-
-		const vAxisMajorLineHeight = (t.vAxis.area.offsetHeight - t.hAxis.area.offsetHeight - t.chart.titleArea.offsetHeight) * (scale.maj / (scale.max - scale.min));
-		const vAxisMinorLineHeight = vAxisMajorLineHeight / 2;
-
-		if (t.vAxis.min >= 0) {
-
-			t.vAxis.baseLine.style.opacity = "1";
-			t.vAxis.baseLine.style.height = "2px";
-	
-		} else {
-	
-			t.vAxis.baseLine.style.opacity = "";
-			t.vAxis.baseLine.style.height = "";
-	
-		}
-
-		for (const [index, elems] of Object.entries(t.vAxis.elements)) {
-
-			let majorLineHeight = (vAxisMajorLineHeight * (parseInt(index) + 1));
-			let minorLineHeight = majorLineHeight - vAxisMinorLineHeight;
-
-			// elems.label.style.color = getContrastColor(this.options.chart.color);
-			elems.label.style.bottom = majorLineHeight + t.hAxis.area.offsetHeight - (elems.label.offsetHeight / 2) + 'px';
-			elems.label.textContent = formatLabel((scale.maj * (parseInt(index) + 1)) + scale.min, t.options.vAxis.format, t.data.max);
-
-			if (elems.majorLine != null) {
-
-				// elems.majorLine.style.backgroundColor = getContrastColor(this.options.chart.color);
-				elems.majorLine.style.bottom = majorLineHeight - elems.majorLine.offsetHeight + 'px';
-
-				if ((scale.maj * (parseInt(index) + 1) + scale.min) == 0) {
-
-					elems.majorLine.style.height = "2px";
-					elems.majorLine.style.opacity = "1";
-
-				} else {
-
-					elems.majorLine.style.height = "";
-					elems.majorLine.style.opacity = "";
-
-				}
-			
-			}
-
-			if (elems.minorLine != null) {
-
-				// elems.minorLine.style.backgroundColor = getContrastColor(this.options.chart.color);
-				elems.minorLine.style.bottom = minorLineHeight - elems.minorLine.offsetHeight + 'px';
-
-			}
-
-			if (elems.label.offsetWidth > vAxisWidth) {
-
-				vAxisWidth = elems.label.offsetWidth;
-
-			}
-
-		}
-
-		return vAxisWidth + 2;
 
 	}
 
-	// _createBar() {
-	//
-	// 	const bar = document.createElement('div');
-	// 	const option = this.options.bar;
-	//
-	// 	bar.className = 'cragColumnBar';
-	//
-	// 	if (option.rounded) bar.classList.add('cragColumnBarRound');
-	// 	if (option.inset) bar.classList.add('cragColumnBarInset');
-	// 	if (option.striped) bar.classList.add('cragColumnBarStriped');
-	// 	if (option.animated) bar.classList.add('cragColumnBarStripedAnimate');
-	//
-	// 	return bar;
-	//
-	// }
-	//
-	// _createLabel() {
-	//
-	// 	const label = document.createElement('span');
-	// 	label.className = 'cragColumnHAxisLabel';
-	// 	return label;
-	//
-	// }
-	//
-	// _createBarLabel() {
-	//
-	// 	if (this.options.labels.position != 'none') {
-	// 		const label = document.createElement('span');
-	// 		label.className = 'cragColumnBarLabel';
-	// 		// if (this.options.labels.color !== 'match') {
-	// 		// 	label.style.color = pallet[this.options.labels.color];
-	// 		// }
-	// 		return label;
-	// 	} else {
-	// 		return null;
-	// 	}
-	//
-	// }
+	/**
+	 * Shows tool tip for selected point
+	 * @param {DataPoint} point
+	 * @private
+	 */
+	_showToolTip(point) {
 
-	_showToolTip(index) {
-
-		this.toolTip.title.textContent = this.data.series[index][0];
+		this.toolTip.title.textContent = point.name; //this.data.series[index][0];
 		this.toolTip.label.textContent = this.options.vAxis.label;
-		this.toolTip.value.textContent = this.dataPoints[index].value;
+		this.toolTip.value.textContent = point.value; //this.dataPoints[index].value;
 
 		const chartHeight = this.chart.area.offsetHeight;
 		const chartWidth = this.chart.area.offsetWidth;
 
-		const barLeft = parseFloat(this.dataPoints[index].column.style.left.replace('px', ''));
-		const barWidth = this.dataPoints[index].column.offsetWidth;
-		const barHeight = this.dataPoints[index].column.offsetHeight;
+		const barLeft = parseFloat(point.column.style.left.replace('px', ''));
+		const barWidth = point.column.offsetWidth;
+		const barHeight = point.column.offsetHeight;
 
 		const tipHeight = this.toolTip.container.offsetHeight;
 		const tipWidth = this.toolTip.container.offsetWidth;
@@ -1074,6 +994,7 @@ class CragColumn {
 		let vAlignment = 0;
 
 		if (chartWidth / 2 > barLeft) {
+
 			if (chartWidth - barLeft - barWidth - 8 > tipWidth) {
 				hAlignment = 1;
 			} else if (barLeft - 8 > tipWidth) {
@@ -1081,7 +1002,9 @@ class CragColumn {
 			} else {
 				hAlignment = 0;
 			}
+
 		} else {
+
 			if (barLeft - 8 > tipWidth) {
 				hAlignment = -1;
 			} else if (chartWidth - barLeft - barWidth - 8 > tipWidth) {
@@ -1089,63 +1012,71 @@ class CragColumn {
 			} else {
 				hAlignment = 0;
 			}
+
 		}
 
-		if (hAlignment == 0) {
+		if (hAlignment === 0) {
+
 			if (chartHeight - barHeight - 8 > tipHeight) {
 				vAlignment = 1;
 			} else {
 				vAlignment = -1;
 			}
+
 		} else {
+
 			if (barHeight < tipHeight) {
 				vAlignment = 1;
 			} else {
 				vAlignment = 0;
 			}
+
 		}
 
-		this.toolTip.container.style.opacity = 1;
+		this.toolTip.container.style.opacity = '1';
 
-		if (hAlignment == 1) {
+		if (hAlignment === 1) {
 			this.toolTip.container.style.left = barLeft + barWidth + 8 + 'px';
-		} else if (hAlignment == -1) {
+		} else if (hAlignment === -1) {
 			this.toolTip.container.style.left = barLeft - tipWidth - 8 + 'px';
 		} else {
 			this.toolTip.container.style.left = barLeft + (barWidth / 2) - (tipWidth / 2) + 'px';
 		}
 
-		if (vAlignment == 0) {
+		if (vAlignment === 0) {
 			this.toolTip.container.style.bottom = barHeight - tipHeight + 'px';
-		} else if (vAlignment == -1) {
-			this.toolTip.container.style.opacity = 0.9;
+		} else if (vAlignment === -1) {
+			this.toolTip.container.style.opacity = '0.9';
 			this.toolTip.container.style.bottom = chartHeight - tipHeight - 8 + 'px';
 		} else {
 			this.toolTip.container.style.bottom = barHeight + 8 + 'px';
 		}
 
-		this.chart.labelArea.style.opacity = 0.3;
+		this.chart.labelArea.style.opacity = '0.3';
 
 		for (const point of Object.values(this.dataPoints)) {
-			point.column.style.opacity = 0.3;
+			point.column.style.opacity = '0.3';
 		}
-		this.dataPoints[index].column.style.opacity = 1;
+
+		point.column.style.opacity = '1';
 
 	}
 
 	_hideToolTip() {
 
-		this.toolTip.container.style.opacity = 0;
+		this.toolTip.container.style.opacity = '0';
 
 		for (const point of Object.values(this.dataPoints)) {
-			point.column.style.opacity = 1;
+
+			point.column.style.opacity = '1';
+
 		}
 
-		this.chart.labelArea.style.opacity = 1;
+		this.chart.labelArea.style.opacity = '1';
 
 	}
 
-	_setMax() {
+	_getDataMinMax() {
 
 		this.data.max = 0;
 
@@ -1230,6 +1161,22 @@ class CragColumn {
 		}
 
 		this.draw();
+
+	}
+
+	set labelColor(color) {
+
+		if (isValidColor(color)) {
+
+			this.options.labels.color = color;
+
+		} else {
+
+			this.options.labels.color = 'auto';
+
+		}
+
+		this.colorize();
 
 	}
 

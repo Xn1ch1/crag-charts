@@ -86,8 +86,6 @@ function dataGenerator(maxLen = 20, count = 1, decimal = false, drastic = false,
 
 	}
 
-	console.log(minMaxes);
-
 	for (var i = 0; i < length; i++) {
 
 		let series = [randomName()];
@@ -111,10 +109,22 @@ function dataGenerator(maxLen = 20, count = 1, decimal = false, drastic = false,
 	return data;
 
 }
+
+const cssVar = (name, value) => {
+
+	if (name.substr(0, 2) !== "--") name = "--" + name;
+
+	if (value) document.documentElement.style.setProperty(name, value);
+
+	return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+}
+
 function randomName() {
 	return wordList[randomInt(0, wordList.length)] + ' ' + wordList[randomInt(0, wordList.length)];
 }
-var wordList = [
+
+const wordList = [
 	"ability","able","aboard","about","above","accept","accident","according",
 	"account","accurate","acres","across","act","action","active","activity",
 	"actual","actually","add","addition","additional","adjective","adult","adventure",
