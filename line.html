@@ -87,7 +87,7 @@
 
 				<h3 id="function-update">Update</h3>
 
-				<p>To update the data in the chart, the update function should be called on the chart object. Only one parameter is required, an array of arrays. See <a href="#data">data</a> parameter for more information. The data set can change in size when updated, bars will be automatically added and removed as needed but will still be limited to 20 points and truncated automatically. In addition, this function will automatically call the draw function (below) once the update has been completed.</p>
+				<p>To update the data in the chart, the update function should be called on the chart object. Only one parameter is required, an array of arrays. See <a href="#data">data</a> parameter for more information. The data set can change in size when updated, bars will be automatically added and removed as needed but will still be limited to 20 points and truncated automatically. In addition, this function will automatically call the _draw function (below) once the update has been completed.</p>
 
 <pre><code>let newData = [['A', 160], ['B', 527], ['C', 428]];
 chart.update(newData);</code></pre>
@@ -95,16 +95,16 @@ chart.update(newData);</code></pre>
 				<hr class="mini-hr">
 
 				<h3 id="function-draw">Draw</h3>
-				<p>The draw function will cause a complete redraw of the chart with the pre existing data. This function will be useful where the size of the container object changes size. The below example is calling the draw function on the chart object when the window resizes.</p>
+				<p>The _draw function will cause a complete redraw of the chart with the pre existing data. This function will be useful where the size of the container object changes size. The below example is calling the _draw function on the chart object when the window resizes.</p>
 
 <pre><code>window.onresize = function() {
-	chart.draw();
+	chart._draw();
 }</code></pre>
 
 				<div id="line-chart-2" class="chart-container chart-container-resize">
 					<div class="pull-tab"></div>
 				</div>
-				<span class="chart-caption">Tip: Drag the tab in the bottom corner of the chart container to resize the chart and see the draw function in action.</span>
+				<span class="chart-caption">Tip: Drag the tab in the bottom corner of the chart container to resize the chart and see the _draw function in action.</span>
 
 				<h2 id="examples">Examples</h2>
 

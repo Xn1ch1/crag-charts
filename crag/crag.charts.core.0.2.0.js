@@ -1,4 +1,4 @@
-class ColorPallet {
+class CragCore {
 
 	pallet = {
 		red: '#f44336',
@@ -29,19 +29,19 @@ class ColorPallet {
 		white: '#FFFFFF',
 	}
 
-	modes = ['match', 'multi', 'redGreen']
+	modes = ['match', 'multi', 'redGreen'];
 
 	/**
 	 * Resolves a color value, from either a hex code, pallet name or mode.
 	 * @param {string} value Pallet id, hex code or color mode.
 	 * @return {string} Returns hex code. Or returns mode name if valid mode provided
 	 */
-	resolveColor(value) {
+	_resolveColor(value) {
 
 		/**
 		 * Check to see if value is one of the acceptable modes
 		 */
-		if (value in this.modes) return value;
+		if (this.modes.includes(value)) return value;
 
 		/**
 		 * Check to see if value is name of color from pallet
@@ -65,12 +65,12 @@ class ColorPallet {
 	 * @param {string} value Pallet id, hex code or color mode.
 	 * @return {boolean} True if value is pallet name, hex code or mode
 	 */
-	isValidColor(value) {
+	_isValidColor(value) {
 
 		/**
 		 * Check to see if value is one of the acceptable modes
 		 */
-		if (value in this.modes) return true;
+		if (this.modes.includes(value)) return true;
 
 		/**
 		 * Check to see if value is name of color from pallet
@@ -81,19 +81,7 @@ class ColorPallet {
 
 	}
 
-	getColorByIndex(index) {
-
-		if (index > Object.values(this.pallet).length) {
-
-			return this.pallet.white;
-
-		}
-
-		return Object.value(this.pallet)[index];
-
-	}
-
-	getColorByMode(mode, value) {
+	_getColorByMode(mode, value) {
 
 		if (value === undefined) throw "Value needs to be set for mode to function correctly";
 
@@ -107,7 +95,7 @@ class ColorPallet {
 
 		if (mode === 'multi') return Object.values(this.pallet)[value];
 
-		if (mode === 'match') return this.resolveColor(value);
+		if (mode === 'match') return this._resolveColor(value);
 
 	}
 
@@ -117,41 +105,9 @@ class ColorPallet {
 
 	}
 
-	// _getContrastYIQ(color){
-	//
-	//  	color = this.resolveColor(color);
-	//
-	// 	 if (color === false) return '#000000';
-	//
-	// 	let r, g, b;
-	//
-	// 	if (color.includes('rgb')) {
-	//
-	// 		color = color.replace('rgb(', '').replace(')', '');
-	//
-	// 		r = color.split(',')[0].trim();
-	// 		g = color.split(',')[1].trim();
-	// 		b = color.split(',')[2].trim();
-	//
-	// 	} else {
-	//
-	// 		color = color.replace("#", "");
-	//
-	// 		r = parseInt(color.substr(0,2),16);
-	// 		g = parseInt(color.substr(2,2),16);
-	// 		b = parseInt(color.substr(4,2),16);
-	//
-	// 	}
-	//
-	// 	let yiq = ((r*299)+(g*587)+(b*114))/1000;
-	//
-	// 	return (yiq >= 128) ? 'darkgrey' : 'white';
-	//
-	// }
+	_getContrastColor(color) {
 
-	getContrastColor(color) {
-
-		color = this.resolveColor(color);
+		color = this._resolveColor(color);
 
 		if (color === false) return '#000000';
 
@@ -231,7 +187,7 @@ class ColorPallet {
 //
 // }
 //
-// function isValidColor(colorValue) {
+// function _isValidColor(colorValue) {
 //
 // 	if (isPalletColor(colorValue)) return true;
 //
@@ -239,7 +195,7 @@ class ColorPallet {
 //
 // }
 
-// function resolveColor(value) {
+// function _resolveColor(value) {
 //
 // 	if (isPalletColor(value)) return pallet[value];
 //
@@ -570,9 +526,9 @@ function ObjectLength(object) {
 //
 // }
 //
-// function getContrastColor(color) {
+// function _getContrastColor(color) {
 //
-// 	color = resolveColor(color);
+// 	color = _resolveColor(color);
 //
 // 	let r, g, b;
 //

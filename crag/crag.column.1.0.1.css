@@ -60,7 +60,7 @@
 	left: 100%;
 	font-family: 'Roboto', sans-serif;
 }
-.cragColumnBarLabel {
+.cragColumnColumnLabel {
 	position: absolute;
 	text-align: center;
 	font-size: 12px;
@@ -102,9 +102,9 @@
 	transition: all 1s ease;
 	opacity: 0.05;
 }
-.cragColumnBar {
+.cragColumnColumn {
 	height: 0;
-	transition: all 0.7s, height 1.1s, width 0.6s, background-color 0.8s, left 0.7s, opacity 0.7s;
+	transition: all 0.7s, height 0.8s, width 0.6s, background-color 0.8s, left 0.7s, opacity 0.7s;
 	position: absolute;
 	box-sizing: border-box;
 	cursor: pointer;
@@ -112,12 +112,12 @@
 	left: 100%;
 	transform-origin: center;
 }
-.cragColumnBar:hover {
+.cragColumnColumn:hover {
 	-webkit-box-shadow:  0 1px 5px 2px rgba(0, 0, 0, 0.5) !important;
 	-moz-box-shadow:  0 1px 5px 2px rgba(0, 0, 0, 0.5) !important;
 	box-shadow:  0 1px 5px 2px rgba(0, 0, 0, 0.5) !important;
 }
-.cragColumnBarRound {
+.cragColumnColumnRound {
 	-webkit-border-top-left-radius: 10px;
 	-webkit-border-top-right-radius: 10px;
 	-moz-border-radius-topleft: 10px;
@@ -125,17 +125,17 @@
 	border-top-left-radius: 10px;
 	border-top-right-radius: 10px;
 }
-.cragColumnBarInset {
+.cragColumnColumnInset {
 	-webkit-box-shadow: inset 0 5px 10px 0 rgba(0,0,0,0.3);
 	-moz-box-shadow: inset 0 5px 10px 0 rgba(0,0,0,0.3);
 	box-shadow: inset 0 5px 10px 0 rgba(0,0,0,0.3);
 }
-.cragColumnBarStriped {
+.cragColumnColumnStriped {
 	background-size: 50px 50px;
 	background-image: -moz-linear-gradient(-45deg, #FFFFFF11 25%, transparent 25%, transparent 50%, #FFFFFF11 50%, #FFFFFF11 75%, transparent 75%, transparent);
 	background-image: linear-gradient(-45deg, #FFFFFF11 25%, transparent 25%, transparent 50%, #FFFFFF11 50%, #FFFFFF11 75%, transparent 75%, transparent);
 }
-.cragColumnBarStripedAnimate {
+.cragColumnColumnStripedAnimate {
 	animation: barberpole 5s linear infinite;
 }
 .cragColumnToolTip {

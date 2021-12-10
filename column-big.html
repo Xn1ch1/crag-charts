@@ -42,9 +42,9 @@
 
 			<button onclick="newData()">Random Data</button>
 			<button onclick="newTitle()">Random Title</button>
-			<select onchange="newBarColor(this)">
-				<option value="multi">Bar Color (Default: Multi)</option>
-				<option value="positiveNegative">Red/Green</option>
+			<select onchange="newColumnColor(this)">
+				<option value="multi">Column Color (Default: Multi)</option>
+				<option value="redGreen">Red/Green</option>
 				<option value="orange">Orange</option>
 				<option value="green">Green</option>
 				<option value="blue">Blue</option>
@@ -77,33 +77,32 @@
 
 				const options = {
 					data: dataGenerator(5),
-					bar: {
+					columns: {
 						width: 95,
 						rounded: true,
 						inset: true,
 					},
 					vAxis: {
-						label: 'Something Interesting'
+						label: 'Data Set'
 					},
 					chart: {
 						color: cssVar('bg')
 					}
 				}
-				chart = new CragColumn(options).create('column-chart');
 
-				console.log(chart);
+				chart = new CragColumn(options).create('column-chart');
 
 			}
 
-			function newBarColor(elem) {
+			function newColumnColor(elem) {
 
-				chart.barColor = elem.value;
+				chart.columnColor = elem.value;
 
 			}
 
 			function newData() {
 
-				chart.update(dataGenerator(15));
+				chart.newData = dataGenerator(15);
 
 			}
 
