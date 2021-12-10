@@ -191,7 +191,10 @@ class DataPoint {
 
 		if (this.value < 0) {
 
-			this.columnProperties.height = negativeSpace / min * this.value;
+			/**
+			 * Round number down to compensate for slight gaps above the negative bars
+			 */
+			this.columnProperties.height = Math.floor(negativeSpace / min * this.value);
 
 			/**
 			 * When value is negative, the bottom is the height less the negative space
