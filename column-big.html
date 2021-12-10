@@ -14,48 +14,124 @@
 				--bg: #FFFFFF;
 				--on-bg: #081b33;
 			}
+			body {
+				background-color: var(--bg);
+			}
+			.chart-container {
+				width: calc(100vw - 32px);
+				height: calc(100vh - 70px);
+			}
+			.menu-button {
+				height: 34px;
+				width: 34px;
+				margin-bottom: 16px;
+				margin-right: 16px;
+				filter: invert(0.8);
+				cursor: pointer;
+				transition: all 0.3s;
+				display: inline-block;
+			}
+			.menu-button:hover {
+				transform: scale(1.1);
+			}
+			#menu-modal {
+				position: fixed;
+				color: var(--bg);
+				background: var(--on-bg);
+				height: calc(100vh - 16px);
+				max-width: 350px;
+				width: calc(100vw - 16px);
+				top: 8px;
+				left: 8px;
+				z-index: 99;
+				box-shadow: 0 0 6px 3px rgb(0 0 0 / 50%);
+				padding: 16px;
+				border-radius: 4px 16px 16px 4px;
+				box-sizing: border-box;
+				font-family: 'Roboto', sans-serif;
+			}
+			#menu-modal label {
+				display: block;
+				margin-top: 8px;
+				margin-bottom: 2px;
+				font-size: 12px;
+				opacity: 0.8;
+			}
+			#menu-modal select {
+				width: calc(100% - 8px);
+				padding: 8px;
+				border: 1px solid #777777;
+				background: transparent;
+				color: var(--bg);
+				border-radius: 4px;
+				margin-left: 8px;
+			}
+			#menu-modal option {
+				background: var(--on-bg);
+			}
+			#menu-modal button {
+				border: none;
+				border-radius: 4px;
+				width: 100%;
+				margin: 8px 0;
+				padding: 8px;
+				background: var(--bg);
+				color: var(--on-bg);
+				font-family: 'Roboto', sans-serif;
+				cursor: pointer;
+			}
+			#menu-button-close {
+				height: 16px;
+				float: right;
+				cursor: pointer;
+			}
+
 			@media screen and (prefers-color-scheme: dark) {
 				:root {
 					--bg: #081b33;
 					--on-bg: #FFFFFF;
 				}
+				.menu-button {
+					filter: invert(0);
+				}
+				#menu-button-close {
+					filter: invert(0.8);
+				}
 			}
-
-			body {
-				background-color: var(--bg);
-			}
-			button, select {
-				height: 25px;
-			}
-			.chart-container {
-				height: calc(100% - 25px);
-			}
-
-
 		</style>
 
 	</head>
 
 	<body>
 
-		<div>
+		<img src="/resources/icons/hamburger-menu.svg" alt="Menu" class="menu-button" onclick="showMenu()">
+		<img src="/resources/icons/dice.svg" alt="Random Data" class="menu-button" onclick="newData()" style="float: right; margin-right: 8px;">
 
-			<button onclick="newData()">Random Data</button>
-			<button onclick="newTitle()">Random Title</button>
+		<div id="menu-modal" style="display: none">
+
+			<img src="/resources/icons/cross.svg" alt="Menu" id="menu-button-close" onclick="hideMenu()">
+
+			<button onclick="newTitle()">Generate Random Title</button>
+
+			<label>Column Color</label>
 			<select onchange="newColumnColor(this)">
-				<option value="multi">Column Color (Default: Multi)</option>
+				<option value="multi">Default: Multi</option>
 				<option value="redGreen">Red/Green</option>
 				<option value="orange">Orange</option>
 				<option value="green">Green</option>
 				<option value="blue">Blue</option>
 			</select>
+
+			<label>Column Label Position</label>
 			<select onchange="newLabelPos(this)">
-				<option value="none">Column Label Position (Default: None)</option>
+				<option value="none">Default: None</option>
 				<option value="inside">Inside</option>
 				<option value="outside">Outside</option>
 			</select>
+
+			<label>Column Label Color</label>
 			<select onchange="newLabelColor(this)">
-				<option value="auto">Column Label Color (Default: Auto)</option>
+				<option value="auto">Default: Auto</option>
 				<option value="match">Match Label</option>
 				<option value="blue">Blue</option>
 				<option value="green">Green</option>
@@ -68,8 +144,11 @@
 		<script src="crag/crag.charts.loader.js?v=1"></script>
 		<script>
 
-			const themeQuery = window.matchMedia('(prefers-color-scheme: dark)');
 			let chart;
+
+			const themeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+			themeQuery.addEventListener('change', () => chart.chartColor = cssVar('bg'));
 
 			new CragLoader(['column'], createChart, '/crag/');
 
@@ -91,6 +170,22 @@
 				}
 
 				chart = new CragColumn(options).create('column-chart');
+
+			}
+
+		</script>
+
+		<script>
+
+			function showMenu() {
+
+				document.getElementById('menu-modal').style.display = '';
+
+			}
+
+			function hideMenu() {
+
+				document.getElementById('menu-modal').style.display = 'none';
 
 			}
 
@@ -123,12 +218,6 @@
 				chart.labelColor = elem.value;
 
 			}
-
-			themeQuery.addEventListener('change', event => {
-
-				chart.chartColor = cssVar('bg')
-
-			});
 
 		</script>
 

@@ -956,7 +956,7 @@ class CragColumn extends CragCore {
 			this.chart.gridArea.appendChild(line.minorLine);
 
 			this.vAxis.area.appendChild(line.label);
-			
+
 			line.labelText = formatLabel(line.value, this.options.vAxis.format, this.vAxis.max);
 
 			if (line.label.offsetWidth > vAxisCalculatedWidth) vAxisCalculatedWidth = line.label.offsetWidth;
