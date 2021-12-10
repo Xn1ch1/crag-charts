@@ -391,9 +391,10 @@ class VAxisLine {
 
 }
 
-class CragColumn {
+class CragColumn extends ColorPallet {
 
 	constructor (options) {
+		super();
 
 		this.dataPoints = {};
 		this.vAxisLines = {};
@@ -477,7 +478,7 @@ class CragColumn {
 			if (option.width !== undefined && option.width > 0 && option.width < 101) {
 				this.options.bar.width = option.width;
 			}
-			if (option.color !== undefined && isValidColor(option.color)) {
+			if (option.color !== undefined && this.isValidColor(option.color)) {
 				this.options.bar.color = option.color;
 			}
 			if (option.rounded !== undefined && typeof option.rounded === 'boolean') {
@@ -506,7 +507,7 @@ class CragColumn {
 
 			}
 
-			if (options.labels.color !== undefined && pallet.hasOwnProperty(options.labels.color)) {
+			if (options.labels.color !== undefined && this.isValidColor(options.labels.color)) {
 
 				this.options.labels.color = options.labels.color;
 
@@ -521,7 +522,7 @@ class CragColumn {
 			if (option.title !== undefined) {
 				this.options.chart.title = option.title;
 			}
-			if (option.color !== undefined && isValidColor(option.color)) {
+			if (option.color !== undefined && this.isValidColor(option.color)) {
 				this.options.chart.color = option.color;
 			}
 			if (option.minorLines !== undefined && typeof option.minorLines === 'boolean') {
@@ -576,7 +577,7 @@ class CragColumn {
 			this.chart.title.className = 'cragColumnTitleText';
 			this.chart.title.textContent = this.options.chart.title;
 			this.chart.titleArea.appendChild(this.chart.title);
-			this.chart.title.style.color = getContrastColor(this.options.chart.color);
+			this.chart.title.style.color = this.getContrastColor(this.options.chart.color);
 
 		}
 
@@ -694,16 +695,16 @@ class CragColumn {
 		/**
 		 * Core chart components
 		 */
-		this.chartContainer.style.backgroundColor = resolveColor(this.options.chart.color);
-		if (this.chart.title) this.chart.title.style.color = getContrastColor(this.options.chart.color);
+		this.chartContainer.style.backgroundColor = this.resolveColor(this.options.chart.color);
+		if (this.chart.title) this.chart.title.style.color = this.getContrastColor(this.options.chart.color);
 
 		/**
 		 * Tool tip
 		 */
-		this.toolTip.container.style.backgroundColor = getContrastColor(this.options.chart.color);
-		this.toolTip.title.style.color = resolveColor(this.options.chart.color);
-		this.toolTip.value.style.color = resolveColor(this.options.chart.color);
-		this.toolTip.label.style.color = resolveColor(this.options.chart.color);
+		this.toolTip.container.style.backgroundColor = this.getContrastColor(this.options.chart.color);
+		this.toolTip.title.style.color = this.resolveColor(this.options.chart.color);
+		this.toolTip.value.style.color = this.resolveColor(this.options.chart.color);
+		this.toolTip.label.style.color = this.resolveColor(this.options.chart.color);
 
 		/**
 		 * Each of the data point objects
@@ -713,27 +714,22 @@ class CragColumn {
 			/**
 			 * Color in the axis label as a contrast to the background color
 			 */
-			point.axisLabel.style.color = getContrastColor(this.options.chart.color);
+			point.axisLabel.style.color = this.getContrastColor(this.options.chart.color);
 
+			/**
+			 * Color in the columns
+			 */
 			if (this.options.bar.color === 'multi') {
 
-				point.columnColor = pallet.key(point.index);
+				point.columnColor = this.getColorByMode('multi', point.index);
 
-			} else if (this.options.bar.color === 'positiveNegative') {
-			
-				if (point.value < 0) {
+			} else if (this.options.bar.color === 'redGreen') {
 
-					point.columnColor = pallet.red;
-
-				} else {
-
-					point.columnColor = pallet.green;
-
-				}
+				point.columnColor = this.getColorByMode('multi', point.value);
 				
 			} else {
 
-				point.columnColor = resolveColor(this.options.bar.color);
+				point.columnColor = this.getColorByMode('match', this.options.bar.color);
 
 			}
 
@@ -754,7 +750,7 @@ class CragColumn {
 			 */
 			if (point.columnLabelProperties.actualPosition === 'inside') {
 
-				point.columnLabel.style.color = getContrastColor(point.columnProperties.color);
+				point.columnLabel.style.color = this.getContrastColor(point.columnProperties.color);
 
 			} else {
 
@@ -763,15 +759,15 @@ class CragColumn {
 				 */
 				if (this.options.labels.color === 'match') {
 
-					point.columnLabel.style.color = point.columnProperties.color;
+					point.columnLabel.style.color = this.getColorByMode('match', point.columnProperties.color);
 
 				} else if (this.options.labels.color === 'auto') {
 
-					point.columnLabel.style.color = getContrastColor(this.options.chart.color);
+					point.columnLabel.style.color = this.getContrastColor(this.options.chart.color);
 
 				} else {
 
-					point.columnLabel.style.color = this.options.labels.color;
+					point.columnLabel.style.color = this.resolveColor(this.options.labels.color);
 
 				}
 
@@ -781,10 +777,10 @@ class CragColumn {
 
 		for (const line of Object.values(this.vAxisLines)) {
 
-			line.majorLine.style.backgroundColor = getContrastColor(this.options.chart.color);
-			line.minorLine.style.backgroundColor = getContrastColor(this.options.chart.color);
+			line.majorLine.style.backgroundColor = this.getContrastColor(this.options.chart.color);
+			line.minorLine.style.backgroundColor = this.getContrastColor(this.options.chart.color);
 
-			line.label.style.color = getContrastColor(this.options.chart.color);
+			line.label.style.color = this.getContrastColor(this.options.chart.color);
 
 			if (line.isZeroPoint) {
 
@@ -1151,7 +1147,7 @@ class CragColumn {
 	 */
 	set chartColor(color) {
 
-		if (isValidColor(color)) this.options.chart.color = color;
+		if (this.isValidColor(color)) this.options.chart.color = color;
 
 		this.colorize();
 
@@ -1159,27 +1155,35 @@ class CragColumn {
 
 	set barColor(color) {
 
-		if (isValidColor(color)) this.options.bar.color = color;
+		if (this.isValidColor(color)) this.options.bar.color = color;
 
 		this.colorize();
 
 	}
 
+	/**
+	 * Sets new label positions from one fo the possible.
+	 * @param {('inside'|'outside'|'none')} position
+	 */
 	set labelPosition(position) {
 
 		if (['inside', 'outside', 'none'].indexOf(position) >= 0) {
 
 			this.options.labels.position = position;
 
-		}
+			this.draw();
 
-		this.draw();
+		}
 
 	}
 
+	/**
+	 * Sets new label colors with either a mode or a color value.
+	 * @param {('multi'|'match'|'redGreen')|string} color
+	 */
 	set labelColor(color) {
 
-		if (isValidColor(color)) {
+		if (this.isValidColor(color)) {
 
 			this.options.labels.color = color;
 
