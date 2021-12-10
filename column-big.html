@@ -71,7 +71,7 @@
 			const themeQuery = window.matchMedia('(prefers-color-scheme: dark)');
 			let chart;
 
-			new CragLoader(['column'], '/crag/', createChart);
+			new CragLoader(['column'], createChart, '/crag/');
 
 			function createChart() {
 
