@@ -58,7 +58,6 @@ class DataPoint {
 
 		this.columnLabel = document.createElement('span');
 		this.columnLabel.className = 'cragColumnColumnLabel';
-		this.columnLabel.textContent = formatLabel(this.realValue, chartOptions.vAxis.format, 99999);
 
 	}
 
@@ -305,8 +304,14 @@ class VAxisLine {
 	realValue = 0;
 	step = 0;
 	ofSteps = 0;
+	max;
 
 	isZeroPoint = false;
+
+	axisProperties = {
+		format: 0,
+		max: 'number'
+	}
 
 	constructor(value, step, ofSteps) {
 
@@ -340,7 +345,6 @@ class VAxisLine {
 
 		this.label.className = 'cragColumnVAxisLabel';
 		this.label.style.bottom = '100%';
-		this.label.textContent = this.realValue;
 
 	}
 
@@ -394,11 +398,14 @@ class VAxisLine {
 	}
 
 	set value(value) {
-
 		this.realValue = value;
+	}
+	get value() {
+		return this.realValue;
+	}
 
-		this.label.textContent = value;
-
+	set labelText(text) {
+		this.label.textContent = text;
 	}
 
 }
@@ -874,7 +881,7 @@ class CragColumn extends CragCore {
 			this.chart.labelArea.appendChild(point.columnLabel);
 
 			/**
-			 * Apply formatting to column label and append
+			 * Apply formatting to column label
 			 */
 			point.columnLabel.textContent = formatLabel(point.value, this.options.vAxis.format, this.vAxis.max);
 
@@ -902,10 +909,11 @@ class CragColumn extends CragCore {
 				this.vAxisLines[i].value = scale.min + (i * scale.maj);
 				this.vAxisLines[i].step = i;
 				this.vAxisLines[i].ofSteps = scale.steps;
+				this.vAxisLines[i].max = scale.max;
 
 			} else {
 
-				this.vAxisLines[i] = new VAxisLine(scale.min + (i * scale.maj), i, scale.steps);
+				this.vAxisLines[i] = new VAxisLine(scale.min + (i * scale.maj), i, scale.steps, scale.max, this.options.vAxis.format);
 
 			}
 
@@ -948,6 +956,8 @@ class CragColumn extends CragCore {
 			this.chart.gridArea.appendChild(line.minorLine);
 
 			this.vAxis.area.appendChild(line.label);
+			
+			line.labelText = formatLabel(line.value, this.options.vAxis.format, this.vAxis.max);
 
 			if (line.label.offsetWidth > vAxisCalculatedWidth) vAxisCalculatedWidth = line.label.offsetWidth;
 
@@ -1011,7 +1021,6 @@ class CragColumn extends CragCore {
 		this.toolTip.label.textContent = this.options.vAxis.label;
 		this.toolTip.value.textContent = point.value;
 
-		const chartHeight = this.chart.area.offsetHeight;
 		const chartWidth = this.chart.area.offsetWidth;
 
 		const columnLeft = parseFloat(point.column.style.left.replace('px', ''));
@@ -1022,44 +1031,37 @@ class CragColumn extends CragCore {
 		const tipWidth = this.toolTip.container.offsetWidth;
 
 		let hAlignment;
-		let vAlignment;
 
 		if (chartWidth / 2 > columnLeft) {
 
 			if (chartWidth - columnLeft - columnWidth - 8 > tipWidth) {
+
 				hAlignment = 1;
+
 			} else if (columnLeft - 8 > tipWidth) {
+
 				hAlignment = -1;
+
 			} else {
+
 				hAlignment = 0;
+
 			}
 
 		} else {
 
 			if (columnLeft - 8 > tipWidth) {
+
 				hAlignment = -1;
+
 			} else if (chartWidth - columnLeft - columnWidth - 8 > tipWidth) {
+
 				hAlignment = 1;
+
 			} else {
+
 				hAlignment = 0;
-			}
 
-		}
-
-		if (hAlignment === 0) {
-
-			if (chartHeight - columnHeight - 8 > tipHeight) {
-				vAlignment = 1;
-			} else {
-				vAlignment = -1;
-			}
-
-		} else {
-
-			if (columnHeight < tipHeight) {
-				vAlignment = 1;
-			} else {
-				vAlignment = 0;
 			}
 
 		}
@@ -1067,29 +1069,42 @@ class CragColumn extends CragCore {
 		this.toolTip.container.style.opacity = '1';
 
 		if (hAlignment === 1) {
-			this.toolTip.container.style.left = columnLeft + columnWidth + 8 + 'px';
+
+			this.toolTip.container.style.left = `${columnLeft + columnWidth + 8}px`;
+
 		} else if (hAlignment === -1) {
-			this.toolTip.container.style.left = columnLeft - tipWidth - 8 + 'px';
+
+			this.toolTip.container.style.left = `${columnLeft - tipWidth - 8}px`;
+
 		} else {
-			this.toolTip.container.style.left = columnLeft + (columnWidth / 2) - (tipWidth / 2) + 'px';
+
+			this.toolTip.container.style.left = `${columnLeft + (columnWidth / 2) - (tipWidth / 2)}px`;
+			this.toolTip.container.style.opacity = '0.8';
+
 		}
 
-		if (vAlignment === 0) {
-			this.toolTip.container.style.bottom = columnHeight - tipHeight + 'px';
-		} else if (vAlignment === -1) {
-			this.toolTip.container.style.opacity = '0.9';
-			this.toolTip.container.style.bottom = chartHeight - tipHeight - 8 + 'px';
-		} else {
-			this.toolTip.container.style.bottom = columnHeight + 8 + 'px';
+
+		for (const point of Object.values(this.dataPoints)) {
+
+			point.column.style.opacity = '0.3';
+
 		}
 
 		this.chart.labelArea.style.opacity = '0.3';
+		point.column.style.opacity = '1';
 
-		for (const point of Object.values(this.dataPoints)) {
-			point.column.style.opacity = '0.3';
+		const columnBottom = parseFloat(point.column.style.bottom.replace('px', ''));
+
+		if (point.value < 0) {
+
+			this.toolTip.container.style.bottom = `${Math.max(0, columnBottom)}px`;
+
+		} else {
+
+			this.toolTip.container.style.bottom = `${Math.max(0, columnBottom + columnHeight - tipHeight)}px`;
+
 		}
 
-		point.column.style.opacity = '1';
 
 	}
 
