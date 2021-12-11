@@ -205,7 +205,7 @@ class CragCore {
 //
 // }
 
-function formatLabel(value, type = 'number', max = 0) {
+function formatLabel(value, type = 'number', max = 0, formatOption = null) {
 
 	let label;
 
@@ -213,12 +213,17 @@ function formatLabel(value, type = 'number', max = 0) {
 		case 'decimal':
 			label = value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
 			break;
+
 		case 'time':
 			label = sToTime(value, max);
 			break;
+
 		case 'currency':
-			label = value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2, style: 'currency'});
+			label = new Intl.NumberFormat('en-GB',
+				{ style: 'currency', currency: formatOption }
+			).format(value);
 			break;
+
 		default:
 			label = value.toLocaleString(undefined, {maximumFractionDigits: 0});
 			break;
@@ -450,48 +455,56 @@ function calculateScale(min, max, base) {
 
 }
 
-function sToTime(s, max) {
+function sToTime(time, max) {
 
 	function pad(n, z) {
+
+		n = Math.abs(n);
 		let out = '';
-		let split = n.toString().split('.');
+		const split = n.toString().split('.');
+
 		z = z || 2;
 
-		out = ('00' + split[0]).slice(-z);
+		out = (`00${split[0]}`).slice(-z);
 
-		if (split.length > 1) {
-			out = out + '.' + split[1];
-		}
+		if (split.length > 1) out = `${out}.${split[1]}`;
 
 		return out;
 
 	}
 
-	var secs = s % 60;
-	s = (s - secs) / 60;
-	var mins = s % 60;
-	var hrs = (s - mins) / 60;
+	const seconds = time % 60;
+	const minuets = ((time - seconds) / 60) % 60;
+	const hours = ((((time - seconds) / 60) % 60) - minuets) / 60;
 
-	if (hrs > 0 || max > 3600) {
+	if (hours > 0 || max > 3600) {
 
-		return pad(hrs) + ':' + pad(mins) + ':' + pad(secs);
+		return `${(time < 0 ? '-' : '')}${pad(hours)}:${pad(minuets)}:${pad(seconds)}`;
 
 	} else {
 
-		return pad(mins) + ':' + pad(secs);
+		return `${(time < 0 ? '-' : '')}${pad(minuets)}:${pad(seconds)}`;
 
 	}
 
 }
 
 function ObjectLength(object) {
-	var length = 0;
-	for (var key in object) {
+
+	let length = 0;
+
+	for (const key in object) {
+
 		if (object.hasOwnProperty(key)) {
+
 			++length;
+
 		}
+
 	}
+
 	return length;
+
 }
 //
 // function getContrastYIQ(color){
