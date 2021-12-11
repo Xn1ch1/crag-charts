@@ -121,7 +121,9 @@ const cssVar = (name, value) => {
 }
 
 function randomName() {
+
 	return wordList[randomInt(0, wordList.length)] + ' ' + wordList[randomInt(0, wordList.length)];
+
 }
 
 const wordList = [
@@ -368,5 +370,9 @@ const wordList = [
 	"work","worker","world","worried","worry","worse","worth","would",
 	"wrapped","write","writer","writing","written","wrong","wrote","yard",
 	"year","yellow","yes","yesterday","yet","you","young","younger",
-	"your","yourself","youth","zero","zebra","zipper","zoo","zulu"
+	"your","yourself","youth","zero","zebra","zipper","zoo","zulu",
+	"toilet", "pillow", "face", "big", "small", "under", "over",
+	"fridge", "freezer", "kiddie", "evil", "good", "ouch", "pain", "hurt",
+	"dog", "dolphin", "giraffe", "penguin", "tiger", "lion",
+	"smells", "vroom", "crazy", "bed"
   ];

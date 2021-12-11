@@ -384,3 +384,65 @@ pre {
 		display: 'block';
 	}
 }
+
+
+ul.ks-cboxtags {
+	list-style: none;
+	padding: 0 8px;
+	margin: 0;
+}
+ul.ks-cboxtags li{
+	display: inline;
+}
+ul.ks-cboxtags li label{
+	display: block;
+	border: 2px solid var(--on-bg);
+	border-radius: 25px;
+	white-space: nowrap;
+	width: calc(100% - 36px);
+	margin: 0 8px 4px 8px !important;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	-webkit-tap-highlight-color: transparent;
+	transition: all .2s;
+}
+
+ul.ks-cboxtags li label {
+	padding: 8px 12px;
+	cursor: pointer;
+	opacity: 1 !important;
+}
+
+ul.ks-cboxtags li label::before {
+	display: inline-block;
+	font-style: normal;
+	font-variant: normal;
+	text-rendering: auto;
+	-webkit-font-smoothing: antialiased;
+	font-weight: 900;
+	font-size: 12px;
+	padding: 0 6px 2px 2px;
+	content: "\26AA";
+	transition: transform .3s ease-in-out;
+}
+
+ul.ks-cboxtags li input[type="checkbox"]:checked + label::before {
+	content: "\26AB";
+	transform: rotate(-360deg);
+	transition: transform .3s ease-in-out;
+}
+
+ul.ks-cboxtags li input[type="checkbox"]:checked + label {
+	transition: all .2s;
+}
+
+ul.ks-cboxtags li input[type="checkbox"] {
+	display: absolute;
+}
+ul.ks-cboxtags li input[type="checkbox"] {
+	position: absolute;
+	opacity: 0;
+}
