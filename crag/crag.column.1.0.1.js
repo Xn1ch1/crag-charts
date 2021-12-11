@@ -1,3 +1,40 @@
+/**
+ * @typedef optionsChart Chart options.
+ * @property {null|string} [title] Title to show above the chart.
+ * @property {string} [color] Background color of the chart, can be hex code or pallet name.
+ */
+/**
+ * @typedef optionsVAxis vAxis Options.
+ * @property {string} [name] The name of the data series for the vAxis, will be applied to the tool tip.
+ * @property {boolean} [majorLines] Enables the horizontal major lines.
+ * @property {boolean} [minorLines] Enables the horizontal minor lines.
+ * @property {string} [format] Formatting type, must be one of the valid options.
+ * @property {string} [formatOption] Additional parameters for the label formatting, see docs for more info.
+ * @property {string|number} [min] Sets the minimum value for the vAxis, when omitted, this will be calculated automatically.
+ */
+/**
+ * @typedef optionsColumn Column Options.
+ * @property {number} [width] Percentage width of the column relative to the space available. Example, 100 will be a full width bar.
+ * @property {string} [color] The color of the bars, either a hex code, an inbuilt pallet name or color mode.
+ * @property {boolean} [rounded] Applies rounded corners at the top of the column.
+ * @property {boolean} [inset] Applies an inset shadow on the column.
+ * @property {boolean} [striped] Applies diagonal striping to the column.
+ * @property {boolean} [animated] Animates the stripes for a barber-pole effect.
+ * @property {function} [onClick] Callback function when columns are clicked. Passes a DataPoint object to the function.
+ * @property {optionsColumnLabels} [labels]
+ */
+/**
+ * @typedef optionsColumnLabels Column label options.
+ * @property {'inside','outside','none'} [position] Position of the column labels.
+ * @property {string} [color] Color column labels, can be hex code, pallet name or mode.
+ */
+/**
+ * @typedef options
+ * @property {optionsChart} [chart]
+ * @property {optionsVAxis} [vAxis]
+ * @property {optionsColumn} [columns]
+ */
+
 class DataPoint {
 
 	index = 0;
@@ -13,9 +50,11 @@ class DataPoint {
 	/** @type {HTMLSpanElement} */
 	axisLabel = null;
 
-	columnLabelOption = {
-		position: null,
-		color: null
+	/**
+	 * @type {optionsColumn}
+	 */
+	options = {
+
 	}
 
 	columnLabelProperties = {
@@ -33,28 +72,25 @@ class DataPoint {
 		this.realValue = value;
 		this.realName = name;
 
-		this._createColumn(chartOptions);
-		this._createColumnLabel(chartOptions);
-		this._createAxisLabel(chartOptions);
+		this.options = chartOptions.columns;
+
+		this._createColumn();
+		this._createColumnLabel();
+		this._createAxisLabel();
 
 	}
 
-	_createColumn(chartOptions) {
+	_createColumn() {
 
 		this.column = document.createElement('div');
 
 		this.column.className = 'cragColumnColumn';
 
-		if (chartOptions.columns.rounded) this.column.classList.add('cragColumnColumnRound');
-		if (chartOptions.columns.inset) this.column.classList.add('cragColumnColumnInset');
-		if (chartOptions.columns.striped) this.column.classList.add('cragColumnColumnStriped');
-		if (chartOptions.columns.animated) this.column.classList.add('cragColumnColumnStripedAnimate');
+		this._setColumnStyle();
 
 	}
 
-	_createColumnLabel(chartOptions) {
-
-		this.columnLabelOption = chartOptions.labels;
+	_createColumnLabel() {
 
 		this.columnLabel = document.createElement('span');
 		this.columnLabel.className = 'cragColumnColumnLabel';
@@ -62,8 +98,6 @@ class DataPoint {
 	}
 
 	_positionColumnLabel(width, zeroLine, positiveSpace, negativeSpace, max, min) {
-
-		console.log(width, this.columnLabel.offsetWidth);
 
 		this.columnLabel.style.width = 'auto';
 
@@ -77,7 +111,7 @@ class DataPoint {
 
 		} else {
 
-			if (this.columnLabelOption.position === 'none') {
+			if (this.options.labels.position === 'none') {
 
 				this.columnLabel.style.opacity = '0';
 
@@ -105,7 +139,7 @@ class DataPoint {
 			 * If label won't fit in the area or the label options are set to inside
 			 * add back on the height of the label to put it back within the column
 			 */
-			if (position - this.columnLabel.offsetHeight < 0 || this.columnLabelOption.position === 'inside') {
+			if (position - this.columnLabel.offsetHeight < 0 || this.options.labels.position === 'inside') {
 
 				position += this.columnLabel.offsetHeight;
 				this.columnLabelProperties.actualPosition = 'inside'
@@ -137,7 +171,7 @@ class DataPoint {
 			 * If label won't fit in the area or the label options are set to inside
 			 * remove the height of the label to put it back within the column
 			 */
-			if (this.columnProperties.height + this.columnLabel.offsetHeight > positiveSpace || this.columnLabelOption.position === 'inside') {
+			if (this.columnProperties.height + this.columnLabel.offsetHeight > positiveSpace || this.options.labels.position === 'inside') {
 
 				position -= this.columnLabel.offsetHeight;
 				this.columnLabelProperties.actualPosition = 'inside'
@@ -228,6 +262,15 @@ class DataPoint {
 
 	}
 
+	_setColumnStyle() {
+
+		this.column.classList.toggle('cragColumnColumnRound', this.options.rounded);
+		this.column.classList.toggle('cragColumnColumnInset', this.options.inset);
+		this.column.classList.toggle('cragColumnColumnStriped', this.options.striped);
+		this.column.classList.toggle('cragColumnColumnStripedAnimate', this.options.animated);
+
+	}
+
 	_destroy() {
 
 		this.column.style.left = `calc(100% + ${parseInt(this.column.style.width.replace('px', '')) * this.index}px)`;
@@ -288,6 +331,14 @@ class DataPoint {
 
 	}
 
+	set columnOptions(value) {
+
+		this.options = value;
+
+		this._setColumnStyle();
+
+	}
+
 }
 
 class VAxisLine {
@@ -308,16 +359,22 @@ class VAxisLine {
 
 	isZeroPoint = false;
 
+	/**
+	 * @type {optionsVAxis}
+	 */
 	axisProperties = {
-		format: 0,
-		max: 'number'
+		format: 'number',
+		majorLines: true,
+		minorLines: true,
 	}
 
-	constructor(value, step, ofSteps) {
+	constructor(value, step, ofSteps, options) {
 
 		this.realValue = value;
 		this.step = step;
 		this.ofSteps = ofSteps;
+
+		this.axisProperties = options;
 
 		this._createLines();
 		this._createLabel();
@@ -412,19 +469,38 @@ class VAxisLine {
 
 class CragColumn extends CragCore {
 
-	constructor (options) {
+	/**
+	 * @param {array} data
+	 * @param {options} options
+	 */
+	constructor (data, options) {
 		super();
 
 		this.dataPoints = {};
 		this.vAxisLines = {};
 
 		this.data = {
-			series: options.data,
+			series: data,
 			max: 0,
 			min: 0
 		};
 
+		/**
+		 * @type options
+		 */
 		this.options = {
+			chart: {
+				title: null,
+				color: 'white'
+			},
+			vAxis: {
+				name: 'Series',
+				majorLines: true,
+				minorLines: true,
+				format: 'number',
+				formatOption: 'GBP',
+				min: 'auto'
+			},
 			columns: {
 				width: 90,
 				color: 'multi',
@@ -432,23 +508,11 @@ class CragColumn extends CragCore {
 				inset: false,
 				striped: false,
 				animated: false,
-				onClick: null
-			},
-			vAxis: {
-				label: 'Series',
-				lines: true,
-				format: 'number',
-				formatOption: 'GBP',
-				min: 'auto'
-			},
-			labels: {
-				position: 'none',
-				color: 'auto'
-			},
-			chart: {
-				title: null,
-				color: 'white',
-				minorLines: true
+				onClick: null,
+				labels: {
+					position: 'none',
+					color: 'auto'
+				},
 			}
 		}
 
@@ -487,95 +551,43 @@ class CragColumn extends CragCore {
 			value: null
 		}
 
-		if (this.data.series.length > 20) {
-			this.data.series = this.data.series.slice(0, 20);
-		}
+		/**
+		 * Limit chart to 20 bars
+		 */
+		this.data.series = this.data.series.slice(0, 20);
 
-		if (options.columns !== undefined) {
+		/**
+		 * Column Options
+		 */
+		if (options?.columns?.width > 0 && options?.columns?.width < 101) this.options.columns.width = options.columns.width;
 
-			const option = options.columns;
+		if (this._isValidColor(options?.columns?.color)) this.options.columns.color = options.columns.color;
+		if (this._isValidColor(options?.columns?.labels?.color)) this.options.columns.labels.color = options.columns.labels.color;
 
-			if (option.width !== undefined && option.width > 0 && option.width < 101) {
-				this.options.columns.width = option.width;
-			}
+		this.options.columns.rounded = this.validateOption(options?.columns?.rounded, 'boolean', this.options.columns.rounded);
+		this.options.columns.inset = this.validateOption(options?.columns?.inset, 'boolean', this.options.columns.inset);
+		this.options.columns.striped = this.validateOption(options?.columns?.striped, 'boolean', this.options.columns.striped);
+		this.options.columns.animated = this.validateOption(options?.columns?.animated, 'boolean', this.options.columns.animated);
+		this.options.columns.onClick = this.validateOption(options?.columns?.onClick, 'function', this.options.columns.onClick);
 
-			if (option.color !== undefined && this._isValidColor(option.color)) {
-				this.options.columns.color = option.color;
-			}
+		this.options.columns.labels.position = this.validateOption(options?.columns?.labels?.position, this.labelPositions, this.options.columns.labels.position);
 
-			if (option.rounded !== undefined && typeof option.rounded === 'boolean') {
-				this.options.columns.rounded = option.rounded;
-			}
 
-			if (option.inset !== undefined && typeof option.inset === 'boolean') {
-				this.options.columns.inset = option.inset;
-			}
+		/**
+		 * Chart Options
+		 */
+		this.options.chart.title = this.validateOption(options?.chart?.title, 'string', this.options.chart.title);
+		if (this._isValidColor(options?.chart?.color)) this.options.chart.color = options.chart.color;
 
-			if (option.striped !== undefined && typeof option.striped === 'boolean') {
-				this.options.columns.striped = option.striped;
-			}
+		/**
+		 * vAxis options
+		 */
+		this.options.vAxis.name = this.validateOption(options?.vAxis?.name, 'string', this.options.vAxis.name);
+		this.options.vAxis.majorLines = this.validateOption(options?.vAxis?.majorLines, 'boolean', this.options.vAxis.majorLines);
+		this.options.vAxis.minorLines = this.validateOption(options?.vAxis?.minorLines, 'boolean', this.options.vAxis.minorLines);
+		this.options.vAxis.format = this.validateOption(options?.vAxis?.format, this.labelFormats, this.options.vAxis.format);
 
-			if (option.animated !== undefined && typeof option.animated === 'boolean') {
-				this.options.columns.animated = option.animated;
-			}
-
-			if (option.onClick !== undefined && typeof option.onClick === 'function') {
-				this.options.columns.onClick = option.onClick;
-			}
-
-		}
-
-		if (options.labels !== undefined) {
-
-			if (options.labels.position !== undefined && ['inside', 'outside', 'none'].indexOf(options.labels.position) >= 0) {
-				this.options.labels.position = options.labels.position;
-			}
-
-			if (options.labels.color !== undefined && this._isValidColor(options.labels.color)) {
-				this.options.labels.color = options.labels.color;
-			}
-
-		}
-
-		if (options.chart !== undefined) {
-
-			const option = options.chart;
-
-			if (option.title !== undefined) {
-				this.options.chart.title = option.title;
-			}
-
-			if (option.color !== undefined && this._isValidColor(option.color)) {
-				this.options.chart.color = option.color;
-			}
-
-			if (option.minorLines !== undefined && typeof option.minorLines === 'boolean') {
-				this.options.chart.minorLines = option.minorLines;
-			}
-
-		}
-
-		if (options.vAxis !== undefined) {
-
-			const option = options.vAxis;
-
-			if (option.label !== undefined) {
-				this.options.vAxis.label = option.label;
-			}
-
-			if (option.lines !== undefined && typeof option.lines === 'boolean') {
-				this.options.vAxis.lines = option.lines;
-			}
-
-			if (option.format !== undefined && ['number', 'decimal', 'time', 'currency'].indexOf(option.format) >= 0) {
-				this.options.vAxis.format = option.format;
-			}
-
-			if (option.min !== undefined && (option.min === 'auto' || !isNaN(option.min))) {
-				this.options.vAxis.min = option.min;
-			}
-
-		}
+		if (options?.vAxis?.min === 'auto' || !isNaN(options.vAxis?.min)) this.options.vAxis.min = options.vAxis.min;
 
 	}
 
@@ -783,17 +795,17 @@ class CragColumn extends CragCore {
 				/**
 				 * Color in the columns labels based on an outside position
 				 */
-				if (this.options.labels.color === 'match') {
+				if (this.options.columns.labels.color === 'match') {
 
 					point.columnLabel.style.color = this._getColorByMode('match', point.columnProperties.color);
 
-				} else if (this.options.labels.color === 'auto') {
+				} else if (this.options.columns.labels.color === 'auto') {
 
 					point.columnLabel.style.color = this._getContrastColor(this.options.chart.color);
 
 				} else {
 
-					point.columnLabel.style.color = this._resolveColor(this.options.labels.color);
+					point.columnLabel.style.color = this._resolveColor(this.options.columns.labels.color);
 
 				}
 
@@ -810,7 +822,7 @@ class CragColumn extends CragCore {
 
 			if (line.isZeroPoint) {
 
-				line.majorLine.style.opacity = '1';
+				line.majorLine.style.opacity = '0.9';
 				line.majorLine.style.height = '2px';
 
 			} else {
@@ -821,6 +833,12 @@ class CragColumn extends CragCore {
 			}
 
 		}
+
+	}
+
+	_showHideElements() {
+
+
 
 	}
 
@@ -840,7 +858,7 @@ class CragColumn extends CragCore {
 				this.dataPoints[i].value = this.data.series[i][1];
 				this.dataPoints[i].name = this.data.series[i][0];
 
-				this.dataPoints[i].columnLabelOption.position = this.options.labels.position;
+				this.dataPoints[i].columnOptions = this.options.columns;
 
 			} else {
 
@@ -884,7 +902,7 @@ class CragColumn extends CragCore {
 			/**
 			 * Apply formatting to column label
 			 */
-			point.columnLabel.textContent = formatLabel(point.value, this.options.vAxis.format, this.vAxis.max, this.options.vAxis.formatOption);
+			point.columnLabel.textContent = this.formatLabel(point.value, this.options.vAxis.format, this.options.vAxis.formatOption);
 
 		}
 
@@ -912,9 +930,11 @@ class CragColumn extends CragCore {
 				this.vAxisLines[i].ofSteps = scale.steps;
 				this.vAxisLines[i].max = scale.max;
 
+				this.vAxisLines[i].axisProperties = this.options.vAxis;
+
 			} else {
 
-				this.vAxisLines[i] = new VAxisLine(scale.min + (i * scale.maj), i, scale.steps, scale.max, this.options.vAxis.format);
+				this.vAxisLines[i] = new VAxisLine(scale.min + (i * scale.maj), i, scale.steps, scale.max, this.options.vAxis);
 
 			}
 
@@ -952,15 +972,25 @@ class CragColumn extends CragCore {
 			/**
 			 * Append elements to DOM
 			 */
-
 			this.chart.gridArea.appendChild(line.majorLine);
 			this.chart.gridArea.appendChild(line.minorLine);
 
 			this.vAxis.area.appendChild(line.label);
 
-			line.labelText = formatLabel(line.value, this.options.vAxis.format, this.vAxis.max, this.options.vAxis.formatOption);
+			line.labelText = this.formatLabel(line.value, this.options.vAxis.format, this.options.vAxis.formatOption);
 
 			if (line.label.offsetWidth > vAxisCalculatedWidth) vAxisCalculatedWidth = line.label.offsetWidth;
+
+			if (this.options.vAxis.majorLines) {
+				line.majorLine.style.display = '';
+			} else {
+				line.majorLine.style.display = 'none';
+			}
+			if (this.options.vAxis.minorLines) {
+				line.minorLine.style.display = '';
+			} else {
+				line.minorLine.style.display = 'none';
+			}
 
 		}
 
@@ -1019,8 +1049,8 @@ class CragColumn extends CragCore {
 	_showToolTip(point) {
 
 		this.toolTip.title.textContent = point.name;
-		this.toolTip.label.textContent = this.options.vAxis.label;
-		this.toolTip.value.textContent = formatLabel(point.value, this.options.vAxis.format, this.vAxis.max, this.options.vAxis.formatOption);
+		this.toolTip.label.textContent = this.options.vAxis.name;
+		this.toolTip.value.textContent = this.formatLabel(point.value, this.options.vAxis.format, this.options.vAxis.formatOption);
 
 		const chartWidth = this.chart.area.offsetWidth;
 
@@ -1033,6 +1063,12 @@ class CragColumn extends CragCore {
 
 		let hAlignment = 0;
 
+		/**
+		 * If the column is on the left side of screen, see if the tool tip will fit on the left of the column first
+		 * Otherwise check to see if it will fit on the right.
+		 * If the preferred side can not fit, use the other.
+		 * If neither fits, it will default to center over the bar.
+		 */
 		if (chartWidth / 2 > columnLeft) {
 
 			if (chartWidth - columnLeft - columnWidth - 8 > tipWidth) {
@@ -1210,7 +1246,7 @@ class CragColumn extends CragCore {
 
 		if (['inside', 'outside', 'none'].indexOf(position) >= 0) {
 
-			this.options.labels.position = position;
+			this.options.columns.labels.position = position;
 
 			this._draw();
 
@@ -1226,15 +1262,31 @@ class CragColumn extends CragCore {
 
 		if (this._isValidColor(color)) {
 
-			this.options.labels.color = color;
+			this.options.columns.labels.color = color;
 
 		} else {
 
-			this.options.labels.color = 'auto';
+			this.options.columns.labels.color = 'auto';
 
 		}
 
 		this._colorize();
+
+	}
+
+	set majorLinesVisible(value) {
+
+		this.options.vAxis.majorLines = this.validateOption(value, 'boolean', this.options.vAxis.majorLines);
+
+		this._draw();
+
+	}
+
+	set minorLinesVisible(value) {
+
+		this.options.vAxis.minorLines = this.validateOption(value, 'boolean', this.options.vAxis.minorLines);
+
+		this._draw();
 
 	}
 
@@ -1245,16 +1297,43 @@ class CragColumn extends CragCore {
 	 */
 	setAxisFormat(format, formatOption = undefined) {
 
-		if (format !== undefined && ['number', 'decimal', 'time', 'currency'].indexOf(format) >= 0) {
+		this.options.vAxis.format = this.validateOption(format, this.labelFormats, this.options.vAxis.format);
+		this.options.vAxis.formatOption = formatOption ?? null;
 
-			this.options.vAxis.format = format;
-
-			if (formatOption !== undefined) this.options.vAxis.formatOption = formatOption;
-
-			this._draw();
-
-		}
+		this._draw();
 
 	}
 
+	set columnsRounded(value) {
+
+		this.options.columns.rounded = this.validateOption(value, 'boolean', this.options.columns.rounded);
+
+		this._draw();
+
+	}
+	
+	set columnsInset(value) {
+
+		this.options.columns.inset = this.validateOption(value, 'boolean', this.options.columns.inset);
+
+		this._draw();
+
+	}
+
+	set columnsStriped(value) {
+
+		this.options.columns.striped = this.validateOption(value, 'boolean', this.options.columns.striped);
+
+		this._draw();
+
+	}
+
+	set columnsAnimated(value) {
+
+		this.options.columns.animated = this.validateOption(value, 'boolean', this.options.columns.animated);
+
+		this._draw();
+
+	}
+	
 }
