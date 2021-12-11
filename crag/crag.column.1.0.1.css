@@ -83,6 +83,7 @@
 	right: 0;
 	bottom: 100%;
 	pointer-events: none;
+	white-space: nowrap;
 }
 .cragColumnAxisLineMajor {
 	position: absolute;
