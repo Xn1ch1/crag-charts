@@ -35,7 +35,7 @@ class CragLoader {
 	 * @param path
 	 * @param _callback
 	 */
-	constructor(charts, path, _callback) {
+	constructor(charts, _callback, path) {
 
 		/**
 		 * Use specified path if provided
@@ -128,7 +128,7 @@ class CragLoader {
 // 	core: {
 // 		js: 'crag.charts.core.0.2.0.js'
 // 	},
-// 	bar: {
+// 	columns: {
 // 		js: 'crag.column.1.0.1.js',
 // 		css: 'crag.column.1.0.1.css'
 // 	},
@@ -192,8 +192,8 @@ class CragLoader {
 // 				css = resources.progress.css;
 // 				break;
 // 			case 'column':
-// 				js = resources.bar.js;
-// 				css = resources.bar.css;
+// 				js = resources.columns.js;
+// 				css = resources.columns.css;
 // 				break;
 // 			case 'combo':
 // 				js = resources.combo.js;

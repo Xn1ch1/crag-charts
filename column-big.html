@@ -3,6 +3,7 @@
 	<head>
 
 		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+		<link href="resources/demo.css" rel="stylesheet">
 
 		<script src="resources/demo.js?v=2"></script>
 
@@ -14,102 +15,308 @@
 				--bg: #FFFFFF;
 				--on-bg: #081b33;
 			}
+			body {
+				background-color: var(--bg);
+			}
+			.chart-container {
+				width: calc(100vw - 32px);
+				height: calc(100vh - 70px);
+				border: none;
+				margin: 0;
+			}
+			.menu-button {
+				height: 34px;
+				width: 34px;
+				margin: 16px;
+				filter: invert(0.8);
+				cursor: pointer;
+				transition: all 0.3s;
+				display: inline-block;
+			}
+			/*.menu-button:hover {*/
+			/*	transform: scale(1.1);*/
+			/*}*/
+			#menu-modal {
+				position: fixed;
+				color: var(--on-bg);
+				background: var(--bg);
+				max-height: calc(100vh - 16px);
+				max-width: 350px;
+				width: calc(100vw - 16px);
+				top: 8px;
+				left: 8px;
+				z-index: 99;
+				box-shadow: 0 0 4px 1px rgb(0 0 0 / 40%);
+				padding-bottom: 16px;
+				border-radius: 8px;
+				box-sizing: border-box;
+				font-family: 'Roboto', sans-serif;
+				overflow: hidden;
+				opacity: 0.925;
+				user-select: none;
+			}
+			#menu-modal label {
+				display: block;
+				margin-top: 16px;
+				margin-bottom: 4px;
+				margin-left: 8px;
+				font-size: 11px;
+				opacity: 0.6;
+			}
+			#menu-modal select,
+			#menu-modal button {
+				width: calc(100% - 24px);
+				padding: 8px;
+				margin-bottom: 4px;
+				border: 2px solid var(--on-bg);
+				background: transparent;
+				color: var(--on-bg);
+				border-radius: 24px;
+				margin-left: 16px;
+				cursor: pointer;
+			}
+			#menu-modal button {
+				margin-top: 16px;
+				border: 2px solid var(--on-bg);
+				background: var(--on-bg);
+				color: var(--bg);
+			}
+			#menu-modal option {
+				background: var(--bg);
+				padding: 8px;
+			}
+			#menu-button-close {
+				height: 16px;
+				cursor: pointer;
+				filter: invert(0.8);
+				margin: 7px 0 7px calc(100% - 26px);
+			}
+			#options-script {
+				z-index: 100;
+				width: 697px;
+				max-width: 500px;
+				position: fixed;
+				height: 609px;
+				max-height: 50vh;
+				top: 50vh;
+				left: 50vw;
+				transform: translate(-50%, -50%);
+				border-radius: 8px;
+				box-shadow: rgb(0 0 0 / 30%) 0px 0px 4px 1px;
+				margin: 0px;
+				padding: 8px;
+				background: var(--on-bg);
+				color: var(--bg);
+				font-family: monospace;
+				white-space: nowrap;
+			}
+			#options-script-overlay {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100vw;
+				height: 100vh;
+				background: var(--bg);
+				opacity: 0.95;
+				z-index: 99;
+			}
+
 			@media screen and (prefers-color-scheme: dark) {
 				:root {
 					--bg: #081b33;
 					--on-bg: #FFFFFF;
 				}
+				.menu-button {
+					filter: invert(0);
+				}
+				#menu-button-close {
+					filter: invert(0);
+				}
 			}
-
-			body {
-				background-color: var(--bg);
-			}
-			button, select {
-				height: 25px;
-			}
-			.chart-container {
-				height: calc(100% - 25px);
-			}
-
-
 		</style>
 
 	</head>
 
 	<body>
 
-		<div>
+	<img src="/resources/icons/dice.svg" alt="Random Data" class="menu-button" id="new-data" onclick="newData()">
 
-			<button onclick="newData()">Random Data</button>
-			<button onclick="newTitle()">Random Title</button>
-			<select onchange="newBarColor(this)">
-				<option value="multi">Bar Color (Default: Multi)</option>
-				<option value="positiveNegative">Red/Green</option>
-				<option value="orange">Orange</option>
-				<option value="green">Green</option>
-				<option value="blue">Blue</option>
-			</select>
-			<select onchange="newLabelPos(this)">
-				<option value="none">Column Label Position (Default: None)</option>
-				<option value="inside">Inside</option>
-				<option value="outside">Outside</option>
-			</select>
-			<select onchange="newLabelColor(this)">
-				<option value="auto">Column Label Color (Default: Auto)</option>
-				<option value="match">Match Label</option>
-				<option value="blue">Blue</option>
-				<option value="green">Green</option>
-			</select>
+		<div id="menu-modal" style="display: none">
+
+			<div id="menu-modal-head" style="width: 100%; background: rgba(50,50,50,0.2); height: 30px;">
+				<img src="/resources/icons/cross.svg" alt="Menu" id="menu-button-close" onclick="hideMenu()">
+			</div>
+
+			<div style="overflow: auto; max-height: 350px; position: relative; padding: 0 16px 8px 16px; box-sizing: border-box;">
+
+				<label>Column Options</label>
+				<select onchange="newColumnColor(this)">
+					<option value="multi">Color (Default: Multi)</option>
+					<option value="redGreen">Red/Green</option>
+					<option value="red">Red</option>
+					<option value="pink">Pink</option>
+					<option value="purple">Purple</option>
+					<option value="deeppurple">Deep Purple</option>
+					<option value="indigo">Indigo</option>
+					<option value="blue">Blue</option>
+					<option value="lightblue">Light Blue</option>
+					<option value="cyan">Cyan</option>
+					<option value="teal">Teal</option>
+					<option value="green">Green</option>
+					<option value="lightgreen">Light Green</option>
+					<option value="lime">Lime</option>
+					<option value="yellow">Yellow</option>
+					<option value="amber">Amber</option>
+					<option value="orange">Orange</option>
+					<option value="deeporange">Deep Orange</option>
+				</select>
+				<select onchange="newLabelPos(this)">
+					<option value="none">Label Position (Default: None)</option>
+					<option value="inside">Inside</option>
+					<option value="outside">Outside</option>
+				</select>
+				<select onchange="newLabelColor(this)">
+					<option value="auto">Label Color (Default: Auto)</option>
+					<option value="match">Match Column</option>
+					<option value="black">Black</option>
+					<option value="white">White</option>
+					<option value="red">Red</option>
+					<option value="pink">Pink</option>
+					<option value="purple">Purple</option>
+					<option value="deeppurple">Deep Purple</option>
+					<option value="indigo">Indigo</option>
+					<option value="blue">Blue</option>
+					<option value="lightblue">Light Blue</option>
+					<option value="cyan">Cyan</option>
+					<option value="teal">Teal</option>
+					<option value="green">Green</option>
+					<option value="lightgreen">Light Green</option>
+					<option value="lime">Lime</option>
+					<option value="yellow">Yellow</option>
+					<option value="amber">Amber</option>
+					<option value="orange">Orange</option>
+					<option value="deeporange">Deep Orange</option>
+				</select>
+				<ul class="ks-cboxtags">
+					<li><input type="checkbox" onchange="toggleRounded(this)" id="rounded"><label for="rounded">Rounded</label></li>
+					<li><input type="checkbox" onchange="toggleInset(this)" id="inset"><label for="inset">Inset</label></li>
+					<li><input type="checkbox" onchange="toggleStriped(this)" id="striped"><label for="striped">Striped</label></li>
+					<li><input type="checkbox" onchange="toggleAnimated(this)" id="animated"><label for="animated">Animated</label></li>
+				</ul>
+
+				<label>vAxis</label>
+				<select onchange="newAxisFormat(this)">
+					<option value="number">Label Format (Default: Number)</option>
+					<option value="time">Time</option>
+					<option value="decimal">Decimal</option>
+					<option value="currency" data-symbol="GBP">Currency £</option>
+					<option value="currency" data-symbol="USD">Currency $</option>
+					<option value="currency" data-symbol="EUR">Currency €</option>
+				</select>
+				<ul class="ks-cboxtags">
+					<li><input type="checkbox" onchange="toggleMajorLines(this)" id="majorLines" checked><label for="majorLines">Major Lines</label></li>
+					<li><input type="checkbox" onchange="toggleMinorLines(this)" id="minorLines" checked><label for="minorLines">Minor Lines</label></li>
+				</ul>
+
+				<label>Chart Options</label>
+				<ul class="ks-cboxtags">
+					<li><input type="checkbox" onchange="newTitle(this)" id="title"><label for="title">Title</label></li>
+				</ul>
+
+				<button onclick="createOptions()">Generate Options</button>
+
+			</div>
 
 		</div>
+
+		<textarea id="options-script" style="display: none"></textarea>
+		<div id="options-script-overlay" style="display:none"></div>
 
 		<div id="column-chart" class="chart-container"></div>
 		
 		<script src="crag/crag.charts.loader.js?v=1"></script>
 		<script>
 
-			const themeQuery = window.matchMedia('(prefers-color-scheme: dark)');
 			let chart;
 
-			new CragLoader(['column'], '/crag/', createChart);
+			const themeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+			themeQuery.addEventListener('change', () => chart.chartColor = cssVar('bg'));
+
+			new CragLoader(['column'], createChart, '/crag/');
 
 			function createChart() {
 
+				const data = dataGenerator(5);
 				const options = {
-					data: dataGenerator(5),
-					bar: {
+					columns: {
 						width: 95,
-						rounded: true,
-						inset: true,
 					},
 					vAxis: {
-						label: 'Something Interesting'
+						name: 'A series',
 					},
 					chart: {
 						color: cssVar('bg')
 					}
 				}
-				chart = new CragColumn(options).create('column-chart');
 
-				console.log(chart);
+				chart = new CragColumn(data, options).create('column-chart');
 
 			}
 
-			function newBarColor(elem) {
+		</script>
 
-				chart.barColor = elem.value;
+		<script>
+
+			document.body.oncontextmenu = (event) => {
+
+				event.preventDefault();
+
+				if (document.getElementById('menu-modal').contains(event.target)) return;
+
+				document.getElementById('menu-modal').style.display = '';
+
+				document.getElementById('menu-modal').style.left = `${event.clientX}px`;
+				document.getElementById('menu-modal').style.top = `${event.clientY}px`;
+
+			}
+
+			function hideMenu() {
+
+				document.getElementById('menu-modal').style.display = 'none';
+
+			}
+
+			function newColumnColor(elem) {
+
+				chart.columnColor = elem.value;
 
 			}
 
 			function newData() {
 
-				chart.update(dataGenerator(15));
+				document.getElementById('new-data').style.transform = 'rotate(360deg)';
+				document.getElementById('new-data').style.pointerEvents = 'none';
+
+				setTimeout(() => document.getElementById('new-data').style.transform = '', 350);
+				setTimeout(() => document.getElementById('new-data').style.pointerEvents = '', 800);
+
+				chart.newData = dataGenerator(15);
+
 
 			}
 
 			function newTitle() {
 
-				chart.title = randomName(20);
+				if (chart.title === '') {
+
+					chart.title = randomName();
+
+				} else {
+
+					chart.title = '';
+
+				}
 
 			}
 
@@ -125,11 +332,105 @@
 
 			}
 
-			themeQuery.addEventListener('change', event => {
+			function newAxisFormat(elem) {
 
-				chart.chartColor = cssVar('bg')
+				chart.setAxisFormat(elem.value, elem.options[elem.selectedIndex].dataset.symbol);
 
-			});
+			}
+
+			function toggleMajorLines(elem) {
+
+				chart.majorLinesVisible = elem.checked;
+
+			}
+
+			function toggleMinorLines(elem) {
+
+				chart.minorLinesVisible = elem.checked;
+
+			}
+
+			function toggleRounded(elem) {
+
+				chart.columnsRounded = elem.checked;
+
+			}
+
+			function toggleInset(elem) {
+
+				chart.columnsInset = elem.checked;
+
+			}
+
+			function toggleStriped(elem) {
+
+				chart.columnsStriped = elem.checked;
+
+			}
+
+			function toggleAnimated(elem) {
+
+				chart.columnsAnimated = elem.checked;
+
+			}
+
+			document.getElementById('menu-modal-head').ondragstart = function() {
+				return false;
+			};
+
+			document.getElementById('menu-modal-head').onmousedown = function(event) {
+
+				const target = event.target;
+				target.style.cursor = 'grab';
+
+				let shiftX = event.clientX - document.getElementById('menu-modal').getBoundingClientRect().left;
+				let shiftY = event.clientY - document.getElementById('menu-modal').getBoundingClientRect().top;
+
+				// centers the ball at (pageX, pageY) coordinates
+				function moveAt(pageX, pageY) {
+					document.getElementById('menu-modal').style.left = pageX - shiftX + 'px';
+					document.getElementById('menu-modal').style.top = pageY - shiftY + 'px';
+				}
+
+				// move our absolutely positioned ball under the pointer
+				moveAt(event.pageX, event.pageY);
+
+				function onMouseMove(event) {
+					moveAt(event.pageX, event.pageY);
+				}
+
+				// (2) move the ball on mousemove
+				document.addEventListener('mousemove', onMouseMove);
+
+				// (3) drop the ball, remove unneeded handlers
+				document.getElementById('menu-modal').onmouseup = function() {
+
+					target.style.cursor = '';
+
+					document.removeEventListener('mousemove', onMouseMove);
+					document.getElementById('menu-modal').onmouseup = null;
+
+				};
+
+			}
+
+			function createOptions() {
+
+				const optionText = "const options = " + JSON.stringify(chart.options, null, 2);
+				const dataText = "const data = " + JSON.stringify(chart.data.series);
+
+				document.getElementById('options-script-overlay').style.display = '';
+				document.getElementById('options-script').style.display = '';
+				document.getElementById('options-script').value = `${dataText}\n\n${optionText}`;
+
+			}
+
+			document.getElementById('options-script-overlay').onclick = () => {
+
+				document.getElementById('options-script-overlay').style.display = 'none';
+				document.getElementById('options-script').style.display = 'none';
+
+			}
 
 		</script>
 

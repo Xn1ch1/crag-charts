@@ -37,7 +37,7 @@
 					<ul>
 						<li><a href="#function-title">title</a></li>
 						<li><a href="#function-update">update</a></li>
-						<li><a href="#function-draw">draw</a></li>
+						<li><a href="#function-draw">_draw</a></li>
 						<li><a href="#function-callback">onClick</a></li>
 					</ul>
 					<li><a href="#examples">Examples</a></li>
@@ -45,7 +45,7 @@
 					<ul>
 						<li><a href="#data">data</a></li>
 						<li><a href="#chart">chart</a></li>
-						<li><a href="#bar">bar</a></li>
+						<li><a href="#bar">columns</a></li>
 						<li><a href="#line">line</a></li>
 						<li><a href="#vAxes">vAxes</a></li>
 						<li><a href="#labels">labels</a></li>
@@ -61,7 +61,7 @@
 
 				<h2 id="overview">Overview</h2>
 
-				<p>The combo chart is a vertical bar combined with a single line chart rendered in the browser using SVG and HTML. Like all Crag Charts, combo charts display tooltips when the user hovers over the series elements. The chart is also limited to 20 data points and data will automatically be truncated if there are more points provided.</p>
+				<p>The combo chart is a vertical columns combined with a single line chart rendered in the browser using SVG and HTML. Like all Crag Charts, combo charts display tooltips when the user hovers over the series elements. The chart is also limited to 20 data points and data will automatically be truncated if there are more points provided.</p>
 
 				<p>Unlike the column and line chart, each data point in the chart requires 2 values to each label, the first value is for the left side axis, the column, and the second is for the right side axis, the line.</p>
 				<p>The minimum required code required for creating a column chart is the following</p>
@@ -90,7 +90,7 @@
 				<h2 id="functions">Built In Functions</h2>
 
 				<h3 id="function-title">Title Update</h3>
-				<p>The chart title can be updated at any time even if one was not defined in the initial options, should the chart need adjusting for the new space the draw function will be called automatically. The title property should be applied to the chart object.</p>
+				<p>The chart title can be updated at any time even if one was not defined in the initial options, should the chart need adjusting for the new space the _draw function will be called automatically. The title property should be applied to the chart object.</p>
 
 <pre><code>chart.title = 'New Chart Title';</code></pre>
 
@@ -98,7 +98,7 @@
 
 				<h3 id="function-update">Data Update</h3>
 
-				<p>To update the data in the chart, the update function should be called on the chart object. Only one parameter is required, an array of arrays. See <a href="#data">data</a> parameter for more information. The data set can change in size when updated, bars and line points will be automatically added and removed as needed but will still be limited to a total of 20 points and truncated automatically. In addition, this function will automatically call the draw function (below) once the update has been completed.</p>
+				<p>To update the data in the chart, the update function should be called on the chart object. Only one parameter is required, an array of arrays. See <a href="#data">data</a> parameter for more information. The data set can change in size when updated, bars and line points will be automatically added and removed as needed but will still be limited to a total of 20 points and truncated automatically. In addition, this function will automatically call the _draw function (below) once the update has been completed.</p>
 
 <pre><code>let newData = [['A', 160, 100], ['B', 527, 75], ['C', 428, 90]];
 chart.update(newData);</code></pre>
@@ -106,20 +106,20 @@ chart.update(newData);</code></pre>
 				<hr class="mini-hr">
 
 				<h3 id="function-draw">Draw</h3>
-				<p>The draw function will cause a complete redraw of the chart with the pre existing data. This function will be useful where the size of the container object changes size. The below example is calling the draw function on the chart object when the window resizes.</p>
+				<p>The _draw function will cause a complete redraw of the chart with the pre existing data. This function will be useful where the size of the container object changes size. The below example is calling the _draw function on the chart object when the window resizes.</p>
 
 <pre><code>window.onresize = function() {
-	chart.draw();
+	chart._draw();
 }</code></pre>
 
 				<hr class="mini-hr">
 
 				<h3 id="function-callback">On Click Callback</h3>
 
-				<p>A function can be passed to the onClick property in the options to the bar elements. This function will be called when a series bar is clicked.</p>
+				<p>A function can be passed to the onClick property in the options to the columns elements. This function will be called when a series columns is clicked.</p>
 
 <pre><code>let options = {
-	bar: {
+	columns: {
 		onClick: myFunction
 	}
 }
@@ -143,10 +143,10 @@ myFunction(obj) {
 						</tr>
 						<tr>
 							<td>
-								bar
+								columns
 							</td>
 							<td>
-								The html element of the bar clicked as an object.
+								The html element of the columns clicked as an object.
 								<span class="config-type">Type: HTMLElement</span>
 							</td>
 						</tr>
@@ -155,7 +155,7 @@ myFunction(obj) {
 								label
 							</td>
 							<td>
-								The html element of the label related to the bar clicked as an object. If the label positions are none, this will return null.
+								The html element of the label related to the columns clicked as an object. If the label positions are none, this will return null.
 								<span class="config-type">Type: HTMLElement</span>
 							</td>
 						</tr>
@@ -173,7 +173,7 @@ myFunction(obj) {
 								point
 							</td>
 							<td>
-								The html element of the point, related to the bar clicked, as an object.
+								The html element of the point, related to the columns clicked, as an object.
 								<span class="config-type">Type: HTMLElement</span>
 							</td>
 						</tr>
@@ -182,7 +182,7 @@ myFunction(obj) {
 								texts
 							</td>
 							<td>
-								The formatted strings of the data point value. The format can be defined by the chart options. See <a href="#vAxis">vAxis.format</a> for more information. The array returned will have two values, the first for the left hand axis, the bar, and the second for the right axis.
+								The formatted strings of the data point value. The format can be defined by the chart options. See <a href="#vAxis">vAxis.format</a> for more information. The array returned will have two values, the first for the left hand axis, the columns, and the second for the right axis.
 								<span class="config-type">Type: Array of Strings</span>
 							</td>
 						</tr>
@@ -191,7 +191,7 @@ myFunction(obj) {
 								values
 							</td>
 							<td>
-								The numerical values of the data point. The array returned will have two values, the first for the left hand axis, the bar, and the second for the right axis.
+								The numerical values of the data point. The array returned will have two values, the first for the left hand axis, the columns, and the second for the right axis.
 								<span class="config-type">Type: Array of Numbers</span>
 							</td>
 						</tr>
@@ -204,11 +204,11 @@ myFunction(obj) {
 
 				<h3>Example 1</h3>
 
-				<p>The following example is an object containing the data series and additional parameters, these parameters set the bar width to 70%, the top of the bars to be rounded and applies an inset shadow.</p>
+				<p>The following example is an object containing the data series and additional parameters, these parameters set the columns width to 70%, the top of the bars to be rounded and applies an inset shadow.</p>
 
 <pre><code>let options = {
 	data: [['A', 500, 21], ['B', 436, 25], ['C', 300, 19], ['D', 375, 12]],
-	bar: {
+	columns: {
 		width: 70,
 		rounded: true,
 		inset: true
@@ -224,11 +224,11 @@ myFunction(obj) {
 
 				<h3>Example 2</h3>
 
-				<p>In addition to passing options for the bar, there are options available for the line and points. the below example shows some of these options.</p>
+				<p>In addition to passing options for the columns, there are options available for the line and points. the below example shows some of these options.</p>
 
 <pre><code>let options = {
 	data: [['A', 500, 21], ['B', 436, 25], ['C', 300, 19], ['D', 375, 12], ['E', 300, 30]],
-	bar: {
+	columns: {
 		width: 70,
 		color: 'lightgrey',
 		rounded: true
@@ -253,7 +253,7 @@ myFunction(obj) {
 
 <pre><code>let options = {
 	data: [['A', 500, 21], ['B', 436, 25], ['C', 300, 19], ['D', 375, 12], ['E', 300, 30]],
-	bar: {
+	columns: {
 		width: 60,
 		rounded: true
 	},
@@ -273,7 +273,7 @@ myFunction(obj) {
 				<p>This will generate the below chart. Tip: Use the random data generator button below the chart to generate and apply a new random data set.</p>
 
 				<div id="chart4" class="chart-container"></div>
-				<span class="chart-caption"><button onclick="newData4();disableBtn(this)">Random Data Set</button> Top: Both the bar and the point have hover triggers that will show the tooltip.</span>
+				<span class="chart-caption"><button onclick="newData4();disableBtn(this)">Random Data Set</button> Top: Both the columns and the point have hover triggers that will show the tooltip.</span>
 
 				<h2 id="config">Configuration</h2>
 
@@ -345,10 +345,10 @@ myFunction(obj) {
 						</tr>
 						<tr id="bar">
 							<td>
-								bar.width
+								columns.width
 							</td>
 							<td>
-								Percentage width of each bar, where 100 means there is no space between bars. This cannot exceed 100.
+								Percentage width of each columns, where 100 means there is no space between bars. This cannot exceed 100.
 
 								<span class="config-type">Type: Number</span>
 								<span class="config-default">Default: 90</span>
@@ -356,7 +356,7 @@ myFunction(obj) {
 						</tr>
 						<tr>
 							<td>
-								bar.color
+								columns.color
 							</td>
 							<td>
 								The base color of the bars, when not specified the bars will take the default array of colors.
@@ -368,7 +368,7 @@ myFunction(obj) {
 						</tr>
 						<tr>
 							<td>
-								bar.rounded
+								columns.rounded
 							</td>
 							<td>
 								Sets the top of the bars to have rounded corners.
@@ -379,7 +379,7 @@ myFunction(obj) {
 						</tr>
 						<tr>
 							<td>
-								bar.inset
+								columns.inset
 							</td>
 							<td>
 								Sets the bars to have an inset drop shadow.
@@ -390,7 +390,7 @@ myFunction(obj) {
 						</tr>
 						<tr>
 							<td>
-								bar.stripe
+								columns.stripe
 							</td>
 							<td>
 								Applies a striped overlay on the bars, this will not affect the specified color.
@@ -401,10 +401,10 @@ myFunction(obj) {
 						</tr>
 						<tr>
 							<td>
-								bar.animated
+								columns.animated
 							</td>
 							<td>
-								Animates the striped overlay of the bars, will have no effect unless bar.stripe is set to true.
+								Animates the striped overlay of the bars, will have no effect unless columns.stripe is set to true.
 
 								<span class="config-type">Type: Boolean</span>
 								<span class="config-default">Default: false</span>
@@ -412,13 +412,13 @@ myFunction(obj) {
 						</tr>
 						<tr>
 							<td>
-								bar.onClick
+								columns.onClick
 							</td>
 							<td>
-								A function to be called when a bar in the chart is clicked. The function will return a single object containing elements and data related to the bar clicked, see <a href="#functions">Functions</a> for more information.
+								A function to be called when a columns in the chart is clicked. The function will return a single object containing elements and data related to the columns clicked, see <a href="#functions">Functions</a> for more information.
 
 <pre><code>obj = {
-	bar: HTMLElement,
+	columns: HTMLElement,
 	label: HTMLElement,
 	name: String,
 	text: String,
@@ -539,7 +539,7 @@ myFunction(obj) {
 								labels.position
 							</td>
 							<td>
-								Sets the default position of the bar value labels. The position will automatically switch where the label cannot fit in the defined position. In addition, if each label will not fit within the series width, the labels will automatically hide.
+								Sets the default position of the columns value labels. The position will automatically switch where the label cannot fit in the defined position. In addition, if each label will not fit within the series width, the labels will automatically hide.
 
 								<ul>
 									<li>none: labels will not be displayed</li>
@@ -569,7 +569,7 @@ myFunction(obj) {
 
 <pre><code>options = {
 	data: null,
-	bar: {
+	columns: {
 		width: 90,
 		color: 'multi',
 		rounded: false,
