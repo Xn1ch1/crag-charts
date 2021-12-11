@@ -137,6 +137,73 @@ class CragCore {
 
 	}
 
+	labelFormats = ['number', 'time', 'currency', 'decimal'];
+	labelPositions = ['none', 'inside', 'outside'];
+
+	/**
+	 * Converts a number value into a specified formatted string. Will default to number with no decimal places where not specified.
+	 * @param {number} value Numerical value to be formatted. In case of time, this will be seconds.
+	 * @param {string} type Type of formatting to apply, either 'decimal', 'time', 'currency' or default of 'number'
+	 * @param {string|null} formatOption Additional options to be passed to formatter. To be used for currency formatting; pass along the code, eg 'GBP'
+	 * @return {string} Returns formatted string
+	 */
+	formatLabel(value, type = 'number', formatOption = null) {
+
+		switch(type) {
+
+			case 'decimal':
+				return value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+			case 'time':
+				return sToTime(value);
+
+			case 'currency':
+				return new Intl.NumberFormat('en-GB',
+					{ style: 'currency', currency: formatOption }
+				).format(value);
+
+			default:
+				return value.toLocaleString(undefined, {maximumFractionDigits: 0});
+
+		}
+
+	}
+
+	_isValidFormat(format) {
+
+		return this.labelFormats.includes(format);
+
+	}
+
+	/**
+	 * Validates an input option to make sure it conforms to the required type. If an array is passed
+	 * as type, function will check to see if value is in the array.
+	 * @param {any} value Value to validate
+	 * @param {any} type String type name or array to check value exists within.
+	 * @param {any} defaultValue Default to be returned when the value does not conform to required type
+	 * @returns {any} Returns the value if it is a valid type, otherwise the default value
+	 */
+	validateOption(value, type, defaultValue) {
+
+		/**
+		 * If the type object is an array, check to see if the value
+		 * exists in the array, otherwise return the default.
+		 */
+		if (Array.isArray(type)) {
+
+			if (type.includes(value)) return value;
+
+			return defaultValue
+
+		}
+
+		if (typeof value === type) return value;
+
+		return defaultValue
+
+	}
+
+
 }
 //
 // /**
@@ -205,31 +272,32 @@ class CragCore {
 //
 // }
 
-function formatLabel(value, type = 'number', max = 0, formatOption = null) {
-
-	let label;
+/**
+ * Converts a number value into a specified formatted string. Will default to number with no decimal places where not specified.
+ * @param {number} value Numerical value to be formatted. In case of time, this will be seconds.
+ * @param {string} type Type of formatting to apply, either 'decimal', 'time', 'currency' or default of 'number'
+ * @param {string|null} formatOption Additional options to be passed to formatter. To be used for currency formatting; pass along the code, eg 'GBP'
+ * @return {string} Returns formatted string
+ */
+function formatLabel(value, type = 'number', formatOption = null) {
 
 	switch(type) {
+
 		case 'decimal':
-			label = value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-			break;
+			return value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
 		case 'time':
-			label = sToTime(value, max);
-			break;
+			return sToTime(value);
 
 		case 'currency':
-			label = new Intl.NumberFormat('en-GB',
+			return new Intl.NumberFormat('en-GB',
 				{ style: 'currency', currency: formatOption }
 			).format(value);
-			break;
 
 		default:
-			label = value.toLocaleString(undefined, {maximumFractionDigits: 0});
-			break;
-	}
+			return value.toLocaleString(undefined, {maximumFractionDigits: 0});
 
-	return label;
+	}
 
 }
 
@@ -455,7 +523,7 @@ function calculateScale(min, max, base) {
 
 }
 
-function sToTime(time, max) {
+function sToTime(time) {
 
 	function pad(n, z) {
 
@@ -477,7 +545,7 @@ function sToTime(time, max) {
 	const minuets = ((time - seconds) / 60) % 60;
 	const hours = ((((time - seconds) / 60) % 60) - minuets) / 60;
 
-	if (hours > 0 || max > 3600) {
+	if (hours > 0) {
 
 		return `${(time < 0 ? '-' : '')}${pad(hours)}:${pad(minuets)}:${pad(seconds)}`;
 
