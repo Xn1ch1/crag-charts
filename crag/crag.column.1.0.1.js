@@ -438,6 +438,7 @@ class CragColumn extends CragCore {
 				label: 'Series',
 				lines: true,
 				format: 'number',
+				formatOption: 'GBP',
 				min: 'auto'
 			},
 			labels: {
@@ -566,7 +567,7 @@ class CragColumn extends CragCore {
 				this.options.vAxis.lines = option.lines;
 			}
 
-			if (option.format !== undefined && ['number', 'decimal', 'time'].indexOf(option.format) >= 0) {
+			if (option.format !== undefined && ['number', 'decimal', 'time', 'currency'].indexOf(option.format) >= 0) {
 				this.options.vAxis.format = option.format;
 			}
 
@@ -883,7 +884,7 @@ class CragColumn extends CragCore {
 			/**
 			 * Apply formatting to column label
 			 */
-			point.columnLabel.textContent = formatLabel(point.value, this.options.vAxis.format, this.vAxis.max);
+			point.columnLabel.textContent = formatLabel(point.value, this.options.vAxis.format, this.vAxis.max, this.options.vAxis.formatOption);
 
 		}
 
@@ -957,7 +958,7 @@ class CragColumn extends CragCore {
 
 			this.vAxis.area.appendChild(line.label);
 
-			line.labelText = formatLabel(line.value, this.options.vAxis.format, this.vAxis.max);
+			line.labelText = formatLabel(line.value, this.options.vAxis.format, this.vAxis.max, this.options.vAxis.formatOption);
 
 			if (line.label.offsetWidth > vAxisCalculatedWidth) vAxisCalculatedWidth = line.label.offsetWidth;
 
@@ -1019,7 +1020,7 @@ class CragColumn extends CragCore {
 
 		this.toolTip.title.textContent = point.name;
 		this.toolTip.label.textContent = this.options.vAxis.label;
-		this.toolTip.value.textContent = point.value;
+		this.toolTip.value.textContent = formatLabel(point.value, this.options.vAxis.format, this.vAxis.max, this.options.vAxis.formatOption);
 
 		const chartWidth = this.chart.area.offsetWidth;
 
@@ -1030,7 +1031,7 @@ class CragColumn extends CragCore {
 		const tipHeight = this.toolTip.container.offsetHeight;
 		const tipWidth = this.toolTip.container.offsetWidth;
 
-		let hAlignment;
+		let hAlignment = 0;
 
 		if (chartWidth / 2 > columnLeft) {
 
@@ -1041,10 +1042,6 @@ class CragColumn extends CragCore {
 			} else if (columnLeft - 8 > tipWidth) {
 
 				hAlignment = -1;
-
-			} else {
-
-				hAlignment = 0;
 
 			}
 
@@ -1057,10 +1054,6 @@ class CragColumn extends CragCore {
 			} else if (chartWidth - columnLeft - columnWidth - 8 > tipWidth) {
 
 				hAlignment = 1;
-
-			} else {
-
-				hAlignment = 0;
 
 			}
 
@@ -1179,6 +1172,11 @@ class CragColumn extends CragCore {
 		this._draw();
 
 	}
+	get title() {
+
+		return this.chart.title?.textContent ?? '';
+
+	}
 
 	/**
 	 * @description Applies a new background color to the chart.
@@ -1237,6 +1235,25 @@ class CragColumn extends CragCore {
 		}
 
 		this._colorize();
+
+	}
+
+	/**
+	 * Sets new label colors with either a mode or a color value.
+	 * @param {string} format
+	 * @param {string|undefined} formatOption
+	 */
+	setAxisFormat(format, formatOption = undefined) {
+
+		if (format !== undefined && ['number', 'decimal', 'time', 'currency'].indexOf(format) >= 0) {
+
+			this.options.vAxis.format = format;
+
+			if (formatOption !== undefined) this.options.vAxis.formatOption = formatOption;
+
+			this._draw();
+
+		}
 
 	}
 
