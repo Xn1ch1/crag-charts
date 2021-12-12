@@ -47,7 +47,6 @@
 				left: 8px;
 				z-index: 99;
 				box-shadow: 0 0 4px 1px rgb(0 0 0 / 40%);
-				padding-bottom: 16px;
 				border-radius: 8px;
 				box-sizing: border-box;
 				font-family: 'Roboto', sans-serif;
@@ -102,8 +101,8 @@
 				left: 50vw;
 				transform: translate(-50%, -50%);
 				border-radius: 8px;
-				box-shadow: rgb(0 0 0 / 30%) 0px 0px 4px 1px;
-				margin: 0px;
+				box-shadow: 0 0 4px 1px rgb(0 0 0 / 30%) ;
+				margin: 0;
 				padding: 8px;
 				background: var(--on-bg);
 				color: var(--bg);
@@ -119,6 +118,95 @@
 				background: var(--bg);
 				opacity: 0.95;
 				z-index: 99;
+			}
+			.slider-container {
+				position: relative;
+				height: 36px;
+				margin-left: 16px;
+				margin-bottom: 4px;
+				width: calc(100% - 24px);
+			}
+			.slider-container span {
+				position: absolute;
+				top: 50%;
+				left: 16px;
+				transform: translateY(-50%);
+				pointer-events: none;
+				font-family: Roboto, sans-serif;
+				font-size: 13px;
+			}
+			.slider-container input[type="range"] {
+				margin: 0;
+				-webkit-appearance: none;
+				position: relative;
+				overflow: hidden;
+				height: 36px;
+				width: 100%;
+				cursor: pointer;
+				border-radius: 24px;
+				border: 2px solid var(--on-bg);
+				background: transparent;
+			}
+
+			.slider-container ::-webkit-slider-runnable-track {
+				background: transparent;
+			}
+
+			/*
+			 * 1. Set to 0 width and remove border for a slider without a thumb
+			 */
+			.slider-container ::-webkit-slider-thumb {
+				-webkit-appearance: none;
+				width: 0;
+				height: 40px;
+				background: transparent;
+				box-shadow: -100vw 0 0 100vw dodgerblue;
+			}
+
+			.slider-container ::-moz-range-track {
+				height: 40px;
+				background: transparent;
+			}
+
+			.slider-container ::-moz-range-thumb {
+				background: #fff;
+				height: 40px;
+				width: 0;
+				border: 0;
+				border-radius: 0 !important;
+				box-shadow: -100vw 0 0 100vw dodgerblue;
+				box-sizing: border-box;
+			}
+
+			.slider-container ::-ms-fill-lower {
+				background: var(--bg);
+			}
+
+			.slider-container ::-ms-thumb {
+				background: transparent;
+				border: none;
+				height: 40px;
+				width: 0;
+				box-sizing: border-box;
+			}
+
+			.slider-container ::-ms-ticks-after {
+				display: none;
+			}
+
+			.slider-container ::-ms-ticks-before {
+				display: none;
+			}
+
+			.slider-container ::-ms-track {
+				background: transparent;
+				color: transparent;
+				height: 40px;
+				border: none;
+			}
+
+			.slider-container ::-ms-tooltip {
+				display: none;
 			}
 
 			@media screen and (prefers-color-scheme: dark) {
@@ -147,7 +235,7 @@
 				<img src="/resources/icons/cross.svg" alt="Menu" id="menu-button-close" onclick="hideMenu()">
 			</div>
 
-			<div style="overflow: auto; max-height: 350px; position: relative; padding: 0 16px 8px 16px; box-sizing: border-box;">
+			<div style="overflow: auto; max-height: 350px; position: relative; padding: 0 16px 8px 16px; box-sizing: border-box;backdrop-filter: brightness(1.25);">
 
 				<label>Column Options</label>
 				<select onchange="newColumnColor(this)">
@@ -197,6 +285,10 @@
 					<option value="orange">Orange</option>
 					<option value="deeporange">Deep Orange</option>
 				</select>
+				<div class="slider-container">
+					<input type="range" value="95" min="1" max="100" onchange="newWidth(this)">
+					<span>Column Width</span>
+				</div>
 				<ul class="ks-cboxtags">
 					<li><input type="checkbox" onchange="toggleRounded(this)" id="rounded"><label for="rounded">Rounded</label></li>
 					<li><input type="checkbox" onchange="toggleInset(this)" id="inset"><label for="inset">Inset</label></li>
@@ -371,6 +463,12 @@
 			function toggleAnimated(elem) {
 
 				chart.columnsAnimated = elem.checked;
+
+			}
+
+			function newWidth(elem) {
+
+				chart.columnWidth = Number(elem.value);
 
 			}
 
