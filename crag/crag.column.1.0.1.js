@@ -1335,5 +1335,13 @@ class CragColumn extends CragCore {
 		this._draw();
 
 	}
+
+	set columnWidth(value) {
+
+		this.options.columns.width = this.validateOption(value, 'number', this.options.columns.width);
+
+		this._draw();
+
+	}
 	
 }
