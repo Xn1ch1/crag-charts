@@ -1,54 +1,17 @@
-.cragColumnChartContainer {
-	width: 100%;
-	height: 100%;
-	display: grid;
-	grid-template-columns: min-content 1fr;
-	grid-template-rows: min-content 1fr min-content;
-	gap: 0 0;
-	grid-template-areas:
-		"cragColumnVAxis cragColumnTitle"
-		"cragColumnVAxis cragColumnChartArea"
-		"cragColumnVAxis cragColumnHAxis";
-	overflow: hidden;
-}
-.cragColumnVAxis {
-	grid-area: cragColumnVAxis;
-	position: relative;
-	transition: all 0.8s ease;
-}
-.cragColumnTitle {
-	grid-area: cragColumnTitle;
-	position: relative;
-	transition: all 0.8s ease;
-	min-height: 10px;
-}
-.cragColumnTitleText {
+.cragTitleText {
 	margin: 0 0 16px 0;
     font-size: 25px;
 	font-family: Roboto, sans-serif;
     font-weight: 300;
     text-align: center;
 }
-.cragColumnChartArea {
-	grid-area: cragColumnChartArea;
-	position: relative;
-}
-.cragColumnCharSubArea {
+.cragChartSubArea {
 	position: absolute;
 	overflow: hidden;
 	width: 100%;
 	height: 100%;
 }
-.cragColumnHAxis {
-	grid-area: cragColumnHAxis;
-	position: relative;
-	font-size: 0;
-	overflow: hidden;
-	height: 20px;
-	box-sizing: border-box;
-	pointer-events: none;
-}
-.cragColumnHAxisLabel {
+.cragHAxisLabel {
 	display: inline-block;
 	font-size: 12px;
 	overflow: hidden;
@@ -62,7 +25,7 @@
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
-.cragColumnColumnLabel {
+.cragColumnLabel {
 	position: absolute;
 	text-align: center;
 	font-size: 12px;
@@ -72,14 +35,14 @@
 	box-sizing: border-box;
 	font-family: Roboto, sans-serif;
 }
-.cragColumnVAxisLabel {
+.cragVAxisLabel {
 	position: absolute;
 	box-sizing: border-box;
 	padding-right: 8px;
 	padding-left: 2px;
 	text-align: right;
 	display: block;
-	font-family: 'Roboto', sans-serif;
+	font-family: Roboto, sans-serif;
 	font-size: 12px;
 	transition: all 0.5s ease;
 	right: 0;
@@ -87,7 +50,7 @@
 	pointer-events: none;
 	white-space: nowrap;
 }
-.cragColumnAxisLineMajor {
+.cragAxisLineMajor {
 	position: absolute;
 	height: 1px;
 	width: 100%;
@@ -96,7 +59,7 @@
 	transition: all 1s ease;
 	opacity: 0.1;
 }
-.cragColumnAxisLineMinor {
+.cragAxisLineMinor {
 	position: absolute;
 	height: 1px;
 	width: 100%;
@@ -105,7 +68,7 @@
 	transition: all 1s ease;
 	opacity: 0.05;
 }
-.cragColumnColumn {
+.cragColumn {
 	height: 0;
 	transition: all 0.7s, height 0.8s, width 0.6s, background-color 0.8s, left 0.7s, opacity 0.7s;
 	position: absolute;
@@ -115,12 +78,12 @@
 	left: 100%;
 	transform-origin: center;
 }
-.cragColumnColumn:hover {
+.cragColumn:hover {
 	-webkit-box-shadow:  0 1px 5px 2px rgba(0, 0, 0, 0.5) !important;
 	-moz-box-shadow:  0 1px 5px 2px rgba(0, 0, 0, 0.5) !important;
 	box-shadow:  0 1px 5px 2px rgba(0, 0, 0, 0.5) !important;
 }
-.cragColumnColumnRound {
+.cragColumnRound {
 	-webkit-border-top-left-radius: 10px;
 	-webkit-border-top-right-radius: 10px;
 	-moz-border-radius-topleft: 10px;
@@ -128,20 +91,20 @@
 	border-top-left-radius: 10px;
 	border-top-right-radius: 10px;
 }
-.cragColumnColumnInset {
+.cragColumnInset {
 	-webkit-box-shadow: inset 0 5px 10px 0 rgba(0,0,0,0.3);
 	-moz-box-shadow: inset 0 5px 10px 0 rgba(0,0,0,0.3);
 	box-shadow: inset 0 5px 10px 0 rgba(0,0,0,0.3);
 }
-.cragColumnColumnStriped {
+.cragColumnStriped {
 	background-size: 50px 50px;
 	background-image: -moz-linear-gradient(-45deg, #FFFFFF11 25%, transparent 25%, transparent 50%, #FFFFFF11 50%, #FFFFFF11 75%, transparent 75%, transparent);
 	background-image: linear-gradient(-45deg, #FFFFFF11 25%, transparent 25%, transparent 50%, #FFFFFF11 50%, #FFFFFF11 75%, transparent 75%, transparent);
 }
-.cragColumnColumnStripedAnimate {
+.cragColumnStripedAnimate {
 	animation: barber-pole 5s linear infinite;
 }
-.cragColumnToolTip {
+.cragToolTip {
 	position: absolute;
 	padding: 8px 16px;
 	opacity: 0;
@@ -154,7 +117,7 @@
 	box-shadow:  0 1px 5px 2px rgba(0, 0, 0, 0.5) !important;
 	pointer-events: none;
 }
-.cragColumnToolTipTitle {
+.cragToolTipTitle {
 	color: #FFFFFF;
 	font-family: Roboto, sans-serif;
 	font-size: 12px;
@@ -163,7 +126,7 @@
 	text-align: center;
 	font-weight: 300;
 }
-.cragColumnToolTipLabel {
+.cragToolTipLabel {
 	display: inline;
 	color: #FFFFFF;
 	font-family: Roboto, sans-serif;
@@ -174,7 +137,7 @@
 	float: left;
 	clear: left;
 }
-.cragColumnToolTipValue {
+.cragToolTipValue {
 	display: inline;
 	color: #FFFFFF;
 	font-family: Roboto, sans-serif;
