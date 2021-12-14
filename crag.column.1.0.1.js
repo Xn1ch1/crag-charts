@@ -830,7 +830,7 @@ class CragColumn extends CragCore {
 		 */
 		for (const line of Object.values(this.vAxisLines)) {
 
-			line.majorLine.style.display = this.options.vAxis.majorLines ? '' : 'none';
+			line.majorLine.style.display = this.options.vAxis.majorLines || line.isZeroPoint ? '' : 'none';
 			line.minorLine.style.display = this.options.vAxis.minorLines ? '' : 'none';
 
 		}
