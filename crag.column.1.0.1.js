@@ -871,7 +871,13 @@ class CragColumn extends CragCore {
 
 				this.dataPoints[i].column.onmouseover = () => this._showToolTip(this.dataPoints[i]);
 				this.dataPoints[i].column.onmouseout = () => this._hideToolTip();
-				this.dataPoints[i].column.onclick = () => this.options.columns.onClick(this.dataPoints[i]);
+
+				/**
+				 * Add onclick if set on creation
+				 */
+				if (this.options.columns.onClick !== null) {
+					this.dataPoints[i].column.onclick = () => this.options.columns.onClick(this.dataPoints[i]);
+				}
 
 			}
 
