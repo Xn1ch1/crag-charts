@@ -1,0 +1,315 @@
+:root {
+    --bg: #FFFFFF;
+    --on-bg: #081b33;
+}
+body {
+    background-color: var(--bg);
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+}
+.chart-container {
+    width: 100vw;
+    height: 100vh;
+    border: none;
+    margin: 0;
+}
+.menu-button {
+    height: 34px;
+    width: 34px;
+    margin: 16px;
+    filter: invert(0.8);
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-block;
+}
+
+#menu-modal {
+    position: fixed;
+    color: var(--on-bg);
+    background: var(--bg);
+    max-height: calc(100vh - 16px);
+    max-width: 350px;
+    width: calc(100vw - 16px);
+    top: 8px;
+    left: 8px;
+    z-index: 99;
+    box-shadow: 0 0 4px 1px rgb(0 0 0 / 40%);
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+    overflow: hidden;
+    opacity: 0.925;
+    user-select: none;
+}
+#menu-modal label {
+    display: block;
+    margin-top: 16px;
+    margin-bottom: 4px;
+    margin-left: 8px;
+    font-size: 11px;
+    opacity: 0.6;
+}
+#menu-modal select,
+#menu-modal button,
+#menu-modal input[type="text"] {
+    width: calc(100% - 24px);
+    padding: 8px;
+    margin-bottom: 4px;
+    border: 2px solid var(--on-bg);
+    background: transparent;
+    color: var(--on-bg);
+    border-radius: 24px;
+    margin-left: 16px;
+    cursor: pointer;
+}
+#menu-modal input[type="text"] {
+    cursor: text;
+}
+#menu-modal input[type="text"]:focus {
+    outline: none;
+}
+#menu-modal button {
+    margin-top: 16px;
+    border: 2px solid var(--on-bg);
+    background: var(--on-bg);
+    color: var(--bg);
+}
+#menu-modal option {
+    background: var(--bg);
+    padding: 8px;
+}
+#menu-button-close {
+    height: 16px;
+    cursor: pointer;
+    filter: invert(0.8);
+    margin: 7px 0 7px calc(100% - 26px);
+}
+.full-screen-textbox {
+    z-index: 100;
+    width: 697px;
+    max-width: 500px;
+    position: fixed;
+    height: 609px;
+    max-height: 50vh;
+    top: 50vh;
+    left: 50vw;
+    transform: translate(-50%, -50%);
+    border-radius: 8px;
+    box-shadow: 0 0 4px 1px rgb(0 0 0 / 30%) ;
+    margin: 0;
+    padding: 8px;
+    background: var(--on-bg);
+    color: var(--bg);
+    font-family: monospace;
+    white-space: pre;
+}
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: var(--bg);
+    opacity: 0.95;
+    z-index: 99;
+}
+.slider-container {
+    position: relative;
+    height: 36px;
+    margin-left: 16px;
+    margin-bottom: 4px;
+    width: calc(100% - 24px);
+}
+.slider-container span {
+    position: absolute;
+    top: 50%;
+    left: 16px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-family: Roboto, sans-serif;
+    font-size: 13px;
+}
+.slider-container input[type="range"] {
+    margin: 0;
+    -webkit-appearance: none;
+    position: relative;
+    overflow: hidden;
+    height: 36px;
+    width: 100%;
+    cursor: pointer;
+    border-radius: 24px;
+    border: 2px solid var(--on-bg);
+    background: transparent;
+}
+
+.slider-container ::-webkit-slider-runnable-track {
+    background: transparent;
+}
+
+/*
+ * 1. Set to 0 width and remove border for a slider without a thumb
+ */
+.slider-container ::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 0;
+    height: 40px;
+    background: transparent;
+    box-shadow: -100vw 0 0 100vw dodgerblue;
+}
+
+.slider-container ::-moz-range-track {
+    height: 40px;
+    background: transparent;
+}
+
+.slider-container ::-moz-range-thumb {
+    background: #fff;
+    height: 40px;
+    width: 0;
+    border: 0;
+    border-radius: 0 !important;
+    box-shadow: -100vw 0 0 100vw dodgerblue;
+    box-sizing: border-box;
+}
+
+.slider-container ::-ms-fill-lower {
+    background: var(--bg);
+}
+
+.slider-container ::-ms-thumb {
+    background: transparent;
+    border: none;
+    height: 40px;
+    width: 0;
+    box-sizing: border-box;
+}
+
+.slider-container ::-ms-ticks-after {
+    display: none;
+}
+
+.slider-container ::-ms-ticks-before {
+    display: none;
+}
+
+.slider-container ::-ms-track {
+    background: transparent;
+    color: transparent;
+    height: 40px;
+    border: none;
+}
+
+.slider-container ::-ms-tooltip {
+    display: none;
+}
+
+#data-input-modal {
+    position: fixed;
+    left: 50vw;
+    top: 50vh;
+    transform: translate(-50%, -50%);
+    max-width: 100vw;
+    max-height: 100vh;
+    background: var(--bg);
+    color: var(--on-bg);
+    border-radius: 2px;
+    z-index: 101;
+    box-shadow: 0 0 6px 2px rgb(0 0 0 / 50%);
+    overflow: hidden;
+}
+
+#data-input-modal table {
+    border-collapse: collapse;
+}
+#data-input-modal th {
+    background: #666666;
+    border: 1px solid var(--on-bg);
+    color: var(--on-bg);
+    font-weight: 300;
+    font-size: 10px;
+    padding: 4px 8px;
+}
+#data-input-modal tr td:first-child {
+    background: #666666;
+    font-size: 10px;
+    text-align: center;
+    color: var(--on-bg);
+    width: 26px;
+}
+#data-input-modal td {
+    border: 1px solid var(--on-bg);
+}
+#data-input-modal input,
+#data-input-modal textarea {
+    background: transparent;
+    color: var(--on-bg);
+    padding: 2px 8px;
+    height: 26px;
+    border: 2px solid transparent;
+    resize: none;
+}
+#data-input-modal input:focus,
+#data-input-modal textarea:focus {
+    outline: none;
+    border: 2px solid blue;
+}
+#canvas-presentation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    z-index: 200;
+    height: 100vh;
+    background: var(--on-bg);
+}
+#canvas-presentation canvas {
+    border: 4px solid var(--bg);
+    width: 95vw !important;
+    height: 95vh !important;
+    top: 2.5vh;
+    left: 2.5vw;
+    position: absolute;
+    box-shadow: 0 0 8px 3px rgba(0, 0, 0, 0.5);
+}
+#canvas-presentation span {
+    position: absolute;
+    top: 8px;
+    z-index: 1;
+    background: var(--bg);
+    color: var(--on-bg);
+    border-radius: 25px;
+    font-size: 14px;
+    padding: 4px 16px;
+    box-shadow: 0 0 4px 2px rgb(0 0 0 / 30%);
+    opacity: 0.7;
+    left: 50vw;
+    transform: translateX(-50%);
+}
+#canvas-presentation img {
+    position: absolute;
+    right: 2.5vw;
+    margin: 8px;
+    z-index: 10;
+    top: 2.5vh;
+    width: 32px;cursor: pointer;
+}
+.menu-modal-text-label {
+    position: absolute;
+    left: 42px;
+    margin-top: 10px;
+    font-size: 13px;
+    pointer-events: none;
+}
+@media screen and (prefers-color-scheme: dark) {
+    :root {
+        --bg: #081b33;
+        --on-bg: #FFFFFF;
+    }
+    .menu-button {
+        filter: invert(0);
+    }
+    #menu-button-close {
+        filter: invert(0);
+    }
+}
