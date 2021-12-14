@@ -1063,7 +1063,12 @@ class CragColumn extends CragCore {
 		const tipHeight = this.toolTip.container.offsetHeight;
 		const tipWidth = this.toolTip.container.offsetWidth;
 
-		let hAlignment = 0;
+		const alignments = [false, true, false];
+
+		if (columnLeft - 8 > tipWidth) alignments[0] = true;
+		if (chartWidth - columnLeft - columnWidth - 8 > tipWidth) alignments[2] = true;
+
+		this.toolTip.container.style.opacity = '1';
 
 		/**
 		 * If the column is on the left side of screen, see if the tool tip will fit on the left of the column first
@@ -1071,41 +1076,13 @@ class CragColumn extends CragCore {
 		 * If the preferred side can not fit, use the other.
 		 * If neither fits, it will default to center over the bar.
 		 */
-		if (chartWidth / 2 > columnLeft) {
-
-			if (chartWidth - columnLeft - columnWidth - 8 > tipWidth) {
-
-				hAlignment = 1;
-
-			} else if (columnLeft - 8 > tipWidth) {
-
-				hAlignment = -1;
-
-			}
-
-		} else {
-
-			if (columnLeft - 8 > tipWidth) {
-
-				hAlignment = -1;
-
-			} else if (chartWidth - columnLeft - columnWidth - 8 > tipWidth) {
-
-				hAlignment = 1;
-
-			}
-
-		}
-
-		this.toolTip.container.style.opacity = '1';
-
-		if (hAlignment === 1) {
-
-			this.toolTip.container.style.left = `${columnLeft + columnWidth + 8}px`;
-
-		} else if (hAlignment === -1) {
+		if (alignments[0] && columnLeft - 8 > tipWidth) {
 
 			this.toolTip.container.style.left = `${columnLeft - tipWidth - 8}px`;
+
+		} else if (alignments[2]) {
+
+			this.toolTip.container.style.left = `${columnLeft + columnWidth + 8}px`;
 
 		} else {
 
