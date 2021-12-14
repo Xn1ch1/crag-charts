@@ -841,20 +841,19 @@ class CragColumn extends CragCore {
 			 * Check to see if label can physically fit in the space required
 			 * Set opacity to 0 where it can not
 			 */
-
 			if (point.columnLabel.offsetWidth > width) {
 
-				point.columnLabel.style.display = 'none';
+				point.columnLabel.style.opacity = '0';
 
 			} else {
 
 				if (this.options.columns.labels.position === 'none') {
 
-					point.columnLabel.style.display = 'none';
+					point.columnLabel.style.opacity = '0';
 
 				} else {
 
-					point.columnLabel.style.display = '';
+					point.columnLabel.style.opacity = '1';
 
 				}
 
