@@ -347,7 +347,7 @@ function calculateScale(min, max, base) {
 
 	} else {
 
-		pMax = (max + (max - min) / 100).toFixed(5);
+		pMax = Number(max + (max - min) / 100).toFixed(5);
 
 	}
 

@@ -5,7 +5,8 @@ class CragLoader {
 	defaultPath = 'https://combinatronics.com/Xn1ch1/Crag-Charts/main/crag/';
 	resources = {
 		core: {
-			js: 'crag.charts.core.0.2.0.js'
+			js: 'crag.charts.core.0.2.0.js',
+			css: 'crag.charts.core.0.0.1.css'
 		},
 		bar: {
 			js: 'crag.column.1.0.1.js',
@@ -94,6 +95,7 @@ class CragLoader {
 					break;
 				default:
 					js = this.resources.core.js;
+					css = this.resources.core.css;
 			}
 
 			const head = document.getElementsByTagName("HEAD")[0];

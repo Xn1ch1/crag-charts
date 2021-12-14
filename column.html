@@ -34,21 +34,25 @@
 					<li>Table of Content</li>
 					<li><a href="#overview">Overview</a></li>
 					<li><a href="#functions">Functions</a></li>
-					<ul>
-						<li><a href="#function-title">title</a></li>
-						<li><a href="#function-update">update</a></li>
-						<li><a href="#function-draw">_draw</a></li>
-						<li><a href="#function-callback">onClick</a></li>
-					</ul>
+					<li>
+						<ul>
+							<li><a href="#function-title">title</a></li>
+							<li><a href="#function-update">update</a></li>
+							<li><a href="#function-draw">_draw</a></li>
+							<li><a href="#function-callback">onClick</a></li>
+						</ul>
+					</li>
 					<li><a href="#examples">Examples</a></li>
 					<li><a href="#config">Configuration</a></li>
-					<ul>
-						<li><a href="#data">data</a></li>
-						<li><a href="#chart">chart</a></li>
-						<li><a href="#column">columns</a></li>
-						<li><a href="#vAxis">vAxis</a></li>
-						<li><a href="#labels">labels</a></li>
-					</ul>
+					<li>
+						<ul>
+							<li><a href="#data">data</a></li>
+							<li><a href="#chart">chart</a></li>
+							<li><a href="#column">columns</a></li>
+							<li><a href="#vAxis">vAxis</a></li>
+							<li><a href="#labels">labels</a></li>
+						</ul>
+					</li>
 					<li><a href="#default">Full Defaults</a></li>
 				</ul>
 			</div>
@@ -72,13 +76,11 @@
 &lt;script src="https://combinatronics.com/Xn1ch1/Crag-Charts/main/crag/crag.charts.loader.js"&gt;&lt;/script&gt;
 &lt;script&gt;
 	let chart;
-	crag.onLoadCallBack(createCharts, ['column']);
+	new CragLoader(createCharts, ['column']);
 
 	function createCharts() {
-		const options = {
-			data: [['A', 500], ['B', 432], ['C', 300]];
-		}
-		chart = new CragColumn(options).create('column-chart');
+		const data = [['A', 500], ['B', 432], ['C', 300]];
+		chart = new CragColumn(data).create('column-chart');
 	}
 &lt;/script&gt;</code></pre>
 
@@ -199,7 +201,6 @@ myFunction(obj) {
 				<p>The following example is an object containing the data series and additional parameters, these parameters set the columns width to 90%, the top of the columns to be rounded and applies an inset shadow.</p>
 
 <pre><code>let options = {
-	data: [['A', 500], ['B', 436], ['C', 300], ['D', 375]],
 	columns: {
 		width: 80,
 		rounded: true,
@@ -220,7 +221,6 @@ myFunction(obj) {
 				<p>Additionally, a chart title has also been specified and extra columns options have been passed such as color and a striped overlay.</p>
 
 <pre><code>let options = {
-	data: [['A', 400], ['B', 500], ['C', 300]],
 	columns: {
 		width: 95,
 		rounded: true,
@@ -251,7 +251,6 @@ myFunction(obj) {
 				<p>This final example demonstrates the onClick callback on the columns elements. The callback will return a single object containing information and HTML objects, see <a href="#function-callback">columns.onClick</a> for more information on the object.</p>
 
 <pre><code>let options = {
-	data: [['A', 194], ['B', 240], ['C', 128], ['D', 207], ['E', 90]],
 	columns: {
 		width: 80,
 		rounded: true,
@@ -297,8 +296,7 @@ function myFunction(obj) {
 								A maximum of 20 points can be displayed on the chart, data will be automatically truncated where the array contains more than 20 child arrays.
 								<br><br>
 
-<pre><code>options = {
-	data: [
+<pre><code>const data = [
 		['A', 5],
 		['B', 10],
 		['C', 15],
@@ -507,7 +505,6 @@ function myFunction(obj) {
 				<h2 id="default">Full Default Configuration</h2>
 
 <pre><code>options = {
-	data: null,
 	columns: {
 		width: 90,
 		color: 'multi',
@@ -550,23 +547,18 @@ function myFunction(obj) {
 
 			function createCharts() {
 
-				const chart1Options = {
-					data: [['A', 500], ['B', 432], ['C', 300]]
-				}
-				chart1 = new CragColumn(chart1Options).create('column-chart-1');
+				chart1 = new CragColumn(dataGenerator(5)).create('column-chart-1');
 
 				const chart2Options = {
-					data: [['A', 500], ['B', 436], ['C', 300], ['D', 375]],
 					columns: {
 						width: 80,
 						rounded: true,
 						inset: true
 					}
 				}
-				chart2 = new CragColumn(chart2Options).create('column-chart-2');
+				chart2 = new CragColumn(dataGenerator(5), chart2Options).create('column-chart-2');
 
 				const chart3Options = {
-					data: [['A', 400], ['B', 500], ['C', 300]],
 					columns: {
 						width: 95,
 						rounded: true,
@@ -576,7 +568,6 @@ function myFunction(obj) {
 						color: 'amber'
 					},
 					vAxis: {
-						min: 'auto',
 						format: 'time'
 					},
 					chart: {
@@ -584,10 +575,9 @@ function myFunction(obj) {
 						color: 'charcoal'
 					}
 				}
-				chart3 = new CragColumn(chart3Options).create('column-chart-3');
+				chart3 = new CragColumn(dataGenerator(5), chart3Options).create('column-chart-3');
 
 				const chart4Options = {
-					data: [['A', 194], ['B', 240], ['C', 128], ['D', 207], ['E', 90]],
 					columns: {
 						width: 80,
 						rounded: true,
@@ -598,7 +588,7 @@ function myFunction(obj) {
 						format: 'time'
 					}
 				}
-				chart4 = new CragColumn(chart4Options).create('column-chart-4');
+				chart4 = new CragColumn(dataGenerator(5), chart4Options).create('column-chart-4');
 
 			}
 

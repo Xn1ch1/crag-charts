@@ -84,7 +84,7 @@ class DataPoint {
 
 		this.column = document.createElement('div');
 
-		this.column.className = 'cragColumnColumn';
+		this.column.className = 'cragColumn';
 
 		this._setColumnStyle();
 
@@ -93,7 +93,7 @@ class DataPoint {
 	_createColumnLabel() {
 
 		this.columnLabel = document.createElement('span');
-		this.columnLabel.className = 'cragColumnColumnLabel';
+		this.columnLabel.className = 'cragColumnLabel';
 
 	}
 
@@ -199,7 +199,7 @@ class DataPoint {
 
 		this.axisLabel = document.createElement('span');
 
-		this.axisLabel.className = 'cragColumnHAxisLabel';
+		this.axisLabel.className = 'cragHAxisLabel';
 		this.axisLabel.textContent = this.realName;
 
 	}
@@ -264,10 +264,10 @@ class DataPoint {
 
 	_setColumnStyle() {
 
-		this.column.classList.toggle('cragColumnColumnRound', this.options.rounded);
-		this.column.classList.toggle('cragColumnColumnInset', this.options.inset);
-		this.column.classList.toggle('cragColumnColumnStriped', this.options.striped);
-		this.column.classList.toggle('cragColumnColumnStripedAnimate', this.options.animated);
+		this.column.classList.toggle('cragColumnRound', this.options.rounded);
+		this.column.classList.toggle('cragColumnInset', this.options.inset);
+		this.column.classList.toggle('cragColumnStriped', this.options.striped);
+		this.column.classList.toggle('cragColumnStripedAnimate', this.options.animated);
 
 	}
 
@@ -385,13 +385,13 @@ class VAxisLine {
 
 		this.majorLine = document.createElement('div');
 
-		this.majorLine.className = 'cragColumnAxisLineMajor';
+		this.majorLine.className = 'cragAxisLineMajor';
 		this.majorLine.style.bottom = '100%';
 		this.majorLine.style.right = '0px';
 
 		this.minorLine = document.createElement('div');
 
-		this.minorLine.className = 'cragColumnAxisLineMinor';
+		this.minorLine.className = 'cragAxisLineMinor';
 		this.minorLine.style.bottom = '100%';
 
 	}
@@ -400,7 +400,7 @@ class VAxisLine {
 
 		this.label = document.createElement('span');
 
-		this.label.className = 'cragColumnVAxisLabel';
+		this.label.className = 'cragVAxisLabel';
 		this.label.style.bottom = '100%';
 
 	}
@@ -473,7 +473,7 @@ class CragColumn extends CragCore {
 	 * @param {array} data
 	 * @param {options} options
 	 */
-	constructor (data, options) {
+	constructor (data, options = undefined) {
 		super();
 
 		this.dataPoints = {};
@@ -587,7 +587,7 @@ class CragColumn extends CragCore {
 		this.options.vAxis.minorLines = this.validateOption(options?.vAxis?.minorLines, 'boolean', this.options.vAxis.minorLines);
 		this.options.vAxis.format = this.validateOption(options?.vAxis?.format, this.labelFormats, this.options.vAxis.format);
 
-		if (options?.vAxis?.min === 'auto' || !isNaN(options.vAxis?.min)) this.options.vAxis.min = options.vAxis.min;
+		if (options?.vAxis?.min === 'auto' || !isNaN(options?.vAxis?.min)) this.options.vAxis.min = options.vAxis.min;
 
 	}
 
@@ -613,7 +613,7 @@ class CragColumn extends CragCore {
 		if (this.options.chart.title != null) {
 
 			this.chart.title = document.createElement('h1');
-			this.chart.title.className = 'cragColumnTitleText';
+			this.chart.title.className = 'cragTitleText';
 			this.chart.title.textContent = this.options.chart.title;
 			this.chart.titleArea.appendChild(this.chart.title);
 			this.chart.title.style.color = this._getContrastColor(this.options.chart.color);
@@ -625,13 +625,15 @@ class CragColumn extends CragCore {
 		this.hAxis.area.className = 'cragColumnHAxis';
 		this.chart.titleArea.className = 'cragColumnTitle';
 		this.chart.area.className = 'cragColumnChartArea';
-		this.chart.gridArea.className = 'cragColumnCharSubArea';
-		this.chart.labelArea.className = 'cragColumnCharSubArea';
-		this.chart.columnArea.className = 'cragColumnCharSubArea';
-		this.toolTip.container.className = 'cragColumnToolTip';
-		this.toolTip.title.className = 'cragColumnToolTipTitle';
-		this.toolTip.value.className = 'cragColumnToolTipValue';
-		this.toolTip.label.className = 'cragColumnToolTipLabel';
+
+		this.chart.gridArea.className = 'cragChartSubArea';
+		this.chart.labelArea.className = 'cragChartSubArea';
+		this.chart.columnArea.className = 'cragChartSubArea';
+
+		this.toolTip.container.className = 'cragToolTip';
+		this.toolTip.title.className = 'cragToolTipTitle';
+		this.toolTip.value.className = 'cragToolTipValue';
+		this.toolTip.label.className = 'cragToolTipLabel';
 
 		this.toolTip.label.textContent = this.options.vAxis.label;
 
@@ -1061,7 +1063,12 @@ class CragColumn extends CragCore {
 		const tipHeight = this.toolTip.container.offsetHeight;
 		const tipWidth = this.toolTip.container.offsetWidth;
 
-		let hAlignment = 0;
+		const alignments = [false, true, false];
+
+		if (columnLeft - 8 > tipWidth) alignments[0] = true;
+		if (chartWidth - columnLeft - columnWidth - 8 > tipWidth) alignments[2] = true;
+
+		this.toolTip.container.style.opacity = '1';
 
 		/**
 		 * If the column is on the left side of screen, see if the tool tip will fit on the left of the column first
@@ -1069,41 +1076,13 @@ class CragColumn extends CragCore {
 		 * If the preferred side can not fit, use the other.
 		 * If neither fits, it will default to center over the bar.
 		 */
-		if (chartWidth / 2 > columnLeft) {
-
-			if (chartWidth - columnLeft - columnWidth - 8 > tipWidth) {
-
-				hAlignment = 1;
-
-			} else if (columnLeft - 8 > tipWidth) {
-
-				hAlignment = -1;
-
-			}
-
-		} else {
-
-			if (columnLeft - 8 > tipWidth) {
-
-				hAlignment = -1;
-
-			} else if (chartWidth - columnLeft - columnWidth - 8 > tipWidth) {
-
-				hAlignment = 1;
-
-			}
-
-		}
-
-		this.toolTip.container.style.opacity = '1';
-
-		if (hAlignment === 1) {
-
-			this.toolTip.container.style.left = `${columnLeft + columnWidth + 8}px`;
-
-		} else if (hAlignment === -1) {
+		if (alignments[0] && columnLeft - 8 > tipWidth) {
 
 			this.toolTip.container.style.left = `${columnLeft - tipWidth - 8}px`;
+
+		} else if (alignments[2]) {
+
+			this.toolTip.container.style.left = `${columnLeft + columnWidth + 8}px`;
 
 		} else {
 
@@ -1196,7 +1175,7 @@ class CragColumn extends CragCore {
 		if (this.chart.title == null) {
 
 			this.chart.title = document.createElement('h1');
-			this.chart.title.className = 'cragColumnTitleText';
+			this.chart.title.className = 'cragTitleText';
 			this.chart.titleArea.appendChild(this.chart.title);
 
 		}
