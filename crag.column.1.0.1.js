@@ -1288,7 +1288,7 @@ class CragColumn extends CragCore {
 
 		this.options.vAxis.majorLines = this.validateOption(value, 'boolean', this.options.vAxis.majorLines);
 
-		this._draw();
+		this._showHideElements();
 
 	}
 
@@ -1296,7 +1296,7 @@ class CragColumn extends CragCore {
 
 		this.options.vAxis.minorLines = this.validateOption(value, 'boolean', this.options.vAxis.minorLines);
 
-		this._draw();
+		this._showHideElements();
 
 	}
 
