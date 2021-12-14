@@ -35,7 +35,7 @@
  * @property {optionsColumn} [columns]
  */
 
-class DataPoint {
+ class DataPoint {
 
 	index = 0;
 	realValue = 0;
@@ -1186,6 +1186,9 @@ class CragColumn extends CragCore {
 	 */
 	set title(value) {
 
+		/**
+		 * Create the title element if it doesn't yet exist
+		 */
 		if (this.chart.title == null) {
 
 			this.chart.title = document.createElement('h1');
@@ -1193,13 +1196,27 @@ class CragColumn extends CragCore {
 			this.chart.titleArea.appendChild(this.chart.title);
 
 		}
+
+		/**
+		 * Set the text content with the new title
+		 */
+		this.chart.title.textContent = value;
+
+		/**
+		 * Only call redraw when the new or old title text was null
+		 * This prevents triggering redraw on each key stroke
+		 */
+		if (value === '' ^ this.options.chart.title === null) {
+
+			this._draw();
+
+		}
+
+		/**
+		 * Set new value to null where new title is blank
+		 */
+		this.options.chart.title = value === '' ? null : value;
 		
-		this.options.chart.title = value;
-
-		this.chart.title.textContent = this.options.chart.title;
-
-		this._draw();
-
 	}
 	get title() {
 
