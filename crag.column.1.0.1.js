@@ -100,29 +100,6 @@ class DataPoint {
 	_positionColumnLabel(width, zeroLine, positiveSpace, negativeSpace, max, min) {
 
 		this.columnLabel.style.width = 'auto';
-
-		/**
-		 * Check to see if label can physically fit in the space required
-		 * Set opacity to 0 where it can not
-		 */
-		if (this.columnLabel.offsetWidth > width) {
-
-			this.columnLabel.style.opacity = '0';
-
-		} else {
-
-			if (this.options.labels.position === 'none') {
-
-				this.columnLabel.style.opacity = '0';
-
-			} else {
-
-				this.columnLabel.style.opacity = '1';
-
-			}
-
-		}
-
 		this.columnLabel.style.width = `${width}px`;
 		this.columnLabel.style.left = `${width * this.index}px`;
 
@@ -737,6 +714,7 @@ class CragColumn extends CragCore {
 		}
 
 		this._colorize();
+		this._showHideElements(seriesItemWidth);
 
 	}
 
@@ -760,6 +738,9 @@ class CragColumn extends CragCore {
 		this.toolTip.value.style.color = this._resolveColor(this.options.chart.color);
 		this.toolTip.label.style.color = this._resolveColor(this.options.chart.color);
 
+		/**
+		 * Columns and column labels
+		 */
 		for (const point of Object.values(this.dataPoints)) {
 
 			/**
@@ -815,6 +796,9 @@ class CragColumn extends CragCore {
 
 		}
 
+		/**
+		 * vAxis Elements
+		 */
 		for (const line of Object.values(this.vAxisLines)) {
 
 			line.majorLine.style.backgroundColor = this._getContrastColor(this.options.chart.color);
@@ -838,9 +822,45 @@ class CragColumn extends CragCore {
 
 	}
 
-	_showHideElements() {
+	_showHideElements(width) {
 
+	
+		/**
+		 * vAxis Elements
+		 */
+		for (const line of Object.values(this.vAxisLines)) {
 
+			line.majorLine.style.display = this.options.vAxis.majorLines ? '' : 'none';
+			line.minorLine.style.display = this.options.vAxis.minorLines ? '' : 'none';
+
+		}
+
+		for (const point of Object.values(this.dataPoints)) {
+
+			/**
+			 * Check to see if label can physically fit in the space required
+			 * Set opacity to 0 where it can not
+			 */
+
+			if (point.columnLabel.offsetWidth > width) {
+
+				point.columnLabel.style.display = 'none';
+
+			} else {
+
+				if (this.options.columns.labels.position === 'none') {
+
+					point.columnLabel.style.display = 'none';
+
+				} else {
+
+					point.columnLabel.style.display = '';
+
+				}
+
+			}
+
+		}
 
 	}
 
@@ -988,18 +1008,7 @@ class CragColumn extends CragCore {
 			line.labelText = this.formatLabel(line.value, this.options.vAxis.format, this.options.vAxis.formatOption);
 
 			if (line.label.offsetWidth > vAxisCalculatedWidth) vAxisCalculatedWidth = line.label.offsetWidth;
-
-			if (this.options.vAxis.majorLines) {
-				line.majorLine.style.display = '';
-			} else {
-				line.majorLine.style.display = 'none';
-			}
-			if (this.options.vAxis.minorLines) {
-				line.minorLine.style.display = '';
-			} else {
-				line.minorLine.style.display = 'none';
-			}
-
+			
 		}
 
 		/**
