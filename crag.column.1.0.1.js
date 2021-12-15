@@ -448,7 +448,7 @@ class CragColumn extends CragCore {
 
 	/**
 	 * @param {array} data
-	 * @param {options} options
+	 * @param {{options}} options
 	 */
 	constructor (data, options = undefined) {
 		super();
@@ -463,7 +463,7 @@ class CragColumn extends CragCore {
 		};
 
 		/**
-		 * @type options
+		 * @type {{columns: optionsColumn, vAxis: optionsVAxis, chart: optionsChart}}
 		 */
 		this.options = {
 			chart: {
@@ -823,6 +823,7 @@ class CragColumn extends CragCore {
 	}
 
 	_showHideElements(width) {
+
 	
 		/**
 		 * vAxis Elements
@@ -886,11 +887,11 @@ class CragColumn extends CragCore {
 
 	}
 
-	/**
-	 * Update the DataPoints with new data, DataPoints will be created where they don't yet exist
-	 */
 	_refactorDataPoints() {
 
+		/**
+		 * Update the DataPoints with new data, DataPoints will be created where they don't yet exist
+		 */
 		for (let i = 0; i < this.data.series.length; i++) {
 
 			if (this.dataPoints[i]) {
@@ -1227,7 +1228,7 @@ class CragColumn extends CragCore {
 
 		/**
 		 * Only call redraw when the new or old title text was null
-		 * This prevents triggering redraw on each key stroke
+		 * This prevents triggering redraw on each keystroke
 		 */
 		if (value === '' ^ this.options.chart.title === null) {
 
