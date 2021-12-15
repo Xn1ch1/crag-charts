@@ -838,6 +838,29 @@ class CragColumn extends CragCore {
 		for (const point of Object.values(this.dataPoints)) {
 
 			/**
+			 * Check to see if the width of the label is larger than the column width
+			 * when the actual position of the label is inside. When it is, set the
+			 * display of the label to be none.
+			 */
+			point.columnLabel.style.width = 'auto';
+
+			const columnWidth = width * (this.options.columns.width / 100);
+
+			if (point.columnLabelProperties.actualPosition === 'inside' && point.columnLabel.offsetWidth > columnWidth) {
+
+				point.columnLabel.style.opacity = '0';
+
+				continue;
+
+			}
+
+			/**
+			 * Past this point indicates the width of the label is smaller than the column or
+			 * the actual position is outside where it can be checked against the series width.
+			 * Note: Series width is bar width + gaps.
+			 */
+
+			/**
 			 * Check to see if label can physically fit in the space required
 			 * Set opacity to 0 where it can not
 			 */
@@ -853,6 +876,7 @@ class CragColumn extends CragCore {
 
 				} else {
 
+					point.columnLabel.style.width = `${width}px`;
 					point.columnLabel.style.opacity = '1';
 
 				}
@@ -1266,7 +1290,7 @@ class CragColumn extends CragCore {
 
 	/**
 	 * Sets new label colors with either a mode or a color value.
-	 * @param {('multi'|'match'|'redGreen')|string} color
+	 * @param {CragCore.pallet} color
 	 */
 	set labelColor(color) {
 
