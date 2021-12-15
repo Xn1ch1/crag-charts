@@ -823,7 +823,6 @@ class CragColumn extends CragCore {
 	}
 
 	_showHideElements(width) {
-
 	
 		/**
 		 * vAxis Elements
@@ -887,11 +886,11 @@ class CragColumn extends CragCore {
 
 	}
 
+	/**
+	 * Update the DataPoints with new data, DataPoints will be created where they don't yet exist
+	 */
 	_refactorDataPoints() {
 
-		/**
-		 * Update the DataPoints with new data, DataPoints will be created where they don't yet exist
-		 */
 		for (let i = 0; i < this.data.series.length; i++) {
 
 			if (this.dataPoints[i]) {
