@@ -644,3 +644,328 @@ Element.prototype.insertChildAtIndex = function(child, index) {
     this.insertBefore(child, this.children[index])
   }
 }
+
+
+class vAxisLines extends CragCore {
+
+	axisDiv = null;
+	linesDiv = null;
+
+	calculatedWidth = 0;
+
+	isSecondary = false;
+
+	/** @type {{VAxisLine}} */
+	lines = {}
+
+	options = {}
+
+	data = {
+		min: 0,
+		max: 0,
+	}
+
+	scale = {
+		min: 0,
+		max: 0,
+		steps: 0,
+	}
+
+	constructor(options, isSecondary = false) {
+		super();
+
+		this.isSecondary = isSecondary;
+		this.options = options;
+
+		this._create();
+
+	}
+
+	_create() {
+
+		this.axisDiv = document.createElement('div');
+		this.axisDiv.className = 'cragComboVAxisPrimary';
+
+		if (this.isSecondary) this.axisDiv.className = 'cragComboVAxisSecondary';
+
+		this.linesDiv = document.createElement('div');
+		this.linesDiv.className = 'cragChartSubArea';
+
+		if (this.options.showOnPrimary) this.axisDiv.style.display = 'none';
+		if (this.options.showOnPrimary) this.linesDiv.style.display = 'none';
+
+	}
+
+	update(min, max) {
+
+		this.data.min = min;
+		this.data.max = max;
+
+		const minimum = this.options.min === 'auto' ? this.data.min : this.options.min;
+
+		this._calculateAxisScale(minimum);
+
+		/**
+		 * Reset the calculated width of the vAxis ready for new labels
+		 */
+		this.calculatedWidth = 0;
+
+		for (let i = 0; i <= this.scale.steps; i++) {
+
+			if (this.lines[i]) {
+
+				this.lines[i].value = this.scale.min + (i * this.scale.maj);
+				this.lines[i].step = i;
+				this.lines[i].ofSteps = this.scale.steps;
+				this.lines[i].max = this.scale.max;
+
+			} else {
+
+				this.lines[i] = new VAxisLine(this.scale.min + (i * this.scale.maj), i, this.scale.steps, this.scale.max);
+
+			}
+
+			/**
+			 * Determine which of the lines is the zero point.
+			 * Zero point is either the bottom line or the middle line where the
+			 * scale goes from negative to positive
+			 */
+			this.lines[i].isZeroPoint = (i === 0 && this.scale.min >= 0) || (i > 0 && this.lines[i].realValue === 0);
+
+		}
+
+		/**
+		 * Remove any VAxisLines that are beyond the current scale length.
+		 * This will happen when a new data set is loaded that has a different scale
+		 */
+		for (let i = Object.values(this.lines).length + 1; i > this.scale.steps; i--) {
+
+			if (!this.lines[i]) continue;
+
+			this.lines[i]._destroy();
+			this.lines[i] = null;
+
+			delete this.lines[i];
+
+		}
+
+		let i = 0;
+
+		for (const line of Object.values(this.lines)) {
+
+			/**
+			 * Append elements to DOM
+			 */
+			this.linesDiv.appendChild(line.majorLine);
+			this.linesDiv.appendChild(line.minorLine);
+
+			this.axisDiv.appendChild(line.label);
+
+			line.labelText = this.formatLabel(line.value, this.options.format, this.options.formatOption);
+
+			if (line.label.offsetWidth > this.calculatedWidth) this.calculatedWidth = line.label.offsetWidth;
+
+			line.positionMajor(this.linesDiv.offsetHeight);
+			line.positionMinor(this.linesDiv.offsetHeight);
+			line.positionLabel(this.axisDiv.offsetHeight);
+
+		}
+
+		/**
+		 * Set the new vAxis are width
+		 */
+		this.axisDiv.style.width = `${this.calculatedWidth}px`;
+
+	}
+
+	/**
+	 * Sets the min and max of the vAxis based on the min and max value in the data set
+	 * @param min The minimum value for the vAxis
+	 * @return {{min: number, max: number, maj: number, steps: number}}
+	 * @private
+	 */
+	_calculateAxisScale(min) {
+
+		if (this.options.format === 'time') {
+
+			/**
+			 * Time scales will be rounded based on the largest value in the data set
+			 * The scales are seconds, minutes, hours then days
+			 */
+
+			let timeRounding;
+
+			if (this.data.max < 60) {
+				timeRounding = 60
+			} else if (this.data.max < 3600) {
+				timeRounding = 3600;
+			} else if (this.data.max < 43200) {
+				timeRounding = 43200;
+			} else {
+				timeRounding = 86400;
+			}
+
+			this.scale = calculateScale(min, this.data.max, timeRounding);
+
+		} else {
+
+			this.scale = calculateScale(min, this.data.max, 10);
+
+		}
+
+	}
+
+	colorize(color) {
+
+		for (const line of Object.values(this.lines)) {
+
+			line.majorLine.style.backgroundColor = color;
+			line.minorLine.style.backgroundColor = color;
+			line.label.style.color = color;
+
+			if (line.isZeroPoint) {
+
+				line.majorLine.style.opacity = '0.9';
+				line.majorLine.style.height = '2px';
+
+			} else {
+
+				line.majorLine.style.opacity = '';
+				line.majorLine.style.height = '1px';
+
+			}
+
+		}
+
+	}
+
+	showHide() {
+
+		for (const line of Object.values(this.lines)) {
+
+			line.majorLine.style.display = this.options.majorLines || (line.isZeroPoint && !this.isSecondary) ? '' : 'none';
+			line.minorLine.style.display = this.options.minorLines ? '' : 'none';
+
+		}
+
+	}
+
+}
+
+class VAxisLine {
+
+	/** @param {HTMLDivElement} */
+	majorLine = null;
+
+	/** @param {HTMLDivElement} */
+	minorLine = null;
+
+	/** @param {HTMLSpanElement} */
+	label = null;
+
+	realValue = 0;
+	step = 0;
+	ofSteps = 0;
+	max;
+
+	isZeroPoint = false;
+
+	constructor(value, step, ofSteps) {
+
+		this.realValue = value;
+		this.step = step;
+		this.ofSteps = ofSteps;
+
+		this._createLines();
+		this._createLabel();
+
+	}
+
+	_createLines() {
+
+		this.majorLine = document.createElement('div');
+
+		this.majorLine.className = 'cragAxisLineMajor';
+		this.majorLine.style.bottom = '100%';
+		this.majorLine.style.right = '0';
+
+		this.minorLine = document.createElement('div');
+
+		this.minorLine.className = 'cragAxisLineMinor';
+
+		this.minorLine.style.bottom = '100%';
+		this.minorLine.style.pointerEvents = 'none';
+		this.minorLine.style.overflow = 'visible';
+
+	}
+
+	_createLabel() {
+
+		this.label = document.createElement('span');
+
+		this.label.className = 'cragVAxisLabel';
+		this.label.style.bottom = '100%';
+
+	}
+
+	positionMajor(space) {
+
+		this.majorLine.style.bottom = `${Math.min(space - 1, space / this.ofSteps * this.step)}px`;
+
+	}
+
+	positionMinor(space) {
+
+		if (this.step === this.ofSteps) {
+
+			this.minorLine.style.opacity = '0';
+
+		} else {
+
+			this.minorLine.style.opacity = '';
+
+		}
+
+		this.minorLine.style.bottom = `${(space / this.ofSteps * this.step) + (space / this.ofSteps / 2)}px`;
+
+	}
+
+	positionLabel(space) {
+
+		this.label.style.bottom = `${space / this.ofSteps * this.step - (this.label.offsetHeight / 2)}px`;
+
+	}
+
+	_destroy() {
+
+		this.label.style.opacity = '0';
+		this.label.style.bottom = '100%';
+
+		this.majorLine.style.opacity = '0';
+		this.majorLine.style.bottom = '100%';
+
+		this.minorLine.style.opacity = '0';
+		this.minorLine.style.bottom = '100%';
+
+		setTimeout(() => {
+
+			this.label.remove();
+			this.majorLine.remove();
+			this.minorLine.remove();
+
+		}, 700);
+
+	}
+
+	set value(value) {
+		this.realValue = value;
+	}
+	get value() {
+		return this.realValue;
+	}
+
+	set labelText(text) {
+		this.label.textContent = text;
+	}
+
+}

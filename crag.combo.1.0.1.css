@@ -4,15 +4,15 @@
 	display: grid;
 	grid-template-columns: min-content 1fr min-content;
 	grid-template-rows: min-content 1fr min-content;
-	gap: 0px 0px;
+	gap: 0 0;
 	grid-template-areas:
-		"cragComboVAxis cragComboTitle cragComboVAxis2"
-		"cragComboVAxis cragComboChartArea cragComboVAxis2"
-		"cragComboVAxis cragComboHAxis cragComboVAxis2";
+		". cragComboTitle ."
+		"cragComboVAxisPrimary cragComboChartArea cragComboVAxisSecondary"
+		". cragComboHAxis .";
 	overflow: hidden;
 }
-.cragComboVAxis {
-	grid-area: cragComboVAxis;
+.cragComboVAxisPrimary {
+	grid-area: cragComboVAxisPrimary;
 	position: relative;
 	transition: all 0.8s ease;
 }
@@ -29,8 +29,8 @@
     font-weight: 300;
     text-align: center;
 }
-.cragComboVAxis2 {
-	grid-area: cragComboVAxis2;
+.cragComboVAxisSecondary {
+	grid-area: cragComboVAxisSecondary;
 	position: relative;
 	transition: all 0.8s ease;
 }
