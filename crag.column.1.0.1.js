@@ -14,7 +14,7 @@
  */
 /**
  * @typedef optionsColumn Column Options.
- * @property {number} [width] Percentage width of the column relative to the space available. Example, 100 will be a full width bar.
+ * @property {number} [width] Percentage width of the column relative to the space available. Example, 100 will be a full width columns.
  * @property {string} [color] The color of the bars, either a hex code, an inbuilt pallet name or color mode.
  * @property {boolean} [rounded] Applies rounded corners at the top of the column.
  * @property {boolean} [inset] Applies an inset shadow on the column.
@@ -857,7 +857,7 @@ class CragColumn extends CragCore {
 			/**
 			 * Past this point indicates the width of the label is smaller than the column or
 			 * the actual position is outside where it can be checked against the series width.
-			 * Note: Series width is bar width + gaps.
+			 * Note: Series width is columns width + gaps.
 			 */
 
 			/**
@@ -1112,7 +1112,7 @@ class CragColumn extends CragCore {
 		 * If the column is on the left side of screen, see if the tool tip will fit on the left of the column first
 		 * Otherwise check to see if it will fit on the right.
 		 * If the preferred side can not fit, use the other.
-		 * If neither fits, it will default to center over the bar.
+		 * If neither fits, it will default to center over the columns.
 		 */
 		if (alignments[0] && columnLeft - 8 > tipWidth) {
 
