@@ -684,9 +684,9 @@ class vAxisLines extends CragCore {
 	_create() {
 
 		this.axisDiv = document.createElement('div');
-		this.axisDiv.className = 'cragComboVAxisPrimary';
+		this.axisDiv.className = 'cragVAxisPrimary';
 
-		if (this.isSecondary) this.axisDiv.className = 'cragComboVAxisSecondary';
+		if (this.isSecondary) this.axisDiv.className = 'cragVAxisSecondary';
 
 		this.linesDiv = document.createElement('div');
 		this.linesDiv.className = 'cragChartSubArea';
@@ -827,11 +827,13 @@ class vAxisLines extends CragCore {
 
 				line.majorLine.style.opacity = '0.9';
 				line.majorLine.style.height = '2px';
+				line.majorLine.style.zIndex = '2';
 
 			} else {
 
 				line.majorLine.style.opacity = '';
 				line.majorLine.style.height = '1px';
+				line.majorLine.style.zIndex = '0';
 
 			}
 
