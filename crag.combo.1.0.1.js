@@ -855,8 +855,8 @@ class CragCombo extends CragCore {
 
 		if (this.options.vAxes.secondary.showOnPrimary) {
 
-			let min = Math.min(this.data.min.primary, this.data.min.secondary);
-			let max = Math.max(this.data.max.primary, this.data.max.secondary);
+			const min = Math.min(this.data.min.primary, this.data.min.secondary);
+			const max = Math.max(this.data.max.primary, this.data.max.secondary);
 
 			this.primaryVAxis.update(min, max);
 			this.secondaryVAxis.update(min, max);
@@ -893,7 +893,7 @@ class CragCombo extends CragCore {
 		/**
 		 * Get height from bottom of the chart area where the 0 line is
 		 */
-		const zeroLine = [
+		const spaceBelowZero = [
 			this.primaryVAxis.scale.min >= 0 ? 0 : chartAreaHeight * Math.abs(this.primaryVAxis.scale.min / (this.primaryVAxis.scale.max - this.primaryVAxis.scale.min)),
 			this.secondaryVAxis.scale.min >= 0 ? 0 : chartAreaHeight * Math.abs(this.secondaryVAxis.scale.min / (this.secondaryVAxis.scale.max - this.secondaryVAxis.scale.min))
 		];
@@ -902,19 +902,15 @@ class CragCombo extends CragCore {
 		 * Calculate pixel space above and below zero line
 		 */
 		const spaceAboveZero = [
-			chartAreaHeight - zeroLine[0],
-			chartAreaHeight - zeroLine[1]
-		];
-		const spaceBelowZero = [
-			zeroLine[0],
-			zeroLine[1]
+			chartAreaHeight - spaceBelowZero[0],
+			chartAreaHeight - spaceBelowZero[1]
 		];
 
 		for (const point of Object.values(this.dataPoints)) {
 
 			point.setColumnHeight(spaceAboveZero[0], spaceBelowZero[0], this.primaryVAxis.scale.max, this.primaryVAxis.scale.min);
-			point._positionColumn(zeroLine[0], (seriesItemWidth * point.index) + (gapWidth / 2), columnWidth);
-			point._positionColumnLabel(seriesItemWidth, zeroLine[0], spaceAboveZero[0], spaceBelowZero[0], this.primaryVAxis.scale.max, this.primaryVAxis.scale.min)
+			point._positionColumn(spaceBelowZero[0], (seriesItemWidth * point.index) + (gapWidth / 2), columnWidth);
+			point._positionColumnLabel(seriesItemWidth, spaceBelowZero[0], spaceAboveZero[0], spaceBelowZero[0], this.primaryVAxis.scale.max, this.primaryVAxis.scale.min)
 
 			point._positionAxisLabel(seriesItemWidth);
 
