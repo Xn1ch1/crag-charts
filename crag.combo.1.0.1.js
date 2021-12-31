@@ -103,9 +103,8 @@ class DataPoint {
 
 		this.dot.setAttribute('cx', '100%');
 		this.dot.setAttribute('cy', '100%');
-
-		this.dot.setAttribute('r', this.options.line.pointSize);
 		this.dot.setAttribute('class', 'cragComboPoint');
+		this.dot.setAttribute('r', this.options.line.pointSize);
 
 	}
 
@@ -126,7 +125,7 @@ class DataPoint {
 
 	}
 
-	_positionColumnLabel(width, zeroLine, positiveSpace, negativeSpace, max, min) {
+	_positionColumnLabel(width, negativeSpace, positiveSpace, max, min) {
 
 		this.columnLabel.style.width = 'auto';
 		this.columnLabel.style.width = `${width}px`;
@@ -137,7 +136,7 @@ class DataPoint {
 			/**
 			 * Calculate outside position for label as a negative
 			 */
-			let position = zeroLine - (negativeSpace / min * this.primaryValue) - this.columnLabel.offsetHeight;
+			let position = negativeSpace -  this.columnProperties.height - this.columnLabel.offsetHeight;
 
 			this.columnLabelProperties.actualPosition = 'outside'
 
@@ -170,7 +169,8 @@ class DataPoint {
 			/**
 			 * Calculate outside position for label as a positive
 			 */
-			let position = zeroLine + (positiveSpace / max * this.primaryValue);
+			let position = negativeSpace + this.columnProperties.height;
+
 			this.columnLabelProperties.actualPosition = 'outside'
 
 			/**
@@ -273,9 +273,13 @@ class DataPoint {
 		if (this.primaryValue < 0) {
 
 			/**
-			 * Round number down to compensate for slight gaps above the negative columns
+			 * This is to fix issues where the scale has both negative and positive
+			 * This will allow the height of a negative column to be scaled only in the
+			 * negative space.
 			 */
-			this.columnProperties.height = negativeSpace / min * this.primaryValue;
+			max = Math.min(max, 0);
+
+			this.columnProperties.height = negativeSpace / (min - max) * (this.primaryValue - max);
 
 			/**
 			 * When value is negative, the bottom is the height less the negative space
@@ -386,6 +390,13 @@ class DataPoint {
 
 	}
 
+	set pointSize(value) {
+
+		this.options.line.pointSize = value;
+		this.dot.setAttribute('r', this.options.line.pointSize);
+
+	}
+
 }
 
 class Line {
@@ -419,6 +430,13 @@ class Line {
 		this.line.setAttribute('d', 'M0,0');
 
 		return this.line;
+
+	}
+
+	set width(value) {
+
+		this.options.width = value;
+		this.line.setAttribute('stroke-width', this.options.width.toString());
 
 	}
 
@@ -682,7 +700,7 @@ class CragCombo extends CragCore {
 		if (this._isValidColor(options?.line?.color)) this.options.line.color = options.line.color;
 
 		this.options.line.smooth = this.validateOption(options?.line?.smooth, 'boolean', this.options.line.smooth);
-		if (options?.line?.width > 0 && options?.line?.width < 101) this.options.line.width = options.line.width;
+		if (options?.line?.width > 0 && options?.line?.width < 11) this.options.line.width = options.line.width;
 		if (options?.line?.pointSize > 0 && options?.line?.pointSize < 51) this.options.line.pointSize = options.line.pointSize;
 
 		/**
@@ -853,6 +871,9 @@ class CragCombo extends CragCore {
 		 */
 		this._getDataMinMax();
 
+		this.primaryVAxis.options = this.options.vAxes.primary;
+		this.secondaryVAxis.options = this.options.vAxes.secondary;
+
 		if (this.options.vAxes.secondary.showOnPrimary) {
 
 			const min = Math.min(this.data.min.primary, this.data.min.secondary);
@@ -906,22 +927,40 @@ class CragCombo extends CragCore {
 			chartAreaHeight - spaceBelowZero[1]
 		];
 
-		for (const point of Object.values(this.dataPoints)) {
+		/**
+		 * Fix bug where calculated values are wrong when both min and max are a negative value
+		 */
+		if (this.options.vAxes.secondary.showOnPrimary) {
 
-			point.setColumnHeight(spaceAboveZero[0], spaceBelowZero[0], this.primaryVAxis.scale.max, this.primaryVAxis.scale.min);
-			point._positionColumn(spaceBelowZero[0], (seriesItemWidth * point.index) + (gapWidth / 2), columnWidth);
-			point._positionColumnLabel(seriesItemWidth, spaceBelowZero[0], spaceAboveZero[0], spaceBelowZero[0], this.primaryVAxis.scale.max, this.primaryVAxis.scale.min)
+			const min = Math.min(this.data.min.primary, this.data.min.secondary);
+			const max = Math.max(this.data.max.primary, this.data.max.secondary);
 
-			point._positionAxisLabel(seriesItemWidth);
+			if (min < 0 && max < 0) {
+				spaceBelowZero[0] = chartAreaHeight;
+				spaceAboveZero[0] = 0;
+			}
 
-			point._positionDot(spaceAboveZero[1], spaceBelowZero[1], this.secondaryVAxis.scale.max, this.secondaryVAxis.scale.min, (seriesItemWidth * point.index) + (seriesItemWidth / 2));
+		} else if (!this.options.vAxes.secondary.showOnPrimary && this.data.min.primary < 0 && this.data.max.primary < 0) {
+			spaceBelowZero[0] = chartAreaHeight;
+			spaceAboveZero[0] = 0;
+		}
+
+		for (const dataPoint of Object.values(this.dataPoints)) {
+
+			dataPoint.setColumnHeight(spaceAboveZero[0], spaceBelowZero[0], this.primaryVAxis.scale.max, this.primaryVAxis.scale.min);
+			dataPoint._positionColumn(spaceBelowZero[0], (seriesItemWidth * dataPoint.index) + (gapWidth / 2), columnWidth);
+			dataPoint._positionColumnLabel(seriesItemWidth, spaceBelowZero[0], spaceAboveZero[0], this.primaryVAxis.scale.max, this.primaryVAxis.scale.min)
+
+			dataPoint._positionAxisLabel(seriesItemWidth);
+
+			dataPoint._positionDot(spaceAboveZero[1], spaceBelowZero[1], this.secondaryVAxis.scale.max, this.secondaryVAxis.scale.min, (seriesItemWidth * dataPoint.index) + (seriesItemWidth / 2));
 
 		}
 
 		this.line.update(Object.values(this.dataPoints).map((a) => a.dot));
 
 		this._colorize();
-		this._showHideElements(seriesItemWidth);
+		this._showHideElements();
 
 	}
 
@@ -1099,25 +1138,31 @@ class CragCombo extends CragCore {
 
 	}
 
-	_showHideElements(width) {
+	_showHideElements() {
+
+		/**
+		 * Get width of the series items
+		 */
+		const chartAreaWidth = this.chartContainer.offsetWidth - this.primaryVAxis.calculatedWidth - this.secondaryVAxis.calculatedWidth;
+		const seriesItemWidth = chartAreaWidth / this.data.series.length;
 
 		this.primaryVAxis.showHide();
 		this.secondaryVAxis.showHide();
 
-		for (const point of Object.values(this.dataPoints)) {
+		for (const dataPoint of Object.values(this.dataPoints)) {
 
 			/**
 			 * Check to see if the width of the label is larger than the column width
 			 * when the actual position of the label is inside. When it is, set the
 			 * display of the label to be none.
 			 */
-			point.columnLabel.style.width = 'auto';
+			dataPoint.columnLabel.style.width = 'auto';
 
-			const columnWidth = width * (this.options.columns.width / 100);
+			const columnWidth = seriesItemWidth * (this.options.columns.width / 100);
 
-			if (point.columnLabelProperties.actualPosition === 'inside' && point.columnLabel.offsetWidth > columnWidth) {
+			if (dataPoint.columnLabelProperties.actualPosition === 'inside' && dataPoint.columnLabel.offsetWidth > columnWidth) {
 
-				point.columnLabel.style.opacity = '0';
+				dataPoint.columnLabel.style.opacity = '0';
 
 				continue;
 
@@ -1133,20 +1178,20 @@ class CragCombo extends CragCore {
 			 * Check to see if label can physically fit in the space required
 			 * Set opacity to 0 where it can not
 			 */
-			if (point.columnLabel.offsetWidth > width) {
+			if (dataPoint.columnLabel.offsetWidth > seriesItemWidth) {
 
-				point.columnLabel.style.opacity = '0';
+				dataPoint.columnLabel.style.opacity = '0';
 
 			} else {
 
 				if (this.options.columns.labels.position === 'none') {
 
-					point.columnLabel.style.opacity = '0';
+					dataPoint.columnLabel.style.opacity = '0';
 
 				} else {
 
-					point.columnLabel.style.width = `${width}px`;
-					point.columnLabel.style.opacity = '1';
+					dataPoint.columnLabel.style.width = `${seriesItemWidth}px`;
+					dataPoint.columnLabel.style.opacity = '1';
 
 				}
 
@@ -1413,6 +1458,76 @@ class CragCombo extends CragCore {
 		if (this._isValidColor(color)) this.options.chart.color = color;
 
 		this._colorize();
+
+	}
+
+	/**
+	 * Sets new label colors with either a mode or a color value.
+	 * @param {'primary'|'secondary'} axis
+	 * @param {string} format
+	 * @param {string|undefined} formatOption
+	 */
+	setAxisFormat(axis, format, formatOption = undefined) {
+
+		this.options.vAxes[axis].format = this.validateOption(format, this.labelFormats, this.options.vAxes[axis].format);
+		this.options.vAxes[axis].formatOption = formatOption ?? null;
+
+		this._draw();
+
+	}
+
+	setMajorLinesVisible(axis, value) {
+
+		this.options.vAxes[axis].majorLines = this.validateOption(value, 'boolean', this.options.vAxes[axis].majorLines);
+
+		this._showHideElements();
+
+	}
+
+	setMinorLinesVisible(axis, value) {
+
+		this.options.vAxes[axis].minorLines = this.validateOption(value, 'boolean', this.options.vAxes[axis].minorLines);
+
+		this._showHideElements();
+
+	}
+
+	set showSecondaryOnPrimary(value) {
+
+		this.options.vAxes.secondary.showOnPrimary = value;
+
+		this._draw();
+
+	}
+
+	set smoothLine(value) {
+
+		this.options.line.smooth = this.validateOption(value, 'boolean', this.options.line.smooth);
+
+		this._draw();
+
+	}
+
+	set lineWidth(value) {
+
+		if (value < 1 || value > 10) return;
+
+		this.options.line.width = value;
+		this.line.width = value;
+
+	}
+
+	set pointSize(value) {
+
+		if (value < 0 || value > 50) return;
+
+		this.options.line.pointSize = value;
+
+		for (const dataPoint of Object.values(this.dataPoints)) {
+
+			dataPoint.pointSize = value;
+
+		}
 
 	}
 

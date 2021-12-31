@@ -581,6 +581,7 @@ class vAxisLines extends CragCore {
 
 		const minimum = this.options.min === 'auto' ? this.data.min : this.options.min;
 
+		this.showHide();
 		this._calculateAxisScale(minimum);
 
 		/**
@@ -605,10 +606,12 @@ class vAxisLines extends CragCore {
 
 			/**
 			 * Determine which of the lines is the zero point.
-			 * Zero point is either the bottom line or the middle line where the
-			 * scale goes from negative to positive
+			 * Zero point can be only of the following
+			 * 1. First line (from bottom) where scale starts at 0 or greater (positive only scale)
+			 * 2. Any line after the first where the real value = 0 (positive and negative scale)
+			 * 3. Last line where scale max is less than 0 (negative only scale)
 			 */
-			this.lines[i].isZeroPoint = (i === 0 && this.scale.min >= 0) || (i > 0 && this.lines[i].realValue === 0);
+			this.lines[i].isZeroPoint = (i === 0 && this.scale.min >= 0) || (i > 0 && this.lines[i].realValue === 0) || (i === this.scale.steps && this.scale.max < 0);
 
 		}
 
@@ -725,6 +728,18 @@ class vAxisLines extends CragCore {
 
 			line.majorLine.style.display = this.options.majorLines || (line.isZeroPoint && !this.isSecondary) ? '' : 'none';
 			line.minorLine.style.display = this.options.minorLines ? '' : 'none';
+
+		}
+
+		if (this.options.showOnPrimary) {
+
+			this.axisDiv.style.display = 'none';
+			this.linesDiv.style.display = 'none';
+
+		} else {
+
+			this.axisDiv.style.display = '';
+			this.linesDiv.style.display = '';
 
 		}
 
