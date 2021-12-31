@@ -1316,4 +1316,104 @@ class CragCombo extends CragCore {
 
 	}
 
+	set columnsRounded(value) {
+
+		this.options.columns.rounded = this.validateOption(value, 'boolean', this.options.columns.rounded);
+
+		this._draw();
+
+	}
+
+	set columnsInset(value) {
+
+		this.options.columns.inset = this.validateOption(value, 'boolean', this.options.columns.inset);
+
+		this._draw();
+
+	}
+
+	set columnsStriped(value) {
+
+		this.options.columns.striped = this.validateOption(value, 'boolean', this.options.columns.striped);
+
+		this._draw();
+
+	}
+
+	set columnsAnimated(value) {
+
+		this.options.columns.animated = this.validateOption(value, 'boolean', this.options.columns.animated);
+
+		this._draw();
+
+	}
+
+	set columnWidth(value) {
+
+		this.options.columns.width = this.validateOption(value, 'number', this.options.columns.width);
+
+		this._draw();
+
+	}
+
+	/**
+	 * Sets new label colors with either a mode or a color value.
+	 * @param {CragCore.pallet} color
+	 */
+	set labelColor(color) {
+
+		if (this._isValidColor(color)) {
+
+			this.options.columns.labels.color = color;
+
+		} else {
+
+			this.options.columns.labels.color = 'auto';
+
+		}
+
+		this._colorize();
+
+	}
+
+	/**
+	 * @description Applies a new color or color mode to the columns.
+	 * @param {string} color
+	 */
+	set columnColor(color) {
+
+		if (this._isValidColor(color)) this.options.columns.color = color;
+
+		this._colorize();
+
+	}
+
+	/**
+	 * Sets new label positions from one fo the possible.
+	 * @param {('inside'|'outside'|'none')} position
+	 */
+	set labelPosition(position) {
+
+		if (['inside', 'outside', 'none'].indexOf(position) >= 0) {
+
+			this.options.columns.labels.position = position;
+
+			this._draw();
+
+		}
+
+	}
+
+	/**
+	 * @description Applies a new background color to the chart.
+	 * @param {string} color
+	 */
+	set chartColor(color) {
+
+		if (this._isValidColor(color)) this.options.chart.color = color;
+
+		this._colorize();
+
+	}
+
 }
