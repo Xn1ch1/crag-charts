@@ -1018,7 +1018,11 @@ class CragCombo extends CragCore {
 			/**
 			 * Color in the dots
 			 */
-			dataPoint.dot.style.fill = this._getContrastColor(this.options.chart.color);
+			if (this._isValidColor(this.options.line.color)) {
+				dataPoint.dot.style.fill = this._resolveColor(this.options.line.color);
+			} else {
+				dataPoint.dot.style.fill = this._getContrastColor(this.options.chart.color);
+			}
 
 			/**
 			 * Regardless of settings, if the final position of the column
@@ -1054,7 +1058,15 @@ class CragCombo extends CragCore {
 		this.primaryVAxis.colorize(this._getContrastColor(this.options.chart.color));
 		this.secondaryVAxis.colorize(this._getContrastColor(this.options.chart.color));
 
-		this.line.line?.setAttribute('stroke', this._getContrastColor(this.options.chart.color));
+		if (this._isValidColor(this.options.line.color)) {
+
+			this.line.line.setAttribute('stroke', this._resolveColor(this.options.line.color));
+
+		} else {
+
+			this.line.line.setAttribute('stroke', this._getContrastColor(this.options.chart.color));
+
+		}
 
 	}
 
@@ -1514,6 +1526,14 @@ class CragCombo extends CragCore {
 
 		this.options.line.width = value;
 		this.line.width = value;
+
+	}
+
+	set lineColor(value) {
+
+		this.options.line.color = value;
+
+		this._colorize();
 
 	}
 
