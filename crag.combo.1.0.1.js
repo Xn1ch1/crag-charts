@@ -103,9 +103,8 @@ class DataPoint {
 
 		this.dot.setAttribute('cx', '100%');
 		this.dot.setAttribute('cy', '100%');
-
-		this.dot.setAttribute('r', this.options.line.pointSize);
 		this.dot.setAttribute('class', 'cragComboPoint');
+		this.dot.setAttribute('r', this.options.line.pointSize);
 
 	}
 
@@ -282,8 +281,6 @@ class DataPoint {
 
 			this.columnProperties.height = negativeSpace / (min - max) * (this.primaryValue - max);
 
-			console.log('this.columnProperties.height', this.columnProperties.height);
-
 			/**
 			 * When value is negative, the bottom is the height less the negative space
 			 * This will put it just below the zero line. It is then inverted to compensate
@@ -393,6 +390,13 @@ class DataPoint {
 
 	}
 
+	set pointSize(value) {
+
+		this.options.line.pointSize = value;
+		this.dot.setAttribute('r', this.options.line.pointSize);
+
+	}
+
 }
 
 class Line {
@@ -426,6 +430,13 @@ class Line {
 		this.line.setAttribute('d', 'M0,0');
 
 		return this.line;
+
+	}
+
+	set width(value) {
+
+		this.options.width = value;
+		this.line.setAttribute('stroke-width', this.options.width.toString());
 
 	}
 
@@ -689,7 +700,7 @@ class CragCombo extends CragCore {
 		if (this._isValidColor(options?.line?.color)) this.options.line.color = options.line.color;
 
 		this.options.line.smooth = this.validateOption(options?.line?.smooth, 'boolean', this.options.line.smooth);
-		if (options?.line?.width > 0 && options?.line?.width < 101) this.options.line.width = options.line.width;
+		if (options?.line?.width > 0 && options?.line?.width < 11) this.options.line.width = options.line.width;
 		if (options?.line?.pointSize > 0 && options?.line?.pointSize < 51) this.options.line.pointSize = options.line.pointSize;
 
 		/**
@@ -919,7 +930,17 @@ class CragCombo extends CragCore {
 		/**
 		 * Fix bug where calculated values are wrong when both min and max are a negative value
 		 */
-		if (this.data.min.primary < 0 && this.data.max.primary < 0) {
+		if (this.options.vAxes.secondary.showOnPrimary) {
+
+			const min = Math.min(this.data.min.primary, this.data.min.secondary);
+			const max = Math.max(this.data.max.primary, this.data.max.secondary);
+
+			if (min < 0 && max < 0) {
+				spaceBelowZero[0] = chartAreaHeight;
+				spaceAboveZero[0] = 0;
+			}
+
+		} else if (!this.options.vAxes.secondary.showOnPrimary && this.data.min.primary < 0 && this.data.max.primary < 0) {
 			spaceBelowZero[0] = chartAreaHeight;
 			spaceAboveZero[0] = 0;
 		}
@@ -1476,6 +1497,37 @@ class CragCombo extends CragCore {
 		this.options.vAxes.secondary.showOnPrimary = value;
 
 		this._draw();
+
+	}
+
+	set smoothLine(value) {
+
+		this.options.line.smooth = this.validateOption(value, 'boolean', this.options.line.smooth);
+
+		this._draw();
+
+	}
+
+	set lineWidth(value) {
+
+		if (value < 1 || value > 10) return;
+
+		this.options.line.width = value;
+		this.line.width = value;
+
+	}
+
+	set pointSize(value) {
+
+		if (value < 0 || value > 50) return;
+
+		this.options.line.pointSize = value;
+
+		for (const dataPoint of Object.values(this.dataPoints)) {
+
+			dataPoint.pointSize = value;
+
+		}
 
 	}
 
