@@ -581,6 +581,7 @@ class vAxisLines extends CragCore {
 
 		const minimum = this.options.min === 'auto' ? this.data.min : this.options.min;
 
+		this.showHide();
 		this._calculateAxisScale(minimum);
 
 		/**
@@ -725,6 +726,18 @@ class vAxisLines extends CragCore {
 
 			line.majorLine.style.display = this.options.majorLines || (line.isZeroPoint && !this.isSecondary) ? '' : 'none';
 			line.minorLine.style.display = this.options.minorLines ? '' : 'none';
+
+		}
+
+		if (this.options.showOnPrimary) {
+
+			this.axisDiv.style.display = 'none';
+			this.linesDiv.style.display = 'none';
+
+		} else {
+
+			this.axisDiv.style.display = '';
+			this.linesDiv.style.display = '';
 
 		}
 
