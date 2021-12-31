@@ -14,7 +14,7 @@
  */
 /**
  * @typedef optionsColumn Column Options.
- * @property {number} [width] Percentage width of the column relative to the space available. Example, 100 will be a full width bar.
+ * @property {number} [width] Percentage width of the column relative to the space available. Example, 100 will be a full width columns.
  * @property {string} [color] The color of the bars, either a hex code, an inbuilt pallet name or color mode.
  * @property {boolean} [rounded] Applies rounded corners at the top of the column.
  * @property {boolean} [inset] Applies an inset shadow on the column.
@@ -318,143 +318,17 @@
 
 }
 
-class VAxisLine {
-
-	/** @param {HTMLDivElement} */
-	majorLine = null;
-
-	/** @param {HTMLDivElement} */
-	minorLine = null;
-
-	/** @param {HTMLSpanElement} */
-	label = null;
-
-	realValue = 0;
-	step = 0;
-	ofSteps = 0;
-	max;
-
-	isZeroPoint = false;
-
-	/**
-	 * @type {optionsVAxis}
-	 */
-	axisProperties = {
-		format: 'number',
-		majorLines: true,
-		minorLines: true,
-	}
-
-	constructor(value, step, ofSteps, options) {
-
-		this.realValue = value;
-		this.step = step;
-		this.ofSteps = ofSteps;
-
-		this.axisProperties = options;
-
-		this._createLines();
-		this._createLabel();
-
-	}
-
-	_createLines() {
-
-		this.majorLine = document.createElement('div');
-
-		this.majorLine.className = 'cragAxisLineMajor';
-		this.majorLine.style.bottom = '100%';
-		this.majorLine.style.right = '0px';
-
-		this.minorLine = document.createElement('div');
-
-		this.minorLine.className = 'cragAxisLineMinor';
-		this.minorLine.style.bottom = '100%';
-
-	}
-
-	_createLabel() {
-
-		this.label = document.createElement('span');
-
-		this.label.className = 'cragVAxisLabel';
-		this.label.style.bottom = '100%';
-
-	}
-
-	positionMajor(space) {
-
-		this.majorLine.style.bottom = `${space / this.ofSteps * this.step}px`;
-
-	}
-
-	positionMinor(space) {
-
-		if (this.step === this.ofSteps) {
-
-			this.minorLine.style.opacity = '0';
-
-		} else {
-
-			this.minorLine.style.opacity = '';
-
-		}
-
-		this.minorLine.style.bottom = `${(space / this.ofSteps * this.step) + (space / this.ofSteps / 2)}px`;
-
-	}
-
-	positionLabel(space, hAxisOffset) {
-
-		this.label.style.bottom = `${space / this.ofSteps * this.step + hAxisOffset - (this.label.offsetHeight / 2)}px`;
-
-	}
-
-	_destroy() {
-
-		this.label.style.opacity = '0';
-		this.label.style.bottom = '100%';
-
-		this.majorLine.style.opacity = '0';
-		this.majorLine.style.bottom = '100%';
-
-		this.minorLine.style.opacity = '0';
-		this.minorLine.style.bottom = '100%';
-
-		setTimeout(() => {
-
-			this.label.remove();
-			this.majorLine.remove();
-			this.minorLine.remove();
-
-		}, 700);
-
-	}
-
-	set value(value) {
-		this.realValue = value;
-	}
-	get value() {
-		return this.realValue;
-	}
-
-	set labelText(text) {
-		this.label.textContent = text;
-	}
-
-}
-
 class CragColumn extends CragCore {
 
 	/**
 	 * @param {array} data
-	 * @param {{options}} options
+	 * @param {options} options
 	 */
 	constructor (data, options = undefined) {
 		super();
 
 		this.dataPoints = {};
-		this.vAxisLines = {};
+		this.primaryAxis = null;
 
 		this.data = {
 			series: data,
@@ -504,16 +378,6 @@ class CragColumn extends CragCore {
 			titleArea: null,
 			title: null,
 			elements: {}
-		}
-
-		this.vAxis = {
-			area: null,
-			elements: {},
-			baseValue: null,
-			baseLine: null,
-			max: 0,
-			min: 0,
-			calculatedWidth: 0,
 		}
 
 		this.hAxis = {
@@ -575,11 +439,9 @@ class CragColumn extends CragCore {
 		this.parent = document.getElementById(e);
 
 		this.chartContainer = document.createElement('div');
-		this.vAxis.area = document.createElement('div');
 		this.hAxis.area = document.createElement('div');
 		this.chart.titleArea = document.createElement('div');
 		this.chart.area = document.createElement('div');
-		this.chart.gridArea = document.createElement('div');
 		this.chart.columnArea = document.createElement('div');
 		this.chart.labelArea = document.createElement('div');
 		this.toolTip.container = document.createElement('div');
@@ -597,13 +459,13 @@ class CragColumn extends CragCore {
 
 		}
 
+		this.primaryVAxis = new vAxisLines(this.options.vAxis, false);
+
 		this.chartContainer.className = 'cragColumnChartContainer';
-		this.vAxis.area.className = 'cragColumnVAxis';
 		this.hAxis.area.className = 'cragColumnHAxis';
 		this.chart.titleArea.className = 'cragColumnTitle';
 		this.chart.area.className = 'cragColumnChartArea';
 
-		this.chart.gridArea.className = 'cragChartSubArea';
 		this.chart.labelArea.className = 'cragChartSubArea';
 		this.chart.columnArea.className = 'cragChartSubArea';
 
@@ -614,16 +476,14 @@ class CragColumn extends CragCore {
 
 		this.toolTip.label.textContent = this.options.vAxis.label;
 
-		this.chart.gridArea.style.pointerEvents = 'none';
-		this.chart.gridArea.style.overflow = 'visible';
 		this.chart.labelArea.style.pointerEvents = 'none';
 
 		this.parent.appendChild(this.chartContainer);
-		this.chartContainer.appendChild(this.vAxis.area);
+		this.chartContainer.appendChild(this.primaryVAxis.axisDiv);
 		this.chartContainer.appendChild(this.chart.titleArea);
 		this.chartContainer.appendChild(this.hAxis.area);
 		this.chartContainer.appendChild(this.chart.area);
-		this.chart.area.appendChild(this.chart.gridArea);
+		this.chart.area.appendChild(this.primaryVAxis.linesDiv);
 		this.chart.area.appendChild(this.chart.columnArea);
 		this.chart.area.appendChild(this.chart.labelArea);
 		this.chart.area.appendChild(this.toolTip.container);
@@ -658,9 +518,11 @@ class CragColumn extends CragCore {
 	_draw() {
 
 		/**
-		 * Updates vAxis to match the current data set.
+		 * Updates both vAxis to match the current data set.
 		 */
-		this._refactorVAxisLines();
+		this._getDataMinMax();
+
+		this.primaryVAxis.update(this.data.min, this.data.max);
 
 		/**
 		 * Updates data points to match the current data set.
@@ -670,7 +532,7 @@ class CragColumn extends CragCore {
 		/**
 		 * width and height for the chart area that holds the columns
 		 */
-		const chartAreaWidth = this.chartContainer.offsetWidth - this.vAxis.calculatedWidth;
+		const chartAreaWidth = this.chartContainer.offsetWidth - this.primaryVAxis.calculatedWidth;
 		const chartAreaHeight = this.chart.area.offsetHeight;
 
 		/**
@@ -687,7 +549,7 @@ class CragColumn extends CragCore {
 		/**
 		 * Get height from bottom of the chart area where the 0 line is
 		 */
-		const zeroLine = this.vAxis.min >= 0 ? 0 : chartAreaHeight * Math.abs(this.vAxis.min / (this.vAxis.max - this.vAxis.min));
+		const zeroLine = this.primaryVAxis.scale.min >= 0 ? 0 : chartAreaHeight * Math.abs(this.primaryVAxis.scale.min / (this.primaryVAxis.scale.max - this.primaryVAxis.scale.min));
 
 		/**
 		 * Calculate pixel space above and below zero line
@@ -697,19 +559,11 @@ class CragColumn extends CragCore {
 
 		for (const point of Object.values(this.dataPoints)) {
 
-			point.setColumnHeight(spaceAboveZero, spaceBelowZero, this.vAxis.max, this.vAxis.min);
+			point.setColumnHeight(spaceAboveZero, spaceBelowZero, this.primaryVAxis.scale.max, this.primaryVAxis.scale.min);
 			point._positionColumn(zeroLine, (seriesItemWidth * point.index) + (gapWidth / 2), columnWidth);
-			point._positionColumnLabel(seriesItemWidth, zeroLine, spaceAboveZero, spaceBelowZero, this.vAxis.max, this.vAxis.min)
+			point._positionColumnLabel(seriesItemWidth, zeroLine, spaceAboveZero, spaceBelowZero, this.primaryVAxis.scale.max, this.primaryVAxis.scale.min)
 
 			point._positionAxisLabel(seriesItemWidth);
-
-		}
-
-		for (const line of Object.values(this.vAxisLines)) {
-
-			line.positionMajor(chartAreaHeight);
-			line.positionMinor(chartAreaHeight);
-			line.positionLabel(chartAreaHeight, this.hAxis.area.offsetHeight);
 
 		}
 
@@ -796,44 +650,13 @@ class CragColumn extends CragCore {
 
 		}
 
-		/**
-		 * vAxis Elements
-		 */
-		for (const line of Object.values(this.vAxisLines)) {
-
-			line.majorLine.style.backgroundColor = this._getContrastColor(this.options.chart.color);
-			line.minorLine.style.backgroundColor = this._getContrastColor(this.options.chart.color);
-
-			line.label.style.color = this._getContrastColor(this.options.chart.color);
-
-			if (line.isZeroPoint) {
-
-				line.majorLine.style.opacity = '0.9';
-				line.majorLine.style.height = '2px';
-
-			} else {
-
-				line.majorLine.style.opacity = '';
-				line.majorLine.style.height = '1px';
-
-			}
-
-		}
+		this.primaryVAxis.colorize(this._getContrastColor(this.options.chart.color));
 
 	}
 
 	_showHideElements(width) {
 
-	
-		/**
-		 * vAxis Elements
-		 */
-		for (const line of Object.values(this.vAxisLines)) {
-
-			line.majorLine.style.display = this.options.vAxis.majorLines || line.isZeroPoint ? '' : 'none';
-			line.minorLine.style.display = this.options.vAxis.minorLines ? '' : 'none';
-
-		}
+		this.primaryVAxis.showHide();
 
 		for (const point of Object.values(this.dataPoints)) {
 
@@ -857,7 +680,7 @@ class CragColumn extends CragCore {
 			/**
 			 * Past this point indicates the width of the label is smaller than the column or
 			 * the actual position is outside where it can be checked against the series width.
-			 * Note: Series width is bar width + gaps.
+			 * Note: Series width is columns width + gaps.
 			 */
 
 			/**
@@ -959,128 +782,6 @@ class CragColumn extends CragCore {
 
 	}
 
-	_refactorVAxisLines() {
-
-		this._getDataMinMax();
-
-		const min = this.options.vAxis.min === 'auto' ? this.data.min : this.options.vAxis.min;
-		const scale = this._calculateAxisScale(min);
-
-		/**
-		 * Set the vAxis min and max based on the calculated scale
-		 */
-		this.vAxis.min = scale.min;
-		this.vAxis.max = scale.max;
-
-		for (let i = 0; i <= scale.steps; i++) {
-
-			if (this.vAxisLines[i]) {
-
-				this.vAxisLines[i].value = scale.min + (i * scale.maj);
-				this.vAxisLines[i].step = i;
-				this.vAxisLines[i].ofSteps = scale.steps;
-				this.vAxisLines[i].max = scale.max;
-
-				this.vAxisLines[i].axisProperties = this.options.vAxis;
-
-			} else {
-
-				this.vAxisLines[i] = new VAxisLine(scale.min + (i * scale.maj), i, scale.steps, scale.max, this.options.vAxis);
-
-			}
-
-			/**
-			 * Determine which of the lines is the zero point.
-			 * Zero point is either the bottom line or the middle line where the
-			 * scale goes from negative to positive
-			 */
-			this.vAxisLines[i].isZeroPoint = (i === 0 && scale.min >= 0) || (i > 0 && this.vAxisLines[i].realValue === 0);
-
-		}
-
-		/**
-		 * Remove any VAxisLines that are beyond the current scale length.
-		 * This will happen when a new data set is loaded that has a different scale
-		 */
-		for (let i = Object.values(this.vAxisLines).length + 1; i > scale.steps; i--) {
-
-			if (!this.vAxisLines[i]) continue;
-
-			this.vAxisLines[i]._destroy();
-			this.vAxisLines[i] = null;
-
-			delete this.vAxisLines[i];
-
-		}
-
-		/**
-		 * Reset the calculated width of the vAxis ready for new labels
-		 */
-		let vAxisCalculatedWidth = 0;
-
-		for (const line of Object.values(this.vAxisLines)) {
-
-			/**
-			 * Append elements to DOM
-			 */
-			this.chart.gridArea.appendChild(line.majorLine);
-			this.chart.gridArea.appendChild(line.minorLine);
-
-			this.vAxis.area.appendChild(line.label);
-
-			line.labelText = this.formatLabel(line.value, this.options.vAxis.format, this.options.vAxis.formatOption);
-
-			if (line.label.offsetWidth > vAxisCalculatedWidth) vAxisCalculatedWidth = line.label.offsetWidth;
-			
-		}
-
-		/**
-		 * Set the new vAxis are width
-		 */
-		this.vAxis.area.style.width = `${vAxisCalculatedWidth}px`;
-
-		this.vAxis.calculatedWidth = vAxisCalculatedWidth;
-
-	}
-
-	/**
-	 * Sets the min and max of the vAxis based on the min and max value in the data set
-	 * @param min The minimum value for the vAxis
-	 * @return {{min: number, max: number, maj: number, steps: number}}
-	 * @private
-	 */
-	_calculateAxisScale(min) {
-
-		if (this.options.vAxis.format === 'time') {
-
-			/**
-			 * Time scales will be rounded based on the largest value in the data set
-			 * The scales are seconds, minutes, hours then days
-			 */
-
-			let timeRounding;
-
-			if (this.data.max < 60) {
-				timeRounding = 60
-			} else if (this.data.max < 3600) {
-				timeRounding = 3600;
-			} else if (this.data.max < 43200) {
-				timeRounding = 43200;
-			} else {
-				timeRounding = 86400;
-			}
-
-			return calculateScale(min, this.data.max, timeRounding);
-
-		} else {
-
-			return calculateScale(min, this.data.max, 10);
-
-		}
-
-
-	}
-
 	/**
 	 * Shows tool tip for selected point
 	 * @param {DataPoint} point
@@ -1112,7 +813,7 @@ class CragColumn extends CragCore {
 		 * If the column is on the left side of screen, see if the tool tip will fit on the left of the column first
 		 * Otherwise check to see if it will fit on the right.
 		 * If the preferred side can not fit, use the other.
-		 * If neither fits, it will default to center over the bar.
+		 * If neither fits, it will default to center over the columns.
 		 */
 		if (alignments[0] && columnLeft - 8 > tipWidth) {
 
@@ -1192,7 +893,7 @@ class CragColumn extends CragCore {
 	 * @description Applies a new data set to the chart. Must be full data set.
 	 * @param {any} data
 	 */
-	set newData(data) {
+	update(data) {
 
 		if (data.length > 20) {
 			data = val.slice(0, 20);
