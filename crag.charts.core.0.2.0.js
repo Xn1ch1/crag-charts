@@ -4,25 +4,25 @@ class CragCore {
 		red: '#f44336',
 		pink: '#ec407a',
 		purple: '#ba68c8',
-		deeppurple: '#7e57c2',
+		deepPurple: '#7e57c2',
 		indigo: '#5c6bc0',
 		blue: '#2196f3',
-		lightblue: '#03a9f4',
+		lightBlue: '#03a9f4',
 		cyan: '#00bcd4',
 		teal: '#009688',
 		green: '#4caf50',
-		lightgreen: '#8bc34a',
+		lightGreen: '#8bc34a',
 		lime: '#cddc39',
 		yellow: '#ffeb3b',
 		amber: '#ffc107',
 		orange: '#ff9800',
-		deeporange: '#ff5722',
+		deepOrange: '#ff5722',
 		brown: '#8d6e63',
 		grey: '#9e9e9e',
-		bluegrey: '#607d8b',
-		darkbluegrey: '#192841',
+		blueGrey: '#607d8b',
+		darkBlueGrey: '#192841',
 		black: '#000000',
-		almostblack: '#222222',
+		almostBlack: '#222222',
 		charcoal: '#333333',
 		darkgrey: '#555555',
 		lightgrey: '#DDDDDD',
@@ -203,74 +203,7 @@ class CragCore {
 
 	}
 
-
 }
-//
-// /**
-//  * @typedef {pallet} Built in available color pallet
-//  */
-// const pallet = {
-// 	red: '#f44336',
-// 	pink: '#ec407a',
-// 	purple: '#ba68c8',
-// 	deeppurple: '#7e57c2',
-// 	indigo: '#5c6bc0',
-// 	blue: '#2196f3',
-// 	lightblue: '#03a9f4',
-// 	cyan: '#00bcd4',
-// 	teal: '#009688',
-// 	green: '#4caf50',
-// 	lightgreen: '#8bc34a',
-// 	lime: '#cddc39',
-// 	yellow: '#ffeb3b',
-// 	amber: '#ffc107',
-// 	orange: '#ff9800',
-// 	deeporange: '#ff5722',
-// 	brown: '#8d6e63',
-// 	grey: '#9e9e9e',
-// 	bluegrey: '#607d8b',
-// 	darkbluegrey: '#192841',
-// 	black: '#000000',
-// 	almostblack: '#222222',
-// 	charcoal: '#333333',
-// 	darkgrey: '#555555',
-// 	lightgrey: '#DDDDDD',
-// 	white: '#FFFFFF',
-// 	multi: null,
-// 	match: null,
-// 	positiveNegative: null,
-// 	key: function(n) {
-// 		return this[Object.keys(this)[n]];
-// 	}
-// };
-//
-// function isPalletColor(col) {
-// 	return pallet.hasOwnProperty(col);
-// }
-//
-// function isValidHexColor(hexCode) {
-//
-// 	return /^#[0-9A-F]{6}$/i.test(hexCode);
-//
-// }
-//
-// function _isValidColor(colorValue) {
-//
-// 	if (isPalletColor(colorValue)) return true;
-//
-// 	return isValidHexColor(colorValue);
-//
-// }
-
-// function _resolveColor(value) {
-//
-// 	if (isPalletColor(value)) return pallet[value];
-//
-// 	if (isValidHexColor(value)) return value;
-//
-// 	return '#FFFFFF';
-//
-// }
 
 /**
  * Converts a number value into a specified formatted string. Will default to number with no decimal places where not specified.
@@ -574,77 +507,22 @@ function ObjectLength(object) {
 	return length;
 
 }
-//
-// function getContrastYIQ(color){
-//
-// 	if (pallet.hasOwnProperty(color)) {
-// 		color = pallet[color];
-// 	}
-//
-// 	let r, g, b;
-//
-// 	if (color.includes('rgb')) {
-//
-// 		color = color.replace('rgb(', '').replace(')', '');
-//
-// 		r = color.split(',')[0].trim();
-// 		g = color.split(',')[1].trim();
-// 		b = color.split(',')[2].trim();
-//
-// 	} else {
-//
-// 		color = color.replace("#", "");
-//
-// 		r = parseInt(color.substr(0,2),16);
-// 		g = parseInt(color.substr(2,2),16);
-// 		b = parseInt(color.substr(4,2),16);
-//
-// 	}
-//
-// 	let yiq = ((r*299)+(g*587)+(b*114))/1000;
-//
-// 	return (yiq >= 128) ? 'darkgrey' : 'white';
-//
-// }
-//
-// function _getContrastColor(color) {
-//
-// 	color = _resolveColor(color);
-//
-// 	let r, g, b;
-//
-// 	if (color.includes('rgb')) {
-//
-// 		color = color.replace('rgb(', '').replace(')', '');
-//
-// 		r = color.split(',')[0].trim();
-// 		g = color.split(',')[1].trim();
-// 		b = color.split(',')[2].trim();
-//
-// 	} else {
-//
-// 		color = color.replace("#", "");
-//
-// 		r = parseInt(color.substr(0,2),16);
-// 		g = parseInt(color.substr(2,2),16);
-// 		b = parseInt(color.substr(4,2),16);
-//
-// 	}
-//
-// 	let yiq = ((r*299)+(g*587)+(b*114))/1000;
-//
-// 	return (yiq >= 140) ? pallet.charcoal : pallet.white;
-//
-// }
-Element.prototype.insertChildAtIndex = function(child, index) {
-  if (!index) index = 0
-  if (index >= this.children.length) {
-    this.appendChild(child)
-  } else {
-    this.insertBefore(child, this.children[index])
-  }
-}
 
+Element.prototype.insertChildAtIndex = function(child, index) {
+
+	if (!index) index = 0;
+
+	if (index >= this.children.length) {
+
+	    this.appendChild(child)
+
+	} else {
+
+    	this.insertBefore(child, this.children[index])
+
+	}
+
+}
 
 class vAxisLines extends CragCore {
 

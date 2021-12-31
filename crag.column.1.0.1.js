@@ -322,7 +322,7 @@ class CragColumn extends CragCore {
 
 	/**
 	 * @param {array} data
-	 * @param {{options}} options
+	 * @param {options} options
 	 */
 	constructor (data, options = undefined) {
 		super();
