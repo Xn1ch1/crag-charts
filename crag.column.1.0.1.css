@@ -105,21 +105,6 @@
 	transition: all 1s ease;
 	opacity: 0.05;
 }
-.cragColumnColumn {
-	height: 0;
-	transition: all 0.7s, height 0.8s, width 0.6s, background-color 0.8s, left 0.7s, opacity 0.7s;
-	position: absolute;
-	box-sizing: border-box;
-	cursor: pointer;
-	bottom: 0;
-	left: 100%;
-	transform-origin: center;
-}
-.cragColumnColumn:hover {
-	-webkit-box-shadow:  0 1px 5px 2px rgba(0, 0, 0, 0.5) !important;
-	-moz-box-shadow:  0 1px 5px 2px rgba(0, 0, 0, 0.5) !important;
-	box-shadow:  0 1px 5px 2px rgba(0, 0, 0, 0.5) !important;
-}
 .cragColumnColumnRound {
 	-webkit-border-top-left-radius: 10px;
 	-webkit-border-top-right-radius: 10px;
