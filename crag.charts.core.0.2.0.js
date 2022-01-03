@@ -1,3 +1,21 @@
+/**
+ * @typedef optionsChart Chart options.
+ * @property {null|string} [title] Title to show above the chart.
+ * @property {string} [color] Background color of the chart, can be hex code or pallet name.
+ */
+/**
+ * @typedef optionsVAxis vAxis Options.
+ * @property {string} [name] The name of the data series for the vAxis, will be applied to the tool tip.
+ * @property {boolean} [majorLines] Enables the horizontal major lines.
+ * @property {boolean} [minorLines] Enables the horizontal minor lines.
+ * @property {boolean} [shadowOnZeroLine] Enables a drop shadow on the primary major zero line.
+ * @property {string} [format] Formatting type, must be one of the valid options.
+ * @property {string} [currencySymbol] Optional currency format.
+ * @property {number} [decimalPlaces] Number of decimal places for decimal formats.
+ * @property {string|number} [min] Sets the minimum value for the vAxis, when omitted, this will be calculated automatically.
+ */
+
+
 class CragCore {
 
 	pallet = {
@@ -29,7 +47,7 @@ class CragCore {
 		white: '#FFFFFF',
 	}
 
-	modes = ['match', 'multi', 'redGreen'];
+	modes = ['auto', 'match', 'multi', 'redGreen'];
 
 	/**
 	 * Resolves a color value, from either a hex code, pallet name or mode.
@@ -144,26 +162,27 @@ class CragCore {
 	 * Converts a number value into a specified formatted string. Will default to number with no decimal places where not specified.
 	 * @param {number} value Numerical value to be formatted. In case of time, this will be seconds.
 	 * @param {string} type Type of formatting to apply, either 'decimal', 'time', 'currency' or default of 'number'
-	 * @param {string|null} formatOption Additional options to be passed to formatter. To be used for currency formatting; pass along the code, eg 'GBP'
+	 * @param {string|null} currencySymbol Additional options to be passed to formatter. To be used for currency formatting; pass along the code, eg 'GBP'
+	 * @param {number} decimalPlaces Number of decimal places for decimal formats.
 	 * @return {string} Returns formatted string
 	 */
-	formatLabel(value, type = 'number', formatOption = null) {
+	formatLabel(value, type = 'number', currencySymbol = 'GBP', decimalPlaces = 0) {
 
 		switch(type) {
 
 			case 'decimal':
-				return value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+				return value.toLocaleString(undefined, {minimumFractionDigits: decimalPlaces, maximumFractionDigits: decimalPlaces});
 
 			case 'time':
 				return sToTime(value);
 
 			case 'currency':
 				return new Intl.NumberFormat('en-GB',
-					{ style: 'currency', currency: formatOption }
+					{ style: 'currency', currency: currencySymbol, minimumFractionDigits: decimalPlaces, maximumFractionDigits: decimalPlaces}
 				).format(value);
 
 			default:
-				return value.toLocaleString(undefined, {maximumFractionDigits: 0});
+				return value.toLocaleString(undefined, {minimumFractionDigits: decimalPlaces, maximumFractionDigits: decimalPlaces});
 
 		}
 
@@ -209,26 +228,27 @@ class CragCore {
  * Converts a number value into a specified formatted string. Will default to number with no decimal places where not specified.
  * @param {number} value Numerical value to be formatted. In case of time, this will be seconds.
  * @param {string} type Type of formatting to apply, either 'decimal', 'time', 'currency' or default of 'number'
- * @param {string|null} formatOption Additional options to be passed to formatter. To be used for currency formatting; pass along the code, eg 'GBP'
+ * @param {string|null} currencySymbol Additional options to be passed to formatter. To be used for currency formatting; pass along the code, eg 'GBP'
+ * @param {number} decimalPlaces Number of decimal places for decimal formats
  * @return {string} Returns formatted string
  */
-function formatLabel(value, type = 'number', formatOption = null) {
+function formatLabel(value, type = 'number', currencySymbol = 'GBP', decimalPlaces = 0) {
 
 	switch(type) {
 
 		case 'decimal':
-			return value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+			return value.toLocaleString(undefined, {minimumFractionDigits: decimalPlaces, maximumFractionDigits: decimalPlaces});
 
 		case 'time':
 			return sToTime(value);
 
 		case 'currency':
 			return new Intl.NumberFormat('en-GB',
-				{ style: 'currency', currency: formatOption }
+				{ style: 'currency', currency: currencySymbol }
 			).format(value);
 
 		default:
-			return value.toLocaleString(undefined, {maximumFractionDigits: 0});
+			return value.toLocaleString(undefined, {maximumFractionDigits: decimalPlaces});
 
 	}
 
@@ -526,36 +546,34 @@ Element.prototype.insertChildAtIndex = function(child, index) {
 
 class vAxisLines extends CragCore {
 
+	chart = null;
+
 	axisDiv = null;
 	linesDiv = null;
 
 	calculatedWidth = 0;
 
-	isSecondary = false;
+	/** @type {'primary'|'secondary'} */
+	axis = 'primary';
 
 	/** @type {{VAxisLine}} */
 	lines = {}
-
-	options = {}
-
-	data = {
-		min: 0,
-		max: 0,
-	}
 
 	scale = {
 		min: 0,
 		max: 0,
 		steps: 0,
+		maj: 0,
 	}
 
-	constructor(options, isSecondary = false) {
+	constructor(chart, axis = 'primary') {
 		super();
 
-		this.isSecondary = isSecondary;
-		this.options = options;
+		this.chart = chart;
+		this.axis = axis;
 
 		this._create();
+		this.showHide();
 
 	}
 
@@ -564,25 +582,17 @@ class vAxisLines extends CragCore {
 		this.axisDiv = document.createElement('div');
 		this.axisDiv.className = 'cragVAxisPrimary';
 
-		if (this.isSecondary) this.axisDiv.className = 'cragVAxisSecondary';
+		if (this.axis === 'secondary') this.axisDiv.className = 'cragVAxisSecondary';
 
 		this.linesDiv = document.createElement('div');
 		this.linesDiv.className = 'cragChartSubArea';
-
-		if (this.options.showOnPrimary) this.axisDiv.style.display = 'none';
-		if (this.options.showOnPrimary) this.linesDiv.style.display = 'none';
 
 	}
 
 	update(min, max) {
 
-		this.data.min = min;
-		this.data.max = max;
-
-		const minimum = this.options.min === 'auto' ? this.data.min : this.options.min;
-
+		this._calculateAxisScale(min, max);
 		this.showHide();
-		this._calculateAxisScale(minimum);
 
 		/**
 		 * Reset the calculated width of the vAxis ready for new labels
@@ -637,12 +647,10 @@ class vAxisLines extends CragCore {
 			/**
 			 * Append elements to DOM
 			 */
-			this.linesDiv.appendChild(line.majorLine);
-			this.linesDiv.appendChild(line.minorLine);
-
+			this.linesDiv.append(line.majorLine, line.minorLine);
 			this.axisDiv.appendChild(line.label);
 
-			line.labelText = this.formatLabel(line.value, this.options.format, this.options.formatOption);
+			line.labelText = this.formatLabel(line.value, this.chart.options.vAxes[this.axis].format, this.chart.options.vAxes[this.axis].currencySymbol, this.chart.options.vAxes[this.axis].decimalPlaces);
 
 			if (line.label.offsetWidth > this.calculatedWidth) this.calculatedWidth = line.label.offsetWidth;
 
@@ -657,17 +665,20 @@ class vAxisLines extends CragCore {
 		 */
 		this.axisDiv.style.width = `${this.calculatedWidth}px`;
 
+		this.showHide();
+
 	}
 
 	/**
 	 * Sets the min and max of the vAxis based on the min and max value in the data set
-	 * @param min The minimum value for the vAxis
 	 * @return {{min: number, max: number, maj: number, steps: number}}
 	 * @private
 	 */
-	_calculateAxisScale(min) {
+	_calculateAxisScale(min, max) {
 
-		if (this.options.format === 'time') {
+		min = this.chart.options.vAxes[this.axis].min === 'auto' ? min : this.chart.options.vAxes[this.axis].min;
+
+		if (this.chart.options.vAxes[this.axis].format === 'time') {
 
 			/**
 			 * Time scales will be rounded based on the largest value in the data set
@@ -676,27 +687,29 @@ class vAxisLines extends CragCore {
 
 			let timeRounding;
 
-			if (this.data.max < 60) {
+			if (max < 60) {
 				timeRounding = 60
-			} else if (this.data.max < 3600) {
+			} else if (max < 3600) {
 				timeRounding = 3600;
-			} else if (this.data.max < 43200) {
+			} else if (max < 43200) {
 				timeRounding = 43200;
 			} else {
 				timeRounding = 86400;
 			}
 
-			this.scale = calculateScale(min, this.data.max, timeRounding);
+			this.scale = calculateScale(min, max, timeRounding);
 
 		} else {
 
-			this.scale = calculateScale(min, this.data.max, 10);
+			this.scale = calculateScale(min, max, 10);
 
 		}
 
 	}
 
-	colorize(color) {
+	_colorize() {
+
+		const color = this._getContrastColor(this.chart.options.chart.color);
 
 		for (const line of Object.values(this.lines)) {
 
@@ -710,11 +723,22 @@ class vAxisLines extends CragCore {
 				line.majorLine.style.height = '2px';
 				line.majorLine.style.zIndex = '2';
 
+				if (this.chart.options.vAxes.primary.shadowOnZeroLine) {
+
+					line.majorLine.style.boxShadow = 'rgb(0 0 0 / 35%) 0px 0px 4px 2px';
+
+				} else {
+
+					line.majorLine.style.boxShadow = 'none';
+
+				}
+
 			} else {
 
 				line.majorLine.style.opacity = '';
 				line.majorLine.style.height = '1px';
 				line.majorLine.style.zIndex = '0';
+				line.majorLine.style.boxShadow = 'none';
 
 			}
 
@@ -726,12 +750,12 @@ class vAxisLines extends CragCore {
 
 		for (const line of Object.values(this.lines)) {
 
-			line.majorLine.style.display = this.options.majorLines || (line.isZeroPoint && !this.isSecondary) ? '' : 'none';
-			line.minorLine.style.display = this.options.minorLines ? '' : 'none';
+			line.majorLine.style.display = this.chart.options?.vAxes[this.axis]?.majorLines || (line.isZeroPoint && this.axis === 'primary') ? '' : 'none';
+			line.minorLine.style.display = this.chart.options?.vAxes[this.axis]?.minorLines ? '' : 'none';
 
 		}
 
-		if (this.options.showOnPrimary) {
+		if (this.axis === 'secondary' && this.chart.options.vAxes.secondary.showOnPrimary) {
 
 			this.axisDiv.style.display = 'none';
 			this.linesDiv.style.display = 'none';
@@ -744,6 +768,73 @@ class vAxisLines extends CragCore {
 		}
 
 	}
+
+	set majorLines(value) {
+
+		this.chart.options.vAxes[this.axis].majorLines = value;
+		this.showHide();
+
+	}
+
+	set minorLines(value) {
+
+		this.chart.options.vAxes[this.axis].minorLines = value;
+		this.showHide();
+
+	}
+
+	set format(value) {
+
+		this.chart.options.vAxes[this.axis].format = value;
+		this.chart._draw();
+
+	}
+
+	set decimals(value) {
+
+		this.chart.options.vAxes[this.axis].decimalPlaces = value;
+		this.chart._draw();
+
+	}
+
+	set currencySymbol(value) {
+
+		this.chart.options.vAxes[this.axis].currencySymbol = value;
+		this.chart._draw();
+
+	}
+
+	set minimum(value) {
+
+		this.chart.options.vAxes[this.axis].min = value;
+		this.chart._draw()
+
+	}
+
+	set shadowOnZeroLine(value) {
+
+		/**
+		 * Primary only attribute
+		 */
+		if (this.axis === 'secondary') return;
+
+		this.chart.options.vAxes.primary.shadowOnZeroLine = value;
+		this._colorize();
+
+	}
+
+	set showOnPrimary(value) {
+
+		/**
+		 * Secondary only attribute
+		 */
+		if (this.axis === 'primary') return;
+
+		this.chart.options.vAxes.secondary.showOnPrimary = value;
+		this.chart._draw();
+
+	}
+
 
 }
 
@@ -805,7 +896,7 @@ class VAxisLine {
 
 	positionMajor(space) {
 
-		this.majorLine.style.bottom = `${Math.min(space - 1, space / this.ofSteps * this.step)}px`;
+		this.majorLine.style.bottom = `${Math.min(space - 2, space / this.ofSteps * this.step)}px`;
 
 	}
 
@@ -861,6 +952,1273 @@ class VAxisLine {
 
 	set labelText(text) {
 		this.label.textContent = text;
+	}
+
+}
+class HAxis extends CragCore {
+
+	chart = null;
+
+	data = [];
+	area = null;
+	labels = {};
+
+	constructor(chart) {
+		super();
+
+		this.chart = chart;
+
+		this._create();
+
+	}
+
+	_create() {
+
+		this.area = document.createElement('div');
+		this.area.className  = 'cragHAxis';
+
+	}
+
+	_refactor() {
+
+		/**
+		 * Update the labels with new data, labels will be created where they don't yet exist
+		 */
+		for (let i = 0; i < this.chart.data.series.length; i++) {
+
+			if (this.labels[i]) {
+
+				/**
+				 * Update existing label at this index with new data
+				 */
+				this.labels[i].textContent = this.chart.data.series[i][0];
+
+			} else {
+
+				/**
+				 * Create new label
+				 */
+				this.labels[i] = document.createElement('span');
+
+				this.labels[i].className = 'cragHAxisLabel';
+				this.labels[i].style.color = this._getContrastColor(this.chart.options.chart.color);
+				this.labels[i].textContent = chart.data.series[i][0];
+
+				this.area.append(this.labels[i]);
+
+			}
+
+		}
+
+		/**
+		 * Remove any labels that are beyond the current data set length.
+		 * This will happen when a new data set is loaded that is smaller than the old data set
+		 */
+		for (let i = Object.values(this.labels).length + 1; i >= this.chart.data.series.length; i--) {
+
+			if (!this.labels[i]) continue;
+
+			const element = this.labels[i];
+
+			element.style.opacity = '0';
+			element.style.left = '100%';
+
+			this.labels[i] = null;
+
+			setTimeout(() => {
+
+				element.remove();
+
+			}, 700);
+
+		}
+
+	}
+
+	update() {
+
+		this._refactor();
+		this._position();
+		this._colorize();
+
+	}
+
+	_position() {
+
+		const axisWidth = this.chart.chart.container.offsetWidth - (this.chart.primaryVAxis?.calculatedWidth ?? 0) - (this.chart.secondaryVAxis?.calculatedWidth ?? 0);
+
+		for (const [index, label] of Object.entries(this.labels)) {
+
+			if (!label) continue;
+
+			label.style.left = `${axisWidth / this.chart.data.series.length * index}px`;
+			label.style.width = `${axisWidth / this.chart.data.series.length}px`;
+
+		}
+
+	}
+
+	_colorize() {
+
+		for (const label of Object.values(this.labels)) {
+
+			if (!label) continue;
+
+			label.style.color = this._getContrastColor(chart.options.chart.color);
+
+		}
+
+	}
+
+}
+
+class ToolTip extends CragCore {
+
+	chart = null;
+
+	container = null;
+	title = null;
+	primaryLabel = null;
+	primaryValue = null;
+
+	secondaryLabel = null;
+	secondaryValue = null;
+
+	constructor(chart) {
+		super();
+
+		this.chart = chart;
+
+		this._create();
+		this._colorize();
+
+	}
+
+	_create() {
+
+		this.container = document.createElement('div');
+		this.title = document.createElement('h6');
+
+		this.primaryLabel = document.createElement('h6');
+		this.primaryValue = document.createElement('h6');
+
+		this.secondaryLabel = document.createElement('h6');
+		this.secondaryValue = document.createElement('h6');
+
+		this.container.className = 'cragToolTip';
+		this.title.className = 'cragToolTipTitle';
+
+		this.primaryLabel.className = 'cragToolTipLabel';
+		this.primaryValue.className = 'cragToolTipValue';
+
+		this.secondaryLabel.className = 'cragToolTipLabel';
+		this.secondaryValue.className = 'cragToolTipValue';
+
+		document.body.appendChild(this.container);
+
+		this.container.append(
+			this.title,
+			this.primaryLabel,
+			this.primaryValue,
+			this.secondaryLabel,
+			this.secondaryValue,
+		);
+
+	}
+
+	_colorize() {
+
+		this.container.style.backgroundColor = this._getContrastColor(this.chart.options.chart.color);
+
+		this.title.style.color = this._resolveColor(this.chart.options.chart.color);
+		this.primaryLabel.style.color = this._resolveColor(this.chart.options.chart.color);
+		this.primaryValue.style.color = this._resolveColor(this.chart.options.chart.color);
+		this.secondaryLabel.style.color = this._resolveColor(this.chart.options.chart.color);
+		this.secondaryValue.style.color = this._resolveColor(this.chart.options.chart.color);
+
+	}
+
+	_position(index, element) {
+
+		const chartWidth = window.innerWidth;
+		const columnLeft = parseFloat(element.style.left.replace('px', ''));
+		const columnWidth = element.offsetWidth;
+		const columnHeight = element.offsetHeight;
+		const tipHeight = this.container.offsetHeight;
+		const tipWidth = this.container.offsetWidth;
+
+		const alignments = [false, true, false];
+
+		if (columnLeft - 8 > tipWidth) alignments[0] = true;
+		if (chartWidth - columnLeft - columnWidth - 8 > tipWidth) alignments[2] = true;
+
+		this.container.style.opacity = '1';
+
+		/**
+		 * If the column is on the left side of screen, see if the tool tip will fit on the left of the column first
+		 * Otherwise check to see if it will fit on the right.
+		 * If the preferred side can not fit, use the other.
+		 * If neither fits, it will default to center over the columns.
+		 */
+		if (alignments[0] && columnLeft - 8 > tipWidth) {
+
+			this.container.style.left = `${columnLeft - tipWidth - 8}px`;
+
+		} else if (alignments[2]) {
+
+			this.container.style.left = `${columnLeft + columnWidth + 8}px`;
+
+		} else {
+
+			this.container.style.left = `${columnLeft + (columnWidth / 2) - (tipWidth / 2)}px`;
+			this.container.style.opacity = '0.8';
+
+		}
+
+		const columnBottom = parseFloat(element.style.bottom.replace('px', ''));
+
+		if (this.chart.data.series[index][1] < 0) {
+
+			this.container.style.bottom = `${Math.max(0, columnBottom)}px`;
+
+		} else {
+
+			this.container.style.bottom = `${Math.max(0, columnBottom + columnHeight - tipHeight)}px`;
+
+		}
+
+	}
+
+	show(index, caller) {
+
+		this.title.textContent = this.chart.data.series[index][0];
+
+		this.primaryLabel.textContent = this.chart.options.vAxes.primary.name;
+		this.primaryValue.textContent = this.formatLabel(
+			this.chart.data.series[index][1],
+			this.chart.options.vAxes.primary.format,
+			this.chart.options.vAxes.primary.currencySymbol,
+			this.chart.options.vAxes.primary.decimalPlaces
+		);
+
+		if (this.chart.data.series[index][2]) {
+			this.secondaryLabel.textContent = this.chart.options.vAxes.secondary?.name;
+			this.secondaryValue.textContent = this.formatLabel(
+				this.chart.data.series[index][2],
+				this.chart.options.vAxes?.secondary?.format,
+				this.chart.options.vAxes?.secondary?.currencySymbol,
+				this.chart.options.vAxes?.secondary?.decimalPlaces
+			);
+		} else {
+			this.secondaryLabel.textContent = '';
+			this.secondaryValue.textContent = '';
+		}
+
+		if (this.secondaryLabel.textContent === '') {
+
+			this.secondaryLabel.style.display = 'none';
+			this.secondaryValue.style.display = 'none';
+
+		} else {
+
+			this.secondaryLabel.style.display = '';
+			this.secondaryValue.style.display = '';
+
+		}
+
+		this.container.style.opacity = '1';
+
+		this._position(index, caller);
+
+	}
+
+	hide() {
+
+		this.container.style.opacity = '0';
+
+	}
+
+}
+
+class Column extends CragCore {
+
+	index = 0;
+	columnValue = 0;
+
+	/** @type {HTMLDivElement} */
+	column = null;
+
+	/** @type {HTMLSpanElement} */
+	label = null;
+
+	calculatedHeight = 0;
+	calculatedBottom = 0;
+	calculatedLeft = 0;
+	calculatedWidth = 0;
+	calculatedColor = null;
+	calculatedLabelPosition = 'none';
+
+	constructor (index, value) {
+		super();
+
+		this.index = index;
+		this.columnValue = value;
+
+		this._createColumn();
+		this._createLabel();
+
+	}
+
+	_createColumn() {
+
+		this.column = document.createElement('div');
+		this.column.className = 'cragColumn';
+
+	}
+
+	_createLabel() {
+
+		this.label = document.createElement('span');
+		this.label.className = 'cragColumnLabel';
+
+	}
+
+	_destroy() {
+
+		this.column.style.left = `calc(100% + ${parseInt(this.column.style.width.replace('px', '')) * this.index}px)`;
+
+		this.label.style.opacity = '0';
+		this.label.style.left = '100%';
+
+		setTimeout(() => {
+
+			this.column.remove();
+
+			if (this.label != null) this.label.remove();
+
+		}, 700);
+
+	}
+
+	/**
+	 * @param {number} value
+	 */
+	set value(value) {
+
+		this.columnValue = value;
+
+	}
+	get value() {
+		return this.columnValue;
+	}
+
+	set color(value) {
+		this.calculatedColor = value;
+		this.column.style.backgroundColor = value;
+	}
+	get color() {
+		return this.calculatedColor;
+	}
+
+	set height(value) {
+		this.calculatedHeight = value;
+		this.column.style.height = `${value}px`;
+	}
+	get height() {
+		return this.calculatedHeight;
+	}
+
+	set width(value) {
+		this.calculatedWidth = value;
+		this.column.style.width = `${value}px`;
+	}
+	get width() {
+		return this.calculatedWidth;
+	}
+
+	set left(value) {
+		this.calculatedLeft = value;
+		this.column.style.left = `${value}px`;
+	}
+	get left() {
+		return this.calculatedLeft;
+	}
+
+	set bottom(value) {
+		this.calculatedBottom = value;
+		this.column.style.bottom = `${value}px`;
+	}
+	get bottom() {
+		return this.calculatedBottom;
+	}
+
+	set rounding(value) {
+
+		if (value) {
+
+			if (this.value < 0) {
+
+				this.column.style.borderRadius = `0 0 ${value}px ${value}px`;
+
+			} else {
+
+				this.column.style.borderRadius = `${value}px ${value}px 0 0`;
+
+			}
+
+		} else {
+
+			this.column.style.borderRadius = '0';
+
+		}
+
+	}
+
+	set shadow(value) {
+
+		if (value !== 0) {
+
+			const shadowType = value < 0 ? 'inset ' : '';
+			const verticalModifier = (value > 0 && this.value > 0) || (value < 0 && this.value < 0) ? '-' : '';
+			const verticalDirection = Math.abs(value);
+			const spread = Math.abs(value) * 2.5;
+
+			this.column.style.boxShadow = `${shadowType}0 ${verticalModifier}${verticalDirection}px ${spread}px 0 rgba(0, 0, 0, 0.35)`;
+
+		} else {
+
+			this.column.style.boxShadow = 'none';
+
+		}
+
+	}
+
+	set stripes(hasStripes) {
+		this.column.classList.toggle('cragColumnStriped', hasStripes);
+	}
+
+	set animatedStripes(hasAnimatedStripes) {
+		this.column.classList.toggle('cragColumnStripedAnimate', hasAnimatedStripes);
+	}
+
+	set labelPosition(value) {
+		this.calculatedLabelPosition = value;
+	}
+	get labelPosition() {
+		return this.calculatedLabelPosition;
+	}
+
+	set labelText(value) {
+
+		this.label.textContent = value;
+
+	}
+
+	_calculateLabelPosition(preferredPosition, maxHeight) {
+
+		if (preferredPosition === 'none') return this.labelPosition = 'none';
+
+		if (
+			(preferredPosition === 'inside' && this.height > this.label.offsetHeight) ||
+			(this.value < 0 && this.bottom < this.label.offsetHeight) ||
+			(this.value > 0 && maxHeight - this.height - this.bottom < this.label.offsetHeight)
+		) return this.labelPosition = 'inside';
+
+		this.labelPosition = 'outside';
+
+	}
+
+	_moveLabel() {
+
+		if (this.labelPosition === 'none') return this.label.style.opacity = '0';
+
+		this.label.style.opacity = '1';
+
+		if (this.labelPosition === 'inside') {
+
+			if (this.value < 0) {
+
+				this.label.style.bottom = `${this.bottom}px`;
+
+			} else {
+
+				this.label.style.bottom = `${this.bottom + this.height - this.label.offsetHeight}px`;
+
+			}
+
+			return;
+
+		}
+
+		if (this.value < 0) {
+
+			this.label.style.bottom = `${this.bottom - this.label.offsetHeight}px`;
+
+		} else {
+
+			this.label.style.bottom = `${this.bottom + this.height}px`;
+
+		}
+
+	}
+
+	_colorLabel(color, backgroundColor) {
+
+		if (this.labelPosition === 'inside') {
+
+			this.label.style.color = this._getContrastColor(this.color);
+
+		} else {
+
+			if (color === 'match') {
+
+				this.label.style.color = this.color;
+
+			} else if (color === 'auto') {
+
+				this.label.style.color = this._getContrastColor(backgroundColor);
+
+			} else {
+
+				this.label.style.color = this._resolveColor(color);
+
+			}
+
+		}
+
+	}
+
+	setLabelPosition(preferredPosition, maxHeight) {
+
+		this.label.style.left = `${this.left}px`;
+		this.label.style.width = `${this.width}px`;
+
+		this._calculateLabelPosition(preferredPosition, maxHeight);
+		this._moveLabel();
+
+	}
+
+	setLabelColor(color, backgroundColor) {
+		this._colorLabel(color, backgroundColor);
+	}
+
+}
+
+class Columns extends CragCore {
+
+	/** @type {HTMLDivElement} */
+	columnArea = null;
+	/** @type {HTMLDivElement} */
+	labelArea = null;
+
+	columns = {}
+
+	chart = null;
+
+	constructor(chart) {
+		super();
+
+		this.chart = chart;
+		this._createAreas();
+
+	}
+
+	_createAreas() {
+
+		this.columnArea = document.createElement('div');
+		this.labelArea = document.createElement('div');
+
+		this.labelArea.className = 'cragChartSubArea';
+		this.columnArea.className = 'cragChartSubArea';
+
+		this.labelArea.style.pointerEvents = 'none';
+
+	}
+
+	update() {
+
+		this._refactorColumns();
+		this._setColumnDimensions();
+		this._applyColumnColors();
+		this._applyColumnStyles();
+		this._populateLabels();
+		this._positionLabels();
+		this._colorLabels();
+
+	}
+
+	_refactorColumns() {
+
+		/**
+		 * Update the DataPoints with new data, DataPoints will be created where they don't yet exist
+		 */
+		for (let i = 0; i < this.chart.data.series.length; i++) {
+
+			if (this.columns[i]) {
+
+				/**
+				 * Update existing DataPoint at this index with new data
+				 */
+				this.columns[i].index = i;
+				this.columns[i].value = this.chart.data.series[i][1];
+
+				this.columns[i].columnOptions = this.chart.options.columns;
+
+			} else {
+
+				/**
+				 * Create new DataPoint
+				 */
+				this.columns[i] = new Column(i, this.chart.data.series[i][1], this.chart.options.vAxes.primary.format, this.chart.options.vAxes.primary.currencySymbol, this.chart.options.vAxes.primary.decimalPlaces);
+
+				this.labelArea.appendChild(this.columns[i].label);
+				this.columnArea.appendChild(this.columns[i].column);
+
+				this.columns[i].column.onmouseover = () => {
+					this.chart.toolTip.show(i, this.columns[i].column);
+					this._focusOne(i);
+				}
+
+				this.columns[i].column.onmouseout = () => {
+					this.chart.toolTip.hide();
+					this._clearFocus();
+				}
+
+				/**
+				 * Add onclick if set on creation
+				 */
+				if (this.chart.options.columns.onClick !== null) {
+
+					this.columns[i].column.onclick = () => this.chart.options.columns.onClick(this.columns[i]);
+
+				}
+
+			}
+
+		}
+
+		/**
+		 * Remove any DataPoints that are beyond the current data set length.
+		 * This will happen when a new data set is loaded that is smaller than the old data set
+		 */
+		for (let i = Object.values(this.columns).length + 1; i >= this.chart.data.series.length; i--) {
+
+			if (!this.columns[i]) continue;
+
+			this.columns[i]._destroy();
+			this.columns[i] = null;
+
+			delete this.columns[i];
+
+		}
+
+	}
+
+	_positionLabels() {
+
+		for (const column of Object.values(this.columns)) {
+
+			column.setLabelPosition(this.chart.options.columns.labels.position, this.columnArea.offsetHeight);
+
+		}
+
+	}
+
+	_populateLabels() {
+
+		for (const column of Object.values(this.columns)) {
+
+			column.labelText = this.formatLabel(column.value, this.chart.options.vAxes.primary.format, this.chart.options.vAxes.primary.currencySymbol, this.chart.options.vAxes.primary.decimalPlaces);
+
+		}
+
+	}
+
+	_colorLabels() {
+
+		for (const column of Object.values(this.columns)) {
+
+			column.setLabelColor(this.chart.options.columns.labels.color, this.chart.options.chart.color);
+
+		}
+
+	}
+
+	_focusOne(index) {
+
+		for (const column of Object.values(this.columns)) {
+
+			if (column.index === index) continue;
+
+			column.column.style.opacity = '0.2';
+
+		}
+
+	}
+
+	_clearFocus() {
+
+		for (const column of Object.values(this.columns)) {
+
+			column.column.style.opacity = '1';
+
+		}
+
+	}
+
+	_setColumnDimensions() {
+
+		let zeroLine = 0;
+
+		/** Scale is positive to negative, zero line will be a part way through */
+		if (this.chart.primaryVAxis.scale.min < 0 && this.chart.primaryVAxis.scale.max > 0) zeroLine = this.columnArea.offsetHeight / (this.chart.primaryVAxis.scale.max - this.chart.primaryVAxis.scale.min) * this.chart.primaryVAxis.scale.max;
+
+		for (const column of Object.values(this.columns)) {
+
+			if (column.value < 0) {
+
+				/** Negative space / smallest number on scale / * columns value */
+				column.height = (this.columnArea.offsetHeight - zeroLine) / (this.chart.primaryVAxis.scale.min - Math.min(0, this.chart.primaryVAxis.scale.max)) * (column.value - Math.min(0, this.chart.primaryVAxis.scale.max));
+
+				/** Negative space - column height */
+				column.bottom = this.columnArea.offsetHeight - zeroLine - column.height;
+
+			} else {
+
+				/** Chart height - Negative space */
+				if (zeroLine === 0) {
+
+					column.bottom = 0;
+					/** Positive space / smallest number on scale / * columns value */
+					column.height = (this.columnArea.offsetHeight - zeroLine) / (this.chart.primaryVAxis.scale.max - this.chart.primaryVAxis.scale.min) * (column.value - this.chart.primaryVAxis.scale.min);
+
+				} else {
+
+					column.bottom = this.columnArea.offsetHeight - zeroLine;
+					/** Positive space / smallest number on scale / * columns value */
+					column.height = zeroLine / this.chart.primaryVAxis.scale.max * column.value;
+
+				}
+
+			}
+
+			const columnWidthSpace = (this.chart.chart.container.offsetWidth - this.chart.primaryVAxis.calculatedWidth - (this.chart?.secondaryVAxis?.calculatedWidth ?? 0)) / this.chart.data.series.length;
+			const columnWidth = columnWidthSpace * (this.chart.options.columns.width / 100);
+
+			/** Series width space * column width option % */
+			column.width = columnWidth;
+
+			/** Series width space * column index (start at 0) + half of remaining space of series width */
+			column.left = columnWidthSpace * column.index + ((columnWidthSpace - columnWidth) / 2);
+
+		}
+
+	}
+
+	_applyColumnColors() {
+
+		for (const column of Object.values(this.columns)) {
+
+			if (this.chart.options.columns.color === 'multi') {
+
+				column.color = this._getColorByMode('multi', column.index);
+
+			} else if (this.chart.options.columns.color === 'redGreen') {
+
+				column.color = this._getColorByMode('redGreen', column.value);
+
+			} else {
+
+				column.color = this._getColorByMode('match', this.chart.options.columns.color);
+
+			}
+
+		}
+
+	}
+
+	_applyColumnStyles() {
+
+		for (const column of Object.values(this.columns)) {
+
+			column.rounding = this.chart.options.columns.rounding;
+			column.shadow = this.chart.options.columns.shadow;
+			column.stripes = this.chart.options.columns.stripes;
+			column.animatedStripes = this.chart.options.columns.animatedStripes;
+
+		}
+
+	}
+
+	set width(value) {
+
+		this.chart.options.columns.width = this.validateOption(value, 'number', this.chart.options.columns.width);
+		this._setColumnDimensions();
+
+	}
+
+	set color(value) {
+
+		if (this.chart.options.columns.color === value) return;
+		if (!this._isValidColor(value)) return;
+
+		this.chart.options.columns.color = value;
+
+		this._applyColumnColors();
+		this._colorLabels();
+
+	}
+
+	set rounding(value) {
+
+		if (this.chart.options.columns.rounding === value) return;
+
+		this.chart.options.columns.rounding = value;
+		this._applyColumnStyles();
+
+	}
+
+	set shadow(value) {
+
+		if (this.chart.options.columns.shadow === value) return;
+
+		this.chart.options.columns.shadow = value;
+		this._applyColumnStyles();
+
+	}
+
+	set stripes(hasStripes) {
+
+		if (this.chart.options.columns.stripes === hasStripes) return;
+
+		this.chart.options.columns.stripes = hasStripes;
+		this._applyColumnStyles();
+
+	}
+
+	set animatedStripes(hasAnimatedStripes) {
+
+		if (this.chart.options.columns.animatedStripes === hasAnimatedStripes) return;
+
+		this.chart.options.columns.animatedStripes = hasAnimatedStripes;
+		this._applyColumnStyles();
+
+	}
+
+	set labelColor(value) {
+
+		if (!this._isValidColor(value)) return;
+
+		this.chart.options.columns.labels.color = value;
+		this._colorLabels();
+
+	}
+
+	set labelPosition(value) {
+
+		if (!['inside', 'outside', 'none'].includes(value)) return;
+
+		this.chart.options.columns.labels.position = value;
+		this._positionLabels();
+		this._colorLabels();
+
+	}
+
+}
+
+class Dot {
+
+	dot = null;
+	value = 0;
+	index = 0;
+
+	constructor(index, value) {
+
+		this.index = index;
+		this.value = value;
+
+		this._createDot();
+
+	}
+
+	_createDot() {
+
+		this.dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+
+		this.dot.setAttribute('cx', '100%');
+		this.dot.setAttribute('cy', '100%');
+		this.dot.setAttribute('class', 'cragComboPoint');
+
+	}
+
+	_destroy() {
+
+		this.dot.style.opacity = '0';
+
+		setTimeout(() => {
+
+			this.dot.remove();
+
+		}, 700);
+
+	}
+
+	set r(value) {
+
+		this.dot.setAttribute('r', value);
+
+	}
+
+	set cy(value) {
+
+		this.dot.setAttribute('cy', `${value}px`);
+
+	}
+
+	set cx(value) {
+
+		this.dot.setAttribute('cx', `${value}px`);
+
+	}
+
+	set fill(value) {
+
+		this.dot.style.fill = value;
+
+	}
+
+}
+
+class Line extends CragCore {
+
+	chart = null;
+
+	/** @type {null|SVGPathElement} */
+	line = null;
+
+	/** @type {array} */
+	points = [[0, 0]];
+
+	dots = {};
+
+	/** @type {null|SVGSVGElement} */
+	area = null;
+
+	constructor(chart) {
+		super();
+
+		this.chart = chart;
+
+		this._createArea();
+		this._createLine();
+		this._colorize();
+
+	}
+
+	_createArea() {
+
+		this.area = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+		this.area.setAttribute('width', '100%');
+		this.area.setAttribute('height', '100%');
+		this.area.style.position = 'absolute';
+		this.area.style.pointerEvents = 'none';
+		this.area.style.left = '0';
+		this.area.style.top = '0';
+
+	}
+
+	_createLine() {
+
+		this.line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+		this.line.setAttribute('fill', 'none');
+		this.line.setAttribute('stroke-width', this.chart.options.line.thickness.toString());
+		this.line.setAttribute('class', 'cragComboLine');
+		this.line.setAttribute('d', 'M0,0');
+
+		this.area.append(this.line);
+
+	}
+
+	update(data, scale) {
+
+		this._refactorDots(data);
+		this._positionDots(scale);
+		this.updateLine();
+
+	}
+
+	_refactorDots(data) {
+
+		for (let i = 0; i < data.length; i++) {
+
+			if (this.dots[i]) {
+
+				/**
+				 * Update existing DataPoint at this index with new data
+				 */
+				this.dots[i].index = i;
+				this.dots[i].value = data[i];
+
+			} else {
+
+				this.dots[i] = new Dot(i, data[i]);
+
+				this.dots[i].r = this.chart.options.line.pointSize;
+				this.dots[i].fill = this._getContrastColor(this.chart.options.chart.color);
+
+				this.area.append(this.dots[i].dot);
+
+			}
+
+		}
+
+		/**
+		 * Remove any DataPoints that are beyond the current data set length.
+		 * This will happen when a new data set is loaded that is smaller than the old data set
+		 */
+		for (let i = Object.values(this.dots).length + 1; i >= data.length; i--) {
+
+			if (!this.dots[i]) continue;
+
+			this.dots[i]._destroy();
+			this.dots[i] = null;
+
+			delete this.dots[i];
+
+		}
+
+	}
+
+	_positionDots(scale) {
+
+		const seriesItemWidth = this.area.width.baseVal.value / this.chart.data.series.length;
+
+		let zeroLine = 0;
+
+		/** Scale is all negative, zero line will be at bottom of container */
+		if (scale.min >= 0) zeroLine = this.area.height.baseVal.value;
+		/** Scale is positive to negative, zero line will be a part way through */
+		if (scale.min < 0 && scale.max > 0) zeroLine = this.area.height.baseVal.value / (scale.max - scale.min) * scale.max;
+
+		for (const dot of Object.values(this.dots)) {
+
+			let cy = 0;
+
+			if (dot.value < 0) {
+
+				cy = (this.area.height.baseVal.value - zeroLine) / (scale.min - Math.min(0, scale.max)) * (dot.value - Math.min(0, scale.max));
+
+			} else {
+
+				if (zeroLine === this.area.height.baseVal.value) {
+
+					cy = -this.area.height.baseVal.value / (scale.max - scale.min) * (dot.value - scale.min);
+
+				} else {
+
+					cy = -(zeroLine - this.area.height.baseVal.value) / (scale.min - Math.min(0, scale.max)) * (dot.value - Math.min(0, scale.max));
+
+				}
+
+
+			}
+
+			dot.cy = zeroLine + cy;
+			dot.cx = (seriesItemWidth * dot.index) + (seriesItemWidth / 2);
+
+		}
+
+
+	}
+
+	updateLine() {
+
+		const newPoints = Object.values(this.dots).map((a) => a.dot);
+
+		const smoothing = this.chart.options.line.smooth ? 0.125 : 0;
+
+		const line = (pointA, pointB) => {
+
+			const lengthX = pointB[0] - pointA[0]
+			const lengthY = pointB[1] - pointA[1]
+
+			return {
+				length: Math.sqrt(Math.pow(lengthX, 2) + Math.pow(lengthY, 2)),
+				angle: Math.atan2(lengthY, lengthX)
+			}
+
+		}
+
+		const controlPoint = (current, previous, next, reverse) => {
+
+			const p = previous || current;
+			const n = next || current;
+			const o = line(p, n);
+			const angle = o.angle + (reverse ? Math.PI : 0);
+			const length = o.length * smoothing;
+			const x = current[0] + Math.cos(angle) * length;
+			const y = current[1] + Math.sin(angle) * length;
+
+			return [x, y];
+
+		}
+
+		const bezierCommand = (point, i, a) => {
+
+			const cps = controlPoint(a[i - 1], a[i - 2], point);
+			const cpe = controlPoint(point, a[i - 1], a[i + 1], true);
+
+			return `C ${cps[0]},${cps[1]} ${cpe[0]},${cpe[1]} ${point[0]},${point[1]}`;
+
+		}
+
+		const svgPath = (points, command) => {
+
+			return points.reduce((acc, point, i, a) => i === 0
+					? `M ${point[0]},${point[1]}`
+					: `${acc} ${command(point, i, a)}`
+				, '');
+
+		}
+
+		/**
+		 * Add in new entries into points where there are more new points than
+		 * the exists set of points.
+		 * New points added cause an instant re-draw bypassing the animation, to
+		 * overcome this new points are placed in the same location as
+		 * the last existing point so when the re-draw happens, it looks like nothing changed
+		 */
+		if (Object.values(newPoints).length > this.points.length) {
+
+			const lastExistingPoint = this.points[this.points.length - 1];
+
+			for (let p = this.points.length; p < Object.values(newPoints).length; p++) {
+
+				this.points.push(lastExistingPoint);
+
+			}
+
+			const path = svgPath(
+				this.points,
+				bezierCommand
+			);
+
+			/**
+			 * Set new line path with extra points, then move into place with animation
+			 */
+			this.line.setAttribute('d', path);
+
+			this.points = newPoints.map((a) => [a.cx.baseVal.value, a.cy.baseVal.value]);
+
+			setTimeout(() => {
+
+				const path = svgPath(
+					this.points,
+					bezierCommand
+				);
+
+				this.line.setAttribute('d', path);
+
+			}, 10);
+
+		} else if (Object.values(newPoints).length < this.points.length) {
+
+			/**
+			 * When there are more existing points than there are new points,
+			 * points after the last new point will be moved into the same position
+			 * as the last new point. After the animation is complete, these will then
+			 * be removed causing an instant redraw, which won't be noticed
+			 */
+			const temporaryPoints = newPoints.map((a) => [a.cx.baseVal.value, a.cy.baseVal.value]);
+			const lastTemporaryPoint = temporaryPoints[temporaryPoints.length - 1];
+
+			for (let p = temporaryPoints.length; p < this.points.length; p++) {
+
+				temporaryPoints.push(lastTemporaryPoint);
+
+			}
+
+			const path = svgPath(
+				temporaryPoints,
+				bezierCommand
+			);
+
+			this.line.setAttribute('d', path);
+
+			setTimeout(() => {
+
+				this.points = newPoints.map((a) => [a.cx.baseVal.value, a.cy.baseVal.value]);
+
+				const path = svgPath(
+					this.points,
+					bezierCommand
+				);
+
+				this.line.setAttribute('d', path);
+
+			}, 750);
+
+		} else {
+
+			/**
+			 * Same number of points as last time, no redraw needed
+			 */
+
+			this.points = newPoints.map((a) => [a.cx.baseVal.value, a.cy.baseVal.value]);
+
+			const path = svgPath(
+				this.points,
+				bezierCommand
+			);
+
+			this.line.setAttribute('d', path);
+
+		}
+
+	}
+
+	_colorize() {
+
+		this.color = this._getContrastColor(this.chart.options.chart.color);
+
+	}
+
+	set thickness(value) {
+
+		this.chart.options.line.thickness = value;
+		this.line.setAttribute('stroke-width', this.chart.options.line.thickness.toString());
+
+	}
+
+	set smooth(value) {
+
+		this.chart.options.line.smooth = value;
+		this.updateLine();
+
+	}
+
+	set pointSize(value) {
+
+		for (const dot of Object.values(this.dots)) {
+
+			dot.r = value;
+
+		}
+
+	}
+
+	set color(color) {
+
+		if (color === 'auto') color = this._getContrastColor(this.chart.options.chart.color);
+
+		this.line.setAttribute('stroke', color);
+
+		for (const dot of Object.values(this.dots)) {
+
+			dot.fill = color;
+
+		}
+
 	}
 
 }
