@@ -189,6 +189,10 @@ class CragColumn extends CragCore {
 		 */
 		this._getDataMinMax();
 
+		/**
+		 * Axis updates should always ben first, these provide scale for the data sets.
+		 */
+
 		this.primaryVAxis.update(this.data.min, this.data.max);
 		this.hAxis.update();
 		this.columns.update(this.data.series, this.primaryVAxis.scale);
@@ -209,7 +213,10 @@ class CragColumn extends CragCore {
 		this.chart.container.style.backgroundColor = this._resolveColor(this.options.chart.color);
 		if (this.chart.title) this.chart.title.style.color = this._getContrastColor(this.options.chart.color);
 
-		this.primaryVAxis.colorize(this._getContrastColor(this.options.chart.color));
+		this.hAxis._colorize();
+		this.columns._colorLabels();
+		this.toolTip._colorize();
+		this.primaryVAxis._colorize();
 
 	}
 
@@ -271,9 +278,7 @@ class CragColumn extends CragCore {
 		
 	}
 	get title() {
-
 		return this.chart.title?.textContent ?? '';
-
 	}
 
 	/**
@@ -284,117 +289,7 @@ class CragColumn extends CragCore {
 
 		if (this._isValidColor(color)) this.options.chart.color = color;
 
-		this.hAxis._colorize();
-		this.columns._colorLabels();
-		this.toolTip._colorize();
-
 		this._colorize();
-
-	}
-
-	set primaryMajorLines(value) {
-
-		this.options.vAxes.primary.majorLines = value;
-		this.primaryVAxis.showHide();
-
-	}
-
-	set primaryMinorLines(value) {
-
-		this.options.vAxes.primary.minorLines = value;
-		this.primaryVAxis.showHide();
-
-	}
-
-	set shadowOnZeroLine(value) {
-
-		this.options.vAxes.primary.shadowOnZeroLine = value;
-		this.primaryVAxis.colorize();
-
-	}
-
-	set primaryAxisFormat(value) {
-
-		this.options.vAxes.primary.format = value;
-		this._draw();
-
-	}
-
-	set primaryAxisDecimals(value) {
-
-		this.options.vAxes.primary.decimalPlaces = value;
-		this._draw();
-
-	}
-
-	set primaryAxisCurrencySymbol(value) {
-
-		this.options.vAxes.primary.currencySymbol = value;
-		this._draw();
-
-	}
-
-	/**
-	 * @description Applies a new color or color mode to the columns.
-	 * @param {string} color
-	 */
-	set columnColor(color) {
-
-		if (!this._isValidColor(color)) return;
-
-		this.columns.color = color;
-
-	}
-
-	set columnRounding(value) {
-
-		this.columns.rounding = value;
-
-	}
-	
-	set columnShadow(value) {
-
-		this.columns.shadow = value;
-
-	}
-
-	set columnStripes(value) {
-
-		this.columns.stripes = value;
-
-	}
-
-	set columnAnimatedStripes(value) {
-
-		this.columns.animatedStripes = value;
-
-	}
-
-	set columnWidth(value) {
-
-		this.options.columns.width = this.validateOption(value, 'number', this.options.columns.width);
-
-		this._draw();
-
-	}
-
-	set columnLabelColor(value) {
-
-		if (this._isValidColor(value)) {
-
-			this.columns.labelColor = value
-
-		}
-
-	}
-
-	set columnLabelPosition(value) {
-
-		if (['inside', 'outside', 'none'].includes(value)) {
-
-			this.columns.labelPosition = value;
-
-		}
 
 	}
 

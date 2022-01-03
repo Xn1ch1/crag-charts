@@ -573,6 +573,7 @@ class vAxisLines extends CragCore {
 		this.axis = axis;
 
 		this._create();
+		this.showHide();
 
 	}
 
@@ -586,18 +587,11 @@ class vAxisLines extends CragCore {
 		this.linesDiv = document.createElement('div');
 		this.linesDiv.className = 'cragChartSubArea';
 
-		if (this.axis === 'secondary' && this.chart.options.vAxes.secondary.showOnPrimary) {
-
-			this.axisDiv.style.display = 'none';
-			this.linesDiv.style.display = 'none';
-
-		}
-
 	}
 
-	update() {
+	update(min, max) {
 
-		this._calculateAxisScale();
+		this._calculateAxisScale(min, max);
 		this.showHide();
 
 		/**
@@ -671,6 +665,8 @@ class vAxisLines extends CragCore {
 		 */
 		this.axisDiv.style.width = `${this.calculatedWidth}px`;
 
+		this.showHide();
+
 	}
 
 	/**
@@ -678,9 +674,9 @@ class vAxisLines extends CragCore {
 	 * @return {{min: number, max: number, maj: number, steps: number}}
 	 * @private
 	 */
-	_calculateAxisScale() {
+	_calculateAxisScale(min, max) {
 
-		const min = this.chart.options.vAxes[this.axis].min === 'auto' ? this.chart.data.min : this.chart.options.vAxes.secondary.min;
+		min = this.chart.options.vAxes[this.axis].min === 'auto' ? min : this.chart.options.vAxes[this.axis].min;
 
 		if (this.chart.options.vAxes[this.axis].format === 'time') {
 
@@ -691,27 +687,27 @@ class vAxisLines extends CragCore {
 
 			let timeRounding;
 
-			if (this.chart.data.max < 60) {
+			if (max < 60) {
 				timeRounding = 60
-			} else if (this.chart.data.max < 3600) {
+			} else if (max < 3600) {
 				timeRounding = 3600;
-			} else if (this.chart.data.max < 43200) {
+			} else if (max < 43200) {
 				timeRounding = 43200;
 			} else {
 				timeRounding = 86400;
 			}
 
-			this.scale = calculateScale(min, this.chart.data.max, timeRounding);
+			this.scale = calculateScale(min, max, timeRounding);
 
 		} else {
 
-			this.scale = calculateScale(min, this.chart.data.max, 10);
+			this.scale = calculateScale(min, max, 10);
 
 		}
 
 	}
 
-	colorize() {
+	_colorize() {
 
 		const color = this._getContrastColor(this.chart.options.chart.color);
 
@@ -754,8 +750,8 @@ class vAxisLines extends CragCore {
 
 		for (const line of Object.values(this.lines)) {
 
-			line.majorLine.style.display = this.chart.options.vAxes[this.axis].majorLines || (line.isZeroPoint && this.axis !== 'secondary') ? '' : 'none';
-			line.minorLine.style.display = this.chart.options.vAxes[this.axis].minorLines ? '' : 'none';
+			line.majorLine.style.display = this.chart.options?.vAxes[this.axis]?.majorLines || (line.isZeroPoint && this.axis === 'primary') ? '' : 'none';
+			line.minorLine.style.display = this.chart.options?.vAxes[this.axis]?.minorLines ? '' : 'none';
 
 		}
 
@@ -772,6 +768,73 @@ class vAxisLines extends CragCore {
 		}
 
 	}
+
+	set majorLines(value) {
+
+		this.chart.options.vAxes[this.axis].majorLines = value;
+		this.showHide();
+
+	}
+
+	set minorLines(value) {
+
+		this.chart.options.vAxes[this.axis].minorLines = value;
+		this.showHide();
+
+	}
+
+	set format(value) {
+
+		this.chart.options.vAxes[this.axis].format = value;
+		this.chart._draw();
+
+	}
+
+	set decimals(value) {
+
+		this.chart.options.vAxes[this.axis].decimalPlaces = value;
+		this.chart._draw();
+
+	}
+
+	set currencySymbol(value) {
+
+		this.chart.options.vAxes[this.axis].currencySymbol = value;
+		this.chart._draw();
+
+	}
+
+	set minimum(value) {
+
+		this.chart.options.vAxes[this.axis].min = value;
+		this.chart._draw()
+
+	}
+
+	set shadowOnZeroLine(value) {
+
+		/**
+		 * Primary only attribute
+		 */
+		if (this.axis === 'secondary') return;
+
+		this.chart.options.vAxes.primary.shadowOnZeroLine = value;
+		this._colorize();
+
+	}
+
+	set showOnPrimary(value) {
+
+		/**
+		 * Secondary only attribute
+		 */
+		if (this.axis === 'primary') return;
+
+		this.chart.options.vAxes.secondary.showOnPrimary = value;
+		this.chart._draw();
+
+	}
+
 
 }
 
@@ -912,7 +975,7 @@ class HAxis extends CragCore {
 	_create() {
 
 		this.area = document.createElement('div');
-		this.area.className  = 'cragColumnHAxis';
+		this.area.className  = 'cragHAxis';
 
 	}
 
@@ -982,7 +1045,7 @@ class HAxis extends CragCore {
 
 	_position() {
 
-		const axisWidth = this.area.offsetWidth;
+		const axisWidth = this.chart.chart.container.offsetWidth - (this.chart.primaryVAxis?.calculatedWidth ?? 0) - (this.chart.secondaryVAxis?.calculatedWidth ?? 0);
 
 		for (const [index, label] of Object.entries(this.labels)) {
 
@@ -1008,6 +1071,7 @@ class HAxis extends CragCore {
 	}
 
 }
+
 class ToolTip extends CragCore {
 
 	chart = null;
@@ -1137,13 +1201,18 @@ class ToolTip extends CragCore {
 			this.chart.options.vAxes.primary.decimalPlaces
 		);
 
-		this.secondaryLabel.textContent = this.chart.options.vAxes.secondary?.name;
-		this.secondaryValue.textContent = this.formatLabel(
-			this.chart.data.series[index][1],
-			this.chart.options.vAxes?.secondary?.format,
-			this.chart.options.vAxes?.secondary?.currencySymbol,
-			this.chart.options.vAxes?.secondary?.decimalPlaces
-		);
+		if (this.chart.data.series[index][2]) {
+			this.secondaryLabel.textContent = this.chart.options.vAxes.secondary?.name;
+			this.secondaryValue.textContent = this.formatLabel(
+				this.chart.data.series[index][2],
+				this.chart.options.vAxes?.secondary?.format,
+				this.chart.options.vAxes?.secondary?.currencySymbol,
+				this.chart.options.vAxes?.secondary?.decimalPlaces
+			);
+		} else {
+			this.secondaryLabel.textContent = '';
+			this.secondaryValue.textContent = '';
+		}
 
 		if (this.secondaryLabel.textContent === '') {
 
@@ -1681,11 +1750,20 @@ class Columns extends CragCore {
 
 	}
 
+	set width(value) {
+
+		this.chart.options.columns.width = this.validateOption(value, 'number', this.chart.options.columns.width);
+		this._setColumnDimensions();
+
+	}
+
 	set color(value) {
 
 		if (this.chart.options.columns.color === value) return;
+		if (!this._isValidColor(value)) return;
 
 		this.chart.options.columns.color = value;
+
 		this._applyColumnColors();
 		this._colorLabels();
 
@@ -1729,6 +1807,8 @@ class Columns extends CragCore {
 
 	set labelColor(value) {
 
+		if (!this._isValidColor(value)) return;
+
 		this.chart.options.columns.labels.color = value;
 		this._colorLabels();
 
@@ -1736,9 +1816,408 @@ class Columns extends CragCore {
 
 	set labelPosition(value) {
 
+		if (!['inside', 'outside', 'none'].includes(value)) return;
+
 		this.chart.options.columns.labels.position = value;
 		this._positionLabels();
 		this._colorLabels();
+
+	}
+
+}
+
+class Dot {
+
+	dot = null;
+	value = 0;
+	index = 0;
+
+	constructor(index, value) {
+
+		this.index = index;
+		this.value = value;
+
+		this._createDot();
+
+	}
+
+	_createDot() {
+
+		this.dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+
+		this.dot.setAttribute('cx', '100%');
+		this.dot.setAttribute('cy', '100%');
+		this.dot.setAttribute('class', 'cragComboPoint');
+
+	}
+
+	_destroy() {
+
+		this.dot.style.opacity = '0';
+
+		setTimeout(() => {
+
+			this.dot.remove();
+
+		}, 700);
+
+	}
+
+	set r(value) {
+
+		this.dot.setAttribute('r', value);
+
+	}
+
+	set cy(value) {
+
+		this.dot.setAttribute('cy', `${value}px`);
+
+	}
+
+	set cx(value) {
+
+		this.dot.setAttribute('cx', `${value}px`);
+
+	}
+
+	set fill(value) {
+
+		this.dot.style.fill = value;
+
+	}
+
+}
+
+class Line extends CragCore {
+
+	chart = null;
+
+	/** @type {null|SVGPathElement} */
+	line = null;
+
+	/** @type {array} */
+	points = [[0, 0]];
+
+	dots = {};
+
+	/** @type {null|SVGSVGElement} */
+	area = null;
+
+	constructor(chart) {
+		super();
+
+		this.chart = chart;
+
+		this._createArea();
+		this._createLine();
+		this._colorize();
+
+	}
+
+	_createArea() {
+
+		this.area = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+		this.area.setAttribute('width', '100%');
+		this.area.setAttribute('height', '100%');
+		this.area.style.position = 'absolute';
+		this.area.style.pointerEvents = 'none';
+		this.area.style.left = '0';
+		this.area.style.top = '0';
+
+	}
+
+	_createLine() {
+
+		this.line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+		this.line.setAttribute('fill', 'none');
+		this.line.setAttribute('stroke-width', this.chart.options.line.thickness.toString());
+		this.line.setAttribute('class', 'cragComboLine');
+		this.line.setAttribute('d', 'M0,0');
+
+		this.area.append(this.line);
+
+	}
+
+	update(data, scale) {
+
+		this._refactorDots(data);
+		this._positionDots(scale);
+		this.updateLine();
+
+	}
+
+	_refactorDots(data) {
+
+		for (let i = 0; i < data.length; i++) {
+
+			if (this.dots[i]) {
+
+				/**
+				 * Update existing DataPoint at this index with new data
+				 */
+				this.dots[i].index = i;
+				this.dots[i].value = data[i];
+
+			} else {
+
+				this.dots[i] = new Dot(i, data[i]);
+
+				this.dots[i].r = this.chart.options.line.pointSize;
+				this.dots[i].fill = this._getContrastColor(this.chart.options.chart.color);
+
+				this.area.append(this.dots[i].dot);
+
+			}
+
+		}
+
+		/**
+		 * Remove any DataPoints that are beyond the current data set length.
+		 * This will happen when a new data set is loaded that is smaller than the old data set
+		 */
+		for (let i = Object.values(this.dots).length + 1; i >= data.length; i--) {
+
+			if (!this.dots[i]) continue;
+
+			this.dots[i]._destroy();
+			this.dots[i] = null;
+
+			delete this.dots[i];
+
+		}
+
+	}
+
+	_positionDots(scale) {
+
+		const seriesItemWidth = this.area.width.baseVal.value / this.chart.data.series.length;
+
+		let zeroLine = 0;
+
+		/** Scale is all negative, zero line will be at bottom of container */
+		if (scale.min >= 0) zeroLine = this.area.height.baseVal.value;
+		/** Scale is positive to negative, zero line will be a part way through */
+		if (scale.min < 0 && scale.max > 0) zeroLine = this.area.height.baseVal.value / (scale.max - scale.min) * scale.max;
+
+		for (const dot of Object.values(this.dots)) {
+
+			let cy = 0;
+
+			if (dot.value < 0) {
+
+				cy = (this.area.height.baseVal.value - zeroLine) / (scale.min - Math.min(0, scale.max)) * (dot.value - Math.min(0, scale.max));
+
+			} else {
+
+				if (zeroLine === this.area.height.baseVal.value) {
+
+					cy = -this.area.height.baseVal.value / (scale.max - scale.min) * (dot.value - scale.min);
+
+				} else {
+
+					cy = -(zeroLine - this.area.height.baseVal.value) / (scale.min - Math.min(0, scale.max)) * (dot.value - Math.min(0, scale.max));
+
+				}
+
+
+			}
+
+			dot.cy = zeroLine + cy;
+			dot.cx = (seriesItemWidth * dot.index) + (seriesItemWidth / 2);
+
+		}
+
+
+	}
+
+	updateLine() {
+
+		const newPoints = Object.values(this.dots).map((a) => a.dot);
+
+		const smoothing = this.chart.options.line.smooth ? 0.125 : 0;
+
+		const line = (pointA, pointB) => {
+
+			const lengthX = pointB[0] - pointA[0]
+			const lengthY = pointB[1] - pointA[1]
+
+			return {
+				length: Math.sqrt(Math.pow(lengthX, 2) + Math.pow(lengthY, 2)),
+				angle: Math.atan2(lengthY, lengthX)
+			}
+
+		}
+
+		const controlPoint = (current, previous, next, reverse) => {
+
+			const p = previous || current;
+			const n = next || current;
+			const o = line(p, n);
+			const angle = o.angle + (reverse ? Math.PI : 0);
+			const length = o.length * smoothing;
+			const x = current[0] + Math.cos(angle) * length;
+			const y = current[1] + Math.sin(angle) * length;
+
+			return [x, y];
+
+		}
+
+		const bezierCommand = (point, i, a) => {
+
+			const cps = controlPoint(a[i - 1], a[i - 2], point);
+			const cpe = controlPoint(point, a[i - 1], a[i + 1], true);
+
+			return `C ${cps[0]},${cps[1]} ${cpe[0]},${cpe[1]} ${point[0]},${point[1]}`;
+
+		}
+
+		const svgPath = (points, command) => {
+
+			return points.reduce((acc, point, i, a) => i === 0
+					? `M ${point[0]},${point[1]}`
+					: `${acc} ${command(point, i, a)}`
+				, '');
+
+		}
+
+		/**
+		 * Add in new entries into points where there are more new points than
+		 * the exists set of points.
+		 * New points added cause an instant re-draw bypassing the animation, to
+		 * overcome this new points are placed in the same location as
+		 * the last existing point so when the re-draw happens, it looks like nothing changed
+		 */
+		if (Object.values(newPoints).length > this.points.length) {
+
+			const lastExistingPoint = this.points[this.points.length - 1];
+
+			for (let p = this.points.length; p < Object.values(newPoints).length; p++) {
+
+				this.points.push(lastExistingPoint);
+
+			}
+
+			const path = svgPath(
+				this.points,
+				bezierCommand
+			);
+
+			/**
+			 * Set new line path with extra points, then move into place with animation
+			 */
+			this.line.setAttribute('d', path);
+
+			this.points = newPoints.map((a) => [a.cx.baseVal.value, a.cy.baseVal.value]);
+
+			setTimeout(() => {
+
+				const path = svgPath(
+					this.points,
+					bezierCommand
+				);
+
+				this.line.setAttribute('d', path);
+
+			}, 10);
+
+		} else if (Object.values(newPoints).length < this.points.length) {
+
+			/**
+			 * When there are more existing points than there are new points,
+			 * points after the last new point will be moved into the same position
+			 * as the last new point. After the animation is complete, these will then
+			 * be removed causing an instant redraw, which won't be noticed
+			 */
+			const temporaryPoints = newPoints.map((a) => [a.cx.baseVal.value, a.cy.baseVal.value]);
+			const lastTemporaryPoint = temporaryPoints[temporaryPoints.length - 1];
+
+			for (let p = temporaryPoints.length; p < this.points.length; p++) {
+
+				temporaryPoints.push(lastTemporaryPoint);
+
+			}
+
+			const path = svgPath(
+				temporaryPoints,
+				bezierCommand
+			);
+
+			this.line.setAttribute('d', path);
+
+			setTimeout(() => {
+
+				this.points = newPoints.map((a) => [a.cx.baseVal.value, a.cy.baseVal.value]);
+
+				const path = svgPath(
+					this.points,
+					bezierCommand
+				);
+
+				this.line.setAttribute('d', path);
+
+			}, 750);
+
+		} else {
+
+			/**
+			 * Same number of points as last time, no redraw needed
+			 */
+
+			this.points = newPoints.map((a) => [a.cx.baseVal.value, a.cy.baseVal.value]);
+
+			const path = svgPath(
+				this.points,
+				bezierCommand
+			);
+
+			this.line.setAttribute('d', path);
+
+		}
+
+	}
+
+	_colorize() {
+
+		this.color = this._getContrastColor(this.chart.options.chart.color);
+
+	}
+
+	set thickness(value) {
+
+		this.chart.options.line.thickness = value;
+		this.line.setAttribute('stroke-width', this.chart.options.line.thickness.toString());
+
+	}
+
+	set smooth(value) {
+
+		this.chart.options.line.smooth = value;
+		this.updateLine();
+
+	}
+
+	set pointSize(value) {
+
+		for (const dot of Object.values(this.dots)) {
+
+			dot.r = value;
+
+		}
+
+	}
+
+	set color(color) {
+
+		if (color === 'auto') color = this._getContrastColor(this.chart.options.chart.color);
+
+		this.line.setAttribute('stroke', color);
+
+		for (const dot of Object.values(this.dots)) {
+
+			dot.fill = color;
+
+		}
 
 	}
 
