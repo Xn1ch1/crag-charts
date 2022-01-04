@@ -29,9 +29,6 @@ class CragColumn extends CragCore {
 	constructor (data, options = undefined) {
 		super();
 
-		this.primaryVAxis = null;
-		this.columns = null;
-
 		this.data = {
 			series: data.slice(0, 20),
 			max: 0,
@@ -76,9 +73,7 @@ class CragColumn extends CragCore {
 		this.chart = {
 			parent: null,
 			container: null,
-			area: null,
-			titleArea: null,
-			title: null,
+			area: null
 		}
 
 		/**
@@ -121,33 +116,22 @@ class CragColumn extends CragCore {
 
 		this.chart.parent = document.getElementById(e);
 		this.chart.container = document.createElement('div');
-		this.chart.titleArea = document.createElement('div');
 		this.chart.area = document.createElement('div');
 
 		this.primaryVAxis = new vAxisLines(this, 'primary');
 		this.columns = new Columns(this);
 		this.hAxis = new HAxis(this);
 		this.toolTip = new ToolTip(this);
-
-		if (this.options.chart.title != null) {
-
-			this.chart.title = document.createElement('h1');
-			this.chart.title.className = 'cragTitleText';
-			this.chart.title.textContent = this.options.chart.title;
-			this.chart.titleArea.appendChild(this.chart.title);
-			this.chart.title.style.color = this._getContrastColor(this.options.chart.color);
-
-		}
+		this.title = new Title(this);
 
 		this.chart.container.className = 'cragColumnChartContainer';
-		this.chart.titleArea.className = 'cragColumnTitle';
 		this.chart.area.className = 'cragColumnChartArea';
 
 		this.chart.parent.appendChild(this.chart.container);
 
 		this.chart.container.append(
+			this.title.area,
 			this.primaryVAxis.axisDiv,
-			this.chart.titleArea,
 			this.chart.area,
 			this.hAxis.area
 		);
@@ -175,7 +159,7 @@ class CragColumn extends CragCore {
 		const self = this;
 
 		window.addEventListener('resize', () => self._draw());
-	
+
 	}
 
 	/**
@@ -211,8 +195,8 @@ class CragColumn extends CragCore {
 		 * Core chart components
 		 */
 		this.chart.container.style.backgroundColor = this._resolveColor(this.options.chart.color);
-		if (this.chart.title) this.chart.title.style.color = this._getContrastColor(this.options.chart.color);
 
+		this.title._colorize();
 		this.hAxis._colorize();
 		this.columns._colorLabels();
 		this.toolTip._colorize();
@@ -237,48 +221,6 @@ class CragColumn extends CragCore {
 
 		this._draw();
 
-	}
-
-	/**
-	 * @description Sets a new title in the chart. Creates the title element if not already present.
-	 * @param {string} value
-	 */
-	set title(value) {
-
-		/**
-		 * Create the title element if it doesn't yet exist
-		 */
-		if (this.chart.title == null) {
-
-			this.chart.title = document.createElement('h1');
-			this.chart.title.className = 'cragTitleText';
-			this.chart.titleArea.appendChild(this.chart.title);
-
-		}
-
-		/**
-		 * Set the text content with the new title
-		 */
-		this.chart.title.textContent = value;
-
-		/**
-		 * Only call redraw when the new or old title text was null
-		 * This prevents triggering redraw on each keystroke
-		 */
-		if (value === '' ^ this.options.chart.title === null) {
-
-			this._draw();
-
-		}
-
-		/**
-		 * Set new value to null where new title is blank
-		 */
-		this.options.chart.title = value === '' ? null : value;
-		
-	}
-	get title() {
-		return this.chart.title?.textContent ?? '';
 	}
 
 	/**

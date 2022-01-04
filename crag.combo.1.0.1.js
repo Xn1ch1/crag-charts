@@ -8,7 +8,7 @@
 /**
  * @typedef options
  * @property {optionsChart} [chart]
- * @property {0: {optionsVAxes}, 1: {optionsVAxes}} [vAxes]
+ * @property {primary: {optionsVAxes}, secondary: {optionsVAxes}} [vAxes]
  * @property {optionsColumn} [columns]
  * @property {optionsLine} [line]
  */
@@ -20,13 +20,6 @@ class CragCombo extends CragCore {
 	 */
 	constructor (data, options = undefined) {
 		super();
-
-		this.primaryVAxis = null;
-		this.secondaryVAxis = null;
-		this.hAxis = null;
-		this.toolTip = null;
-		this.columns = null;
-		this.line = null;
 
 		this.data = {
 			series: data.slice(0, 20),
@@ -150,8 +143,6 @@ class CragCombo extends CragCore {
 			parent: null,
 			container: null,
 			area: null,
-			titleArea: null,
-			title: null,
 		}
 
 	}
@@ -162,7 +153,6 @@ class CragCombo extends CragCore {
 
 		this.chart.parent = document.getElementById(e);
 		this.chart.container = document.createElement('div');
-		this.chart.titleArea = document.createElement('div');
 		this.chart.area = document.createElement('div');
 
 		this.primaryVAxis = new vAxisLines(this, 'primary');
@@ -171,18 +161,9 @@ class CragCombo extends CragCore {
 		this.toolTip = new ToolTip(this);
 		this.columns = new Columns(this);
 		this.line = new Line(this);
-
-		if (this.options.chart.title != null) {
-
-			this.chart.title = document.createElement('h1');
-			this.chart.title.className = 'cragTitleText';
-			this.chart.title.textContent = this.options.chart.title;
-			this.chart.titleArea.appendChild(this.chart.title);
-
-		}
+		this.title = new Title(this);
 
 		this.chart.container.className = 'cragComboChartContainer';
-		this.chart.titleArea.className = 'cragComboTitle';
 		this.chart.area.className = 'cragComboChartArea';
 
 		this.chart.parent.appendChild(this.chart.container);
@@ -190,7 +171,7 @@ class CragCombo extends CragCore {
 		this.chart.container.append(
 			this.primaryVAxis.axisDiv,
 			this.secondaryVAxis.axisDiv,
-			this.chart.titleArea,
+			this.title.area,
 			this.chart.area,
 			this.hAxis.area
 		);
@@ -256,8 +237,8 @@ class CragCombo extends CragCore {
 		 * Core chart components
 		 */
 		this.chart.container.style.backgroundColor = this._resolveColor(this.options.chart.color);
-		if (this.chart.title) this.chart.title.style.color = this._getContrastColor(this.options.chart.color);
 
+		this.title._colorize();
 		this.hAxis._colorize();
 		this.columns._colorLabels();
 		this.toolTip._colorize();
@@ -277,7 +258,6 @@ class CragCombo extends CragCore {
 			primary: Math.min(...this.data.series.map((e) => e[1])),
 			secondary: Math.min(...this.data.series.map((e) => e[2]))
 		};
-
 
 		if (this.options.vAxes?.secondary?.showOnPrimary) {
 
@@ -301,48 +281,6 @@ class CragCombo extends CragCore {
 
 		this._draw();
 
-	}
-
-	/**
-	 * @description Sets a new title in the chart. Creates the title element if not already present.
-	 * @param {string} value
-	 */
-	set title(value) {
-
-		/**
-		 * Create the title element if it doesn't yet exist
-		 */
-		if (this.chart.title == null) {
-
-			this.chart.title = document.createElement('h1');
-			this.chart.title.className = 'cragTitleText';
-			this.chart.titleArea.appendChild(this.chart.title);
-
-		}
-
-		/**
-		 * Set the text content with the new title
-		 */
-		this.chart.title.textContent = value;
-
-		/**
-		 * Only call redraw when the new or old title text was null
-		 * This prevents triggering redraw on each keystroke
-		 */
-		if (value === '' ^ this.options.chart.title === null) {
-
-			this._draw();
-
-		}
-
-		/**
-		 * Set new value to null where new title is blank
-		 */
-		this.options.chart.title = value === '' ? null : value;
-
-	}
-	get title() {
-		return this.chart.title?.textContent ?? '';
 	}
 
 	/**

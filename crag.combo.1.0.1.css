@@ -6,28 +6,10 @@
 	grid-template-rows: min-content 1fr min-content;
 	gap: 0 0;
 	grid-template-areas:
-		". cragComboTitle ."
+		". cragTitle ."
 		"cragVAxisPrimary cragComboChartArea cragVAxisSecondary"
 		". cragHAxis .";
 	overflow: hidden;
-}
-.cragVAxisPrimary {
-	grid-area: cragVAxisPrimary;
-	position: relative;
-	transition: all 0.8s ease;
-}
-.cragComboTitle {
-	grid-area: cragComboTitle;
-	position: relative;
-	transition: all 0.8s ease;
-	min-height: 10px;
-}
-.cragComboTitleText {
-	margin: 0 0 16px 0;
-    font-size: 25px;
-    font-family: Roboto;
-    font-weight: 300;
-    text-align: center;
 }
 .cragComboChartArea {
 	grid-area: cragComboChartArea;
@@ -39,8 +21,8 @@
 	pointer-events: all;
 	cursor: pointer;
 	stroke-width: 24px;
-    stroke: transparent;
-    paint-order: stroke;
+	stroke: transparent;
+	paint-order: stroke;
 }
 .cragComboLine {
 	transition: all 0.8s ease;

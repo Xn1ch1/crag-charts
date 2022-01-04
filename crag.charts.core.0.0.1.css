@@ -1,9 +1,15 @@
+.cragTitle {
+	grid-area: cragTitle;
+	position: relative;
+	transition: all 0.8s ease;
+	min-height: 10px;
+}
 .cragTitleText {
 	margin: 0 0 16px 0;
-    font-size: 25px;
+	font-size: 25px;
 	font-family: Roboto, sans-serif;
-    font-weight: 300;
-    text-align: center;
+	font-weight: 300;
+	text-align: center;
 }
 .cragChartSubArea {
 	position: absolute;

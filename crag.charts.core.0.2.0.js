@@ -534,11 +534,11 @@ Element.prototype.insertChildAtIndex = function(child, index) {
 
 	if (index >= this.children.length) {
 
-	    this.appendChild(child)
+		this.appendChild(child)
 
 	} else {
 
-    	this.insertBefore(child, this.children[index])
+		this.insertBefore(child, this.children[index])
 
 	}
 
@@ -2219,6 +2219,70 @@ class Line extends CragCore {
 
 		}
 
+	}
+
+}
+class Title extends CragCore {
+
+	chart = null;
+
+	area = null;
+	title = null;
+
+	constructor(chart) {
+		super();
+
+		this.chart = chart;
+		this._create();
+
+	}
+
+	_create() {
+
+		this.area = document.createElement('div');
+		this.title = document.createElement('h1');
+
+		this.area.className = 'cragTitle';
+		this.title.className = 'cragTitleText';
+
+		this.title.textContent = this.chart.options.chart.title;
+
+		this.area.appendChild(this.title);
+
+	}
+
+	_colorize() {
+
+		this.title.style.color = this._getContrastColor(this.chart.options.chart.color);
+
+	}
+
+	/**
+	 * @description Sets a new title in the chart. Creates the title element if not already present.
+	 * @param {string} value
+	 */
+	set text(value) {
+
+		this.title.textContent = value;
+
+		/**
+		 * Only call redraw when the new or old title text was null
+		 * This prevents triggering redraw on each keystroke
+		 */
+		if (value === '' ^ this.chart.options.chart.title === null) {
+
+			this.chart._draw();
+
+		}
+
+		/**
+		 * Set new value to null where new title is blank
+		 */
+		this.chart.options.chart.title = value === '' ? null : value;
+
+	}
+	get title() {
+		return this.title?.textContent ?? '';
 	}
 
 }
