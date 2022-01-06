@@ -168,3 +168,16 @@
 		background-position: 100px 0;
 	}
 }
+.cragPoint {
+	transition: all 0.4s ease;
+	left: 100%;
+	pointer-events: all;
+	cursor: pointer;
+	stroke-width: 24px;
+	stroke: transparent;
+	paint-order: stroke;
+}
+.cragLine {
+	transition: all 0.8s ease;
+	-webkit-transition: all 0.8s ease;
+}

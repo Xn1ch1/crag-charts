@@ -1847,7 +1847,7 @@ class Dot {
 
 		this.dot.setAttribute('cx', '100%');
 		this.dot.setAttribute('cy', '100%');
-		this.dot.setAttribute('class', 'cragComboPoint');
+		this.dot.setAttribute('class', 'cragPoint');
 
 	}
 
@@ -1889,6 +1889,99 @@ class Dot {
 
 }
 
+class Lines extends CragCore {
+
+	colors = ['blue', 'green', 'purple', 'deepOrange', 'blueGrey'];
+	lines = {}
+	count = 0;
+	chart = null;
+
+	constructor(chart, count) {
+		super();
+
+		this.count = count;
+		this.chart = chart;
+
+		for (let i = 0; i < count; i++) {
+
+			this.lines[i] = new Line(chart, i);
+
+			this.setThickness(i, chart.options.lines[i].thickness);
+			this.setPointSize(i, chart.options.lines[i].pointSize);
+			this.setSmooth(i, chart.options.lines[i].smooth);
+
+		}
+
+	}
+
+	_colorize() {
+
+		for (let i = 0; i < this.count; i++) {
+
+			if (this.chart.options.lines[i].color === 'auto') {
+
+				this.lines[i].color = this.colors[i];
+
+			} else {
+
+				this.lines[i].color = this.chart.options.lines[i].color;
+
+			}
+
+		}
+
+	}
+
+	update() {
+
+		for (let i = 0; i < this.count; i++) {
+
+			this.lines[i].update(this.chart.data.series.map((e) => e[i + 1]), this.chart.primaryVAxis.scale)
+			this.setPointSize(i, chart.options.lines[i].pointSize);
+
+		}
+
+	}
+
+	setColor(index, value) {
+
+		this.chart.options.lines[index].color = value;
+
+		if (value === 'auto') {
+
+			this.lines[index].color = this._resolveColor(this.colors[index]);
+
+		} else {
+
+			this.lines[index].color = value;
+
+		}
+
+	}
+
+	setThickness(index, value) {
+
+		this.chart.options.lines[index].thickness = value;
+		this.lines[index].thickness = value;
+
+	}
+
+	setPointSize(index, value) {
+
+		this.chart.options.lines[index].pointSize = value;
+		this.lines[index].pointSize = value;
+
+	}
+
+	setSmooth(index, value) {
+
+		this.chart.options.lines[index].smooth = value;
+		this.lines[index].smooth = value;
+
+	}
+
+}
+
 class Line extends CragCore {
 
 	chart = null;
@@ -1901,13 +1994,16 @@ class Line extends CragCore {
 
 	dots = {};
 
+	index = -1;
+
 	/** @type {null|SVGSVGElement} */
 	area = null;
 
-	constructor(chart) {
+	constructor(chart, index = -1) {
 		super();
 
 		this.chart = chart;
+		this.index = index;
 
 		this._createArea();
 		this._createLine();
@@ -1925,15 +2021,23 @@ class Line extends CragCore {
 		this.area.style.left = '0';
 		this.area.style.top = '0';
 
+		this.chart.chart.area.append(this.area);
+
 	}
 
 	_createLine() {
 
 		this.line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
 		this.line.setAttribute('fill', 'none');
-		this.line.setAttribute('stroke-width', this.chart.options.line.thickness.toString());
-		this.line.setAttribute('class', 'cragComboLine');
+		this.line.setAttribute('class', 'cragLine');
 		this.line.setAttribute('d', 'M0,0');
+
+		if (this.index === -1) {
+
+			this.thickness = this.chart.options.line.thickness.toString();
+
+		}
+
 
 		this.area.append(this.line);
 
@@ -1963,8 +2067,12 @@ class Line extends CragCore {
 
 				this.dots[i] = new Dot(i, data[i]);
 
-				this.dots[i].r = this.chart.options.line.pointSize;
-				this.dots[i].fill = this._getContrastColor(this.chart.options.chart.color);
+				if (this.index === -1) {
+
+					this.dots[i].r = this.chart.options.line.pointSize;
+					this.dots[i].fill = this._getContrastColor(this.chart.options.chart.color);
+
+				}
 
 				this.area.append(this.dots[i].dot);
 
@@ -2035,7 +2143,19 @@ class Line extends CragCore {
 
 		const newPoints = Object.values(this.dots).map((a) => a.dot);
 
-		const smoothing = this.chart.options.line.smooth ? 0.125 : 0;
+		if (newPoints.length === 0) return;
+
+		let smoothing = 0;
+
+		if (this.index === -1) {
+
+			smoothing = this.chart.options.line.smooth ? 0.125 : 0;
+
+		} else {
+
+			smoothing = this.chart.options.lines[this.index].smooth ? 0.125 : 0;
+
+		}
 
 		const line = (pointA, pointB) => {
 
@@ -2179,25 +2299,51 @@ class Line extends CragCore {
 
 	_colorize() {
 
-		this.color = this._getContrastColor(this.chart.options.chart.color);
+		if (this.index !== -1) return;
+
+		if (this.chart.options.line.color === 'auto' || this.chart.options.line.color === null) {
+
+			this.color = this._getContrastColor(this.chart.options.chart.color);
+
+		} else {
+
+			this.color = this._resolveColor(this.chart.options.line.color);
+
+		}
 
 	}
 
 	set thickness(value) {
 
-		this.chart.options.line.thickness = value;
-		this.line.setAttribute('stroke-width', this.chart.options.line.thickness.toString());
+		if (this.index === -1) {
+
+			this.chart.options.line.thickness = value;
+
+		}
+
+		this.line.setAttribute('stroke-width', value.toString());
 
 	}
 
 	set smooth(value) {
 
-		this.chart.options.line.smooth = value;
+		if (this.index === -1) {
+
+			this.chart.options.line.smooth = value;
+
+		}
+
 		this.updateLine();
 
 	}
 
 	set pointSize(value) {
+
+		if (this.index === -1) {
+
+			this.chart.options.line.pointSize = value;
+
+		}
 
 		for (const dot of Object.values(this.dots)) {
 
@@ -2209,13 +2355,19 @@ class Line extends CragCore {
 
 	set color(color) {
 
-		if (color === 'auto') color = this._getContrastColor(this.chart.options.chart.color);
+		if (this.index === -1) {
 
-		this.line.setAttribute('stroke', color);
+			this.chart.options.line.color = color;
+
+			if (color === 'auto') color = this._getContrastColor(this.chart.options.chart.color);
+
+		}
+
+		this.line.setAttribute('stroke', this._resolveColor(color));
 
 		for (const dot of Object.values(this.dots)) {
 
-			dot.fill = color;
+			dot.fill = this._resolveColor(color);
 
 		}
 

@@ -180,8 +180,7 @@ class CragCombo extends CragCore {
 			this.primaryVAxis.linesDiv,
 			this.secondaryVAxis.linesDiv,
 			this.columns.columnArea,
-			this.columns.labelArea,
-			this.line.area
+			this.columns.labelArea
 		);
 
 		setTimeout(this._draw.bind(this), 500);
