@@ -1002,7 +1002,7 @@ class HAxis extends CragCore {
 
 				this.labels[i].className = 'cragHAxisLabel';
 				this.labels[i].style.color = this._getContrastColor(this.chart.options.chart.color);
-				this.labels[i].textContent = chart.data.series[i][0];
+				this.labels[i].textContent = this.chart.data.series[i][0];
 
 				this.area.append(this.labels[i]);
 
@@ -1064,7 +1064,7 @@ class HAxis extends CragCore {
 
 			if (!label) continue;
 
-			label.style.color = this._getContrastColor(chart.options.chart.color);
+			label.style.color = this._getContrastColor(this.chart.options.chart.color);
 
 		}
 
@@ -1937,7 +1937,7 @@ class Lines extends CragCore {
 		for (let i = 0; i < this.count; i++) {
 
 			this.lines[i].update(this.chart.data.series.map((e) => e[i + 1]), this.chart.primaryVAxis.scale)
-			this.setPointSize(i, chart.options.lines[i].pointSize);
+			this.setPointSize(i, this.chart.options.lines[i].pointSize);
 
 		}
 
