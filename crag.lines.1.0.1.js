@@ -40,6 +40,15 @@ class CragLine extends CragCore {
 				color: 'white'
 			},
 			/**
+			 * @type optionsLine
+			 */
+			line: {
+				thickness: 3,
+				pointSize: 3,
+				color: 'auto',
+				smooth: true
+			},
+			/**
 			 * @type Array.<optionsLine>
 			 */
 			lines: {
@@ -88,13 +97,21 @@ class CragLine extends CragCore {
 			},
 		}
 
+		console.log(options);
+
 		/**
 		 * Line Options
 		 */
+		if (this._isValidColor(options?.line?.color)) this.options.line.color = options.line.color;
+		this.options.line.smooth = this.validateOption(options?.line?.smooth, 'boolean', this.options.line.smooth);
+		if (options?.line?.thickness > 0 && options?.line?.thickness < 11) this.options.line.thickness = options.line.thickness;
+		if (options?.line?.pointSize > 0 && options?.line?.pointSize < 51) this.options.line.pointSize = options.line.pointSize;
+
 		for (let i = 0; i < this.data.series[0].length - 1; i++) {
 
-			if (this._isValidColor(options?.lines[i]?.color)) this.options.lines[i].color = options.lines[i].color;
+			if (options?.lines === undefined) continue;
 
+			if (this._isValidColor(options?.lines[i]?.color)) this.options.lines[i].color = options.lines[i].color;
 			this.options.lines[i].smooth = this.validateOption(options?.lines[i]?.smooth, 'boolean', this.options.lines[i].smooth);
 			if (options?.lines[i]?.thickness > 0 && options?.lines[i]?.thickness < 11) this.options.lines[i].thickness = options.lines[i].thickness;
 			if (options?.lines[i]?.pointSize > 0 && options?.lines[i]?.pointSize < 51) this.options.lines[i].pointSize = options.lines[i].pointSize;
@@ -112,6 +129,7 @@ class CragLine extends CragCore {
 		 * 1 = right axis, secondary points
 		 */
 		this.options.vAxes.primary.name = this.validateOption(options?.vAxes?.primary?.name, 'string', this.options.vAxes.primary.name);
+		this.options.vAxes.primary.decimalPlaces = this.validateOption(options?.vAxes?.primary?.decimalPlaces, 'number', this.options.vAxes.primary.decimalPlaces);
 		this.options.vAxes.primary.majorLines = this.validateOption(options?.vAxes?.primary?.majorLines, 'boolean', this.options.vAxes.primary.majorLines);
 		this.options.vAxes.primary.minorLines = this.validateOption(options?.vAxes?.primary?.minorLines, 'boolean', this.options.vAxes.primary.minorLines);
 		this.options.vAxes.primary.format = this.validateOption(options?.vAxes?.primary?.format, this.labelFormats, this.options.vAxes.primary.format);
@@ -172,6 +190,7 @@ class CragLine extends CragCore {
 
 		const self = this;
 
+		// this.chart.parent.addEventListener('onresize', ()=> self._draw());
 		window.addEventListener('resize', () => self._draw());
 
 	}
