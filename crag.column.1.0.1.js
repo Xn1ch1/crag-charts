@@ -118,29 +118,17 @@ class CragColumn extends CragCore {
 		this.chart.container = document.createElement('div');
 		this.chart.area = document.createElement('div');
 
+		this.chart.container.className = 'cragColumnChartContainer';
+		this.chart.area.className = 'cragColumnChartArea';
+
+		this.chart.parent.appendChild(this.chart.container);
+		this.chart.container.append(this.chart.area);
+
 		this.primaryVAxis = new vAxisLines(this, 'primary');
 		this.columns = new Columns(this);
 		this.hAxis = new HAxis(this);
 		this.toolTip = new ToolTip(this);
 		this.title = new Title(this);
-
-		this.chart.container.className = 'cragColumnChartContainer';
-		this.chart.area.className = 'cragColumnChartArea';
-
-		this.chart.parent.appendChild(this.chart.container);
-
-		this.chart.container.append(
-			this.title.area,
-			this.primaryVAxis.axisDiv,
-			this.chart.area,
-			this.hAxis.area
-		);
-
-		this.chart.area.append(
-			this.primaryVAxis.linesDiv,
-			this.columns.columnArea,
-			this.columns.labelArea
-		);
 
 		setTimeout(this._draw.bind(this), 250);
 

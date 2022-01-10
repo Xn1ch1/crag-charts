@@ -155,6 +155,12 @@ class CragCombo extends CragCore {
 		this.chart.container = document.createElement('div');
 		this.chart.area = document.createElement('div');
 
+		this.chart.container.className = 'cragComboChartContainer';
+		this.chart.area.className = 'cragComboChartArea';
+
+		this.chart.parent.appendChild(this.chart.container);
+		this.chart.container.append(this.chart.area);
+
 		this.primaryVAxis = new vAxisLines(this, 'primary');
 		this.secondaryVAxis = new vAxisLines(this, 'secondary');
 		this.hAxis = new HAxis(this);
@@ -162,26 +168,6 @@ class CragCombo extends CragCore {
 		this.columns = new Columns(this);
 		this.line = new Line(this);
 		this.title = new Title(this);
-
-		this.chart.container.className = 'cragComboChartContainer';
-		this.chart.area.className = 'cragComboChartArea';
-
-		this.chart.parent.appendChild(this.chart.container);
-
-		this.chart.container.append(
-			this.primaryVAxis.axisDiv,
-			this.secondaryVAxis.axisDiv,
-			this.title.area,
-			this.chart.area,
-			this.hAxis.area
-		);
-
-		this.chart.area.append(
-			this.primaryVAxis.linesDiv,
-			this.secondaryVAxis.linesDiv,
-			this.columns.columnArea,
-			this.columns.labelArea
-		);
 
 		setTimeout(this._draw.bind(this), 500);
 

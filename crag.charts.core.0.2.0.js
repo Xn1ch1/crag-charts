@@ -14,8 +14,6 @@
  * @property {number} [decimalPlaces] Number of decimal places for decimal formats.
  * @property {string|number} [min] Sets the minimum value for the vAxis, when omitted, this will be calculated automatically.
  */
-
-
 class CragCore {
 
 	pallet = {
@@ -587,6 +585,9 @@ class vAxisLines extends CragCore {
 		this.linesDiv = document.createElement('div');
 		this.linesDiv.className = 'cragChartSubArea';
 
+		this.chart.chart.container.append(this.axisDiv);
+		this.chart.chart.area.append(this.linesDiv);
+
 	}
 
 	update(min, max) {
@@ -976,6 +977,8 @@ class HAxis extends CragCore {
 
 		this.area = document.createElement('div');
 		this.area.className  = 'cragHAxis';
+
+		this.chart.chart.container.append(this.area);
 
 	}
 
@@ -1532,6 +1535,8 @@ class Columns extends CragCore {
 		this.columnArea.className = 'cragChartSubArea';
 
 		this.labelArea.style.pointerEvents = 'none';
+
+		this.chart.chart.area.append(this.columnArea, this.labelArea);
 
 	}
 
@@ -2400,6 +2405,7 @@ class Title extends CragCore {
 		this.title.textContent = this.chart.options.chart.title;
 
 		this.area.appendChild(this.title);
+		this.chart.chart.container.append(this.area);
 
 	}
 

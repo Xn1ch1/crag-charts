@@ -97,8 +97,6 @@ class CragLine extends CragCore {
 			},
 		}
 
-		console.log(options);
-
 		/**
 		 * Line Options
 		 */
@@ -151,28 +149,17 @@ class CragLine extends CragCore {
 		this.chart.container = document.createElement('div');
 		this.chart.area = document.createElement('div');
 
-		this.primaryVAxis = new vAxisLines(this, 'primary');
-		this.hAxis = new HAxis(this);
-		this.toolTip = new ToolTip(this);
-		this.title = new Title(this);
-
-		this.lines = new Lines(this, this.data.series[0].length - 1)
-
 		this.chart.container.className = 'cragLineChartContainer';
 		this.chart.area.className = 'cragLineChartArea';
 
 		this.chart.parent.appendChild(this.chart.container);
+		this.chart.container.append(this.chart.area);
 
-		this.chart.container.append(
-			this.primaryVAxis.axisDiv,
-			this.title.area,
-			this.chart.area,
-			this.hAxis.area
-		);
-
-		this.chart.area.append(
-			this.primaryVAxis.linesDiv,
-		);
+		this.primaryVAxis = new vAxisLines(this, 'primary');
+		this.hAxis = new HAxis(this);
+		this.toolTip = new ToolTip(this);
+		this.title = new Title(this);
+		this.lines = new Lines(this, this.data.series[0].length - 1)
 
 		setTimeout(this._draw.bind(this), 500);
 
