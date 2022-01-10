@@ -202,11 +202,9 @@ class CragCombo extends CragCore {
 
 		this.primaryVAxis.update(this.data.min.primary, this.data.max.primary);
 		this.secondaryVAxis.update(this.data.min.secondary, this.data.max.secondary);
-
-		this.hAxis.update();
-
 		this.columns.update(this.data.series, this.primaryVAxis.scale);
 		this.line.update(this.data.series.map((e) => e[2]), this.secondaryVAxis.scale);
+		this.hAxis.update();
 
 		this._colorize();
 
@@ -246,11 +244,14 @@ class CragCombo extends CragCore {
 
 		if (this.options.vAxes?.secondary?.showOnPrimary) {
 
-			this.data.max.primary = Math.max(this.data.max.primary, this.data.max.secondary);
-			this.data.max.secondary = Math.max(this.data.max.primary, this.data.max.secondary);
-
-			this.data.min.primary = Math.min(this.data.min.primary, this.data.min.secondary);
-			this.data.min.secondary = Math.min(this.data.min.primary, this.data.min.secondary);
+			this.data.max = {
+				primary: Math.max(...this.data.series.map((e) => e.slice(1)).flat()),
+				secondary: Math.max(...this.data.series.map((e) => e.slice(1)).flat()),
+			};
+			this.data.min = {
+				primary: Math.min(...this.data.series.map((e) => e.slice(1)).flat()),
+				secondary: Math.min(...this.data.series.map((e) => e.slice(1)).flat()),
+			};
 
 		}
 
