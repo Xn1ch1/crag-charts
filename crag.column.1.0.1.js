@@ -84,8 +84,8 @@ class CragColumn extends CragCore {
 		if (this._isValidColor(options?.columns?.color)) this.options.columns.color = options.columns.color;
 		if (this._isValidColor(options?.columns?.labels?.color)) this.options.columns.labels.color = options.columns.labels.color;
 
-		this.options.columns.rounding = this.validateOption(options?.columns?.rounding, 'int', this.options.columns.rounding);
-		this.options.columns.shadow = this.validateOption(options?.columns?.shadow, 'int', this.options.columns.shadow);
+		this.options.columns.rounding = this.validateOption(options?.columns?.rounding, 'number', this.options.columns.rounding);
+		this.options.columns.shadow = this.validateOption(options?.columns?.shadow, 'number', this.options.columns.shadow);
 		this.options.columns.stripes = this.validateOption(options?.columns?.stripes, 'boolean', this.options.columns.stripes);
 		this.options.columns.animatedStripes = this.validateOption(options?.columns?.animatedStripes, 'boolean', this.options.columns.animatedStripes);
 		this.options.columns.onClick = this.validateOption(options?.columns?.onClick, 'function', this.options.columns.onClick);
