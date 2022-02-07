@@ -6,16 +6,10 @@
 	grid-template-rows: min-content 1fr min-content;
 	gap: 0 0;
 	grid-template-areas:
-		". cragColumnTitle"
+		". cragTitle"
 		"cragVAxisPrimary cragColumnChartArea"
 		". cragHAxis";
 	overflow: hidden;
-}
-.cragColumnTitle {
-	grid-area: cragColumnTitle;
-	position: relative;
-	transition: all 0.8s ease;
-	min-height: 10px;
 }
 .cragColumnChartArea {
 	grid-area: cragColumnChartArea;

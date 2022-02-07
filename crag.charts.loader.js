@@ -14,9 +14,9 @@ class CragLoader {
 			js: 'crag.progress.1.0.2.js',
 			css: 'crag.progress.1.0.1.css'
 		},
-		line: {
-			js: 'crag.line.1.0.1.js',
-			css: 'crag.line.1.0.2.css'
+		lines: {
+			js: 'crag.lines.1.0.1.js',
+			css: 'crag.lines.1.0.2.css'
 		},
 		combo: {
 			js: 'crag.combo.1.0.1.js',
@@ -83,9 +83,9 @@ class CragLoader {
 					js = this.resources.combo.js;
 					css = this.resources.combo.css;
 					break;
-				case 'line':
-					js = this.resources.line.js;
-					css = this.resources.line.css;
+				case 'lines':
+					js = this.resources.lines.js;
+					css = this.resources.lines.css;
 					break;
 				case 'pie':
 					js = this.resources.pie.js;
