@@ -120,7 +120,8 @@
 }
 .cragToolTip {
 	position: fixed;
-	bottom: 0;
+	z-index: 999;
+	top: 0;
 	left: 0;
 	opacity: 0;
 	padding: 8px 16px;

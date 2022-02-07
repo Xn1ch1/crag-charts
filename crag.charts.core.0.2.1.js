@@ -1143,17 +1143,16 @@ class ToolTip extends CragCore {
 
 	_position(index, element) {
 
+		const elementRect = element.getBoundingClientRect();
+
 		const chartWidth = window.innerWidth;
-		const columnLeft = parseFloat(element.style.left.replace('px', ''));
 		const columnWidth = element.offsetWidth;
-		const columnHeight = element.offsetHeight;
-		const tipHeight = this.container.offsetHeight;
 		const tipWidth = this.container.offsetWidth;
 
 		const alignments = [false, true, false];
 
-		if (columnLeft - 8 > tipWidth) alignments[0] = true;
-		if (chartWidth - columnLeft - columnWidth - 8 > tipWidth) alignments[2] = true;
+		if (elementRect.left - 8 > tipWidth) alignments[0] = true;
+		if (chartWidth - elementRect.left - columnWidth - 8 > tipWidth) alignments[2] = true;
 
 		this.container.style.opacity = '1';
 
@@ -1163,30 +1162,28 @@ class ToolTip extends CragCore {
 		 * If the preferred side can not fit, use the other.
 		 * If neither fits, it will default to center over the columns.
 		 */
-		if (alignments[0] && columnLeft - 8 > tipWidth) {
+		if (alignments[0] && elementRect.left - 8 > tipWidth) {
 
-			this.container.style.left = `${columnLeft - tipWidth - 8}px`;
+			this.container.style.left = `${elementRect.left - tipWidth - 8}px`;
 
 		} else if (alignments[2]) {
 
-			this.container.style.left = `${columnLeft + columnWidth + 8}px`;
+			this.container.style.left = `${elementRect.left + columnWidth + 8}px`;
 
 		} else {
 
-			this.container.style.left = `${columnLeft + (columnWidth / 2) - (tipWidth / 2)}px`;
+			this.container.style.left = `${elementRect.left + (columnWidth / 2) - (tipWidth / 2)}px`;
 			this.container.style.opacity = '0.8';
 
 		}
 
-		const columnBottom = parseFloat(element.style.bottom.replace('px', ''));
-
 		if (this.chart.data.series[index][1] < 0) {
 
-			this.container.style.bottom = `${Math.max(0, columnBottom)}px`;
+			this.container.style.top = `${Math.max(0, elementRect.bottom)}px`;
 
 		} else {
 
-			this.container.style.bottom = `${Math.max(0, columnBottom + columnHeight - tipHeight)}px`;
+			this.container.style.top = `${Math.max(0, elementRect.top)}px`;
 
 		}
 
@@ -2375,6 +2372,11 @@ class Line extends CragCore {
 			dot.fill = this._resolveColor(color);
 
 		}
+
+		/**
+		 * Set new value to null where new title is blank
+		 */
+		this.chart.options.chart.title = value === '' ? null : value;
 
 	}
 
