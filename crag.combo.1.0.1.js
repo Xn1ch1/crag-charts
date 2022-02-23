@@ -63,7 +63,7 @@ class CragCombo extends CragCore {
 			line: {
 				thickness: 2,
 				pointSize: 4,
-				color: null,
+				color: 'auto',
 				smooth: true
 			},
 			vAxes: {

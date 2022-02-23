@@ -2359,8 +2359,6 @@ class Line extends CragCore {
 
 		if (this.index === -1) {
 
-			this.chart.options.line.color = color;
-
 			if (color === 'auto') color = this._getContrastColor(this.chart.options.chart.color);
 
 		}
