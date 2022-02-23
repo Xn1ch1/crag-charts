@@ -23,8 +23,8 @@ class CragLoader {
 			css: 'crag.combo.1.0.1.css'
 		},
 		pie: {
-			js: 'crag.pie.0.0.0.js',
-			css: 'crag.pie.0.0.0.css'
+			js: 'crag.pie.0.0.1.js',
+			css: 'crag.pie.0.0.1.css'
 		}
 	};
 

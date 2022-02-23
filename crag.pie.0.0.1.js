@@ -1,8 +1,9 @@
-class CragPie {
+class CragPie extends CragCore {
 
-	constructor (options) {
+	constructor (data, options) {
+		super();
 
-		this.data = options.data;
+		this.data = data;
 
 		this.options = {
 			chart: {
@@ -49,7 +50,7 @@ class CragPie {
 		this.stoppedOn = null;
 		this.toolTipVisible = false;
 
-		if (getContrastColor(this.options.chart.color) == '#FFFFFF') {
+		if (this._getContrastColor(this.options.chart.color) == '#FFFFFF') {
 			this.palletOffset = 6;
 		} else {
 			this.palletOffset = 0;
@@ -72,7 +73,7 @@ class CragPie {
 				if (option.title != undefined) {
 					this.options.chart.title = option.title;
 				}
-				if (option.color != undefined && pallet.hasOwnProperty(option.color)) {
+				if (option.color != undefined && this.pallet.hasOwnProperty(option.color)) {
 					this.options.chart.color = option.color;
 				}
 
@@ -179,19 +180,19 @@ class CragPie {
 		let cumulativeValue = 0;
 
 		if (this.options.chart.title != null) {
-			this.chart.title.style.color = getContrastColor(this.options.chart.color);
+			this.chart.title.style.color = this._getContrastColor(this.options.chart.color);
 		}
 
-		this.chartContainer.style.backgroundColor = pallet[this.options.chart.color];
+		this.chartContainer.style.backgroundColor = this.pallet[this.options.chart.color];
 
 		if (this.options.pie.hole == 0) {
-			this.toolTip.title.style.color = pallet[this.options.chart.color];
-			this.toolTip.value.style.color = pallet[this.options.chart.color];
-			this.toolTip.label.style.color = pallet[this.options.chart.color];
+			this.toolTip.title.style.color = this.pallet[this.options.chart.color];
+			this.toolTip.value.style.color = this.pallet[this.options.chart.color];
+			this.toolTip.label.style.color = this.pallet[this.options.chart.color];
 		} else {
-			this.toolTip.title.style.color = getContrastColor(this.options.chart.color);
-			this.toolTip.value.style.color = getContrastColor(this.options.chart.color);
-			this.toolTip.label.style.color = getContrastColor(this.options.chart.color);
+			this.toolTip.title.style.color = this._getContrastColor(this.options.chart.color);
+			this.toolTip.value.style.color = this._getContrastColor(this.options.chart.color);
+			this.toolTip.label.style.color = this._getContrastColor(this.options.chart.color);
 		}
 
 		for (const [_, elements] of Object.entries(this.chart.elements)) {
@@ -220,35 +221,35 @@ class CragPie {
 
 		// setTimeout(function() {
 
-			for (const [_, element] of Object.entries(this.chart.elements)) {
-				element.wedge.setAttribute('fill', pallet.key(parseInt(_) + this.palletOffset));
-				element.wedge.setAttribute('stroke',  pallet[this.options.chart.color]);
-				element.key.marker.style.opacity = 1;
+		for (const [_, element] of Object.entries(this.chart.elements)) {
+			element.wedge.setAttribute('fill', this._getColorByMode('multi', parseInt(_) + this.palletOffset));
+			element.wedge.setAttribute('stroke',  this.pallet[this.options.chart.color]);
+			element.key.marker.style.opacity = 1;
 
-				element.key.marker.style.backgroundColor = pallet.key(parseInt(_) + this.palletOffset);
+			element.key.marker.style.backgroundColor = this._getColorByMode('multi', parseInt(_) + this.palletOffset);
 
-				this._animateSector(element.degrees.start, element.degrees.end, element.degrees.oldStart, element.degrees.oldEnd, element.wedge, this.animationSpeed, this.options.pie.hole, 1);
+			this._animateSector(element.degrees.start, element.degrees.end, element.degrees.oldStart, element.degrees.oldEnd, element.wedge, this.animationSpeed, this.options.pie.hole, 1);
 
-				element.degrees.oldEnd = element.degrees.end;
-				element.degrees.oldStart = element.degrees.start;
+			element.degrees.oldEnd = element.degrees.end;
+			element.degrees.oldStart = element.degrees.start;
 
-				cumulativeValue += element.val;
+			cumulativeValue += element.val;
 
-				const mid = ((element.degrees.end / 2) + element.degrees.start / 2) - 90;
-				const coords = this._polarToCartesian(mid, (radius / 2) - (maxLabelLen));
+			const mid = ((element.degrees.end / 2) + element.degrees.start / 2) - 90;
+			const coords = this._polarToCartesian(mid, (radius / 2) - (maxLabelLen));
 
-				element.label.style.top = coords.y + (chartAreaHeight / 2) - (element.label.offsetHeight / 2) +  'px';
-				element.label.style.left = coords.x + (chartAreaWidth / 2) - (element.label.offsetWidth / 2) +  'px';
-				
-				element.label.style.color = pallet[this.options.chart.color];
+			element.label.style.top = coords.y + (chartAreaHeight / 2) - (element.label.offsetHeight / 2) +  'px';
+			element.label.style.left = coords.x + (chartAreaWidth / 2) - (element.label.offsetWidth / 2) +  'px';
 
-				if (element.percentage < 2) {
-					element.label.style.opacity = 0;
-				} else {
-					element.label.style.opacity = 1;
-				}
+			element.label.style.color = this.pallet[this.options.chart.color];
 
+			if (element.percentage < 2) {
+				element.label.style.opacity = 0;
+			} else {
+				element.label.style.opacity = 1;
 			}
+
+		}
 
 		// }.bind(this), 0);
 
@@ -354,7 +355,7 @@ class CragPie {
 
 			element.label.textContent = (100 / total * element.val).toFixed(0) + '%';
 
-			element.key.label.style.color = getContrastColor(this.options.chart.color);
+			element.key.label.style.color = this._getContrastColor(this.options.chart.color);
 
 			element.percentage = 100 / total * element.val;
 
@@ -368,8 +369,8 @@ class CragPie {
 		let angleInRadians = (angleInDegrees) * Math.PI / 180.0;
 
 		return {
-		  x: 0 + (radius * Math.cos(angleInRadians)),
-		  y: 0 + (radius * Math.sin(angleInRadians))
+			x: 0 + (radius * Math.cos(angleInRadians)),
+			y: 0 + (radius * Math.sin(angleInRadians))
 		};
 	}
 
@@ -411,14 +412,14 @@ class CragPie {
 		function doAnimationStep() {
 
 			let progressEase = self._easeInOutSin(Math.min((performance.now() - startTime) / duration, 1));
-		 	let startStep = startCurrent + progressEase * (startNew - startCurrent);
+			let startStep = startCurrent + progressEase * (startNew - startCurrent);
 			let endStep = endCurrent + progressEase * (endNew - endCurrent);
 
 			let arc = self._describeArc(startStep, endStep, inner, outer);
 
 			element.setAttribute('d', arc);
 
-		 	if (progressEase < 1) requestAnimationFrame(doAnimationStep);
+			if (progressEase < 1) requestAnimationFrame(doAnimationStep);
 
 		}
 
@@ -614,9 +615,9 @@ class CragPie {
 	 * @param {any} value
 	 */
 	set color(value) {
-		if (pallet.hasOwnProperty(value)) {
+		if (this.pallet.hasOwnProperty(value)) {
 			this.options.chart.color = value;
-			if (getContrastColor(value) == '#FFFFFF') {
+			if (this._getContrastColor(value) == '#FFFFFF') {
 				this.palletOffset = 6;
 			} else {
 				this.palletOffset = 0;
