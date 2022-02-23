@@ -19,7 +19,7 @@ class CragPie extends CragCore {
 				show: true,
 				position: 'right'
 			}
-		}
+		};
 
 		this.parent = null;
 		this.chartContainer = null;
@@ -46,14 +46,18 @@ class CragPie extends CragCore {
 		this.animationSpeed = 500;
 
 		this.keyHoverActive = false;
-		this.keyHoverDelay;
+		this.keyHoverDelay = null;
 		this.stoppedOn = null;
 		this.toolTipVisible = false;
 
-		if (this._getContrastColor(this.options.chart.color) == '#FFFFFF') {
+		if (this._getContrastColor(this.options.chart.color) === this.pallet.white) {
+
 			this.palletOffset = 6;
+
 		} else {
+
 			this.palletOffset = 0;
+
 		}
 
 		if (this.data.length > this.dataLimit) {
@@ -64,35 +68,8 @@ class CragPie extends CragCore {
 			this._sortData();
 		}
 
-		if (options != undefined) {
-
-			if (options.chart != undefined) {
-
-				const option = options.chart;
-
-				if (option.title != undefined) {
-					this.options.chart.title = option.title;
-				}
-				if (option.color != undefined && this.pallet.hasOwnProperty(option.color)) {
-					this.options.chart.color = option.color;
-				}
-
-			}
-
-			if (options.pie != undefined) {
-
-				const option = options.pie;
-
-				if (option.gap != undefined && option.gap > -1 && option.gap < 6) {
-					this.options.pie.gap = option.gap * 0.004;
-				}
-				if (option.hole != undefined && option.hole > -1 && option.hole < 100) {
-					this.options.pie.hole = option.hole / 100;
-				}
-
-			}
-
-		}
+		this.options.chart.title = this.validateOption(options?.chart?.title, 'string', this.options.chart.title);
+		if (this._isValidColor(options?.chart?.color)) this.options.chart.color = options.chart.color;
 
 	}
 
@@ -116,28 +93,36 @@ class CragPie extends CragCore {
 
 		this.chart.area.setAttribute('viewBox', '-1 -1 2 2');
 
-		self = this;
+		this.chart.area.onmousemove = () => {
 
-		this.chart.area.addEventListener('mousemove', function() {
-			clearTimeout(self.stoppedMoving);
-			self.stoppedMoving = setTimeout(function() {
-				if (self.stoppedOn != null) {
-					self._showToolTip(self.stoppedOn);
-					self.toolTipVisible = true;
+			clearTimeout(this.stoppedMoving);
+
+			this.stoppedMoving = setTimeout(() => {
+
+				if (this.stoppedOn != null) {
+					this._showToolTip(this.stoppedOn);
+					this.toolTipVisible = true;
 				}
+
 			}, 300);
-			if (self.toolTipVisible) {
-				self.toolTipVisible = false;
-				clearTimeout(self.stoppedMoving);
-				self._hideToolTip(self.stoppedOn);
+
+			if (this.toolTipVisible) {
+
+				this.toolTipVisible = false;
+				clearTimeout(this.stoppedMoving);
+				this._hideToolTip(this.stoppedOn);
+
 			}
-		});
+
+		};
 
 		if (this.options.chart.title != null) {
+
 			this.chart.title = document.createElement('h1');
 			this.chart.title.className = 'cragPieTitleText';
 			this.chart.title.textContent = this.options.chart.title;
 			this.chart.titleArea.appendChild(this.chart.title);
+
 		}
 
 		this.chart.area.setAttribute('class', 'cragPieChart');
@@ -183,16 +168,20 @@ class CragPie extends CragCore {
 			this.chart.title.style.color = this._getContrastColor(this.options.chart.color);
 		}
 
-		this.chartContainer.style.backgroundColor = this.pallet[this.options.chart.color];
+		this.chartContainer.style.backgroundColor = this._resolveColor(this.options.chart.color);
 
-		if (this.options.pie.hole == 0) {
-			this.toolTip.title.style.color = this.pallet[this.options.chart.color];
-			this.toolTip.value.style.color = this.pallet[this.options.chart.color];
-			this.toolTip.label.style.color = this.pallet[this.options.chart.color];
+		if (this.options.pie.hole == '0') {
+
+			this.toolTip.title.style.color = this._resolveColor(this.options.chart.color);
+			this.toolTip.value.style.color = this._resolveColor(this.options.chart.color);
+			this.toolTip.label.style.color = this._resolveColor(this.options.chart.color);
+
 		} else {
+
 			this.toolTip.title.style.color = this._getContrastColor(this.options.chart.color);
 			this.toolTip.value.style.color = this._getContrastColor(this.options.chart.color);
 			this.toolTip.label.style.color = this._getContrastColor(this.options.chart.color);
+
 		}
 
 		for (const [_, elements] of Object.entries(this.chart.elements)) {
@@ -201,7 +190,7 @@ class CragPie extends CragCore {
 			elements.key.label.style.opacity = 1;
 
 			elements.key.key.style.top = (28 * _) + (this.chart.leftKey.offsetHeight / 2 - ((28 * ObjectLength(this.chart.elements)) / 2)) + 'px';
-			elements.key.key.style.opacity = 1;
+			elements.key.key.style.opacity = '1';
 
 			if (elements.key.key.offsetWidth > maxKeyLen) {
 				maxKeyLen = elements.key.key.offsetWidth;
@@ -222,8 +211,10 @@ class CragPie extends CragCore {
 		// setTimeout(function() {
 
 		for (const [_, element] of Object.entries(this.chart.elements)) {
+
 			element.wedge.setAttribute('fill', this._getColorByMode('multi', parseInt(_) + this.palletOffset));
-			element.wedge.setAttribute('stroke',  this.pallet[this.options.chart.color]);
+			element.wedge.setAttribute('stroke',  this._resolveColor(this.options.chart.color));
+
 			element.key.marker.style.opacity = 1;
 
 			element.key.marker.style.backgroundColor = this._getColorByMode('multi', parseInt(_) + this.palletOffset);
@@ -241,12 +232,12 @@ class CragPie extends CragCore {
 			element.label.style.top = coords.y + (chartAreaHeight / 2) - (element.label.offsetHeight / 2) +  'px';
 			element.label.style.left = coords.x + (chartAreaWidth / 2) - (element.label.offsetWidth / 2) +  'px';
 
-			element.label.style.color = this.pallet[this.options.chart.color];
+			element.label.style.color = this._resolveColor(this.options.chart.color);
 
 			if (element.percentage < 2) {
-				element.label.style.opacity = 0;
+				element.label.style.opacity = '0';
 			} else {
-				element.label.style.opacity = 1;
+				element.label.style.opacity = '1';
 			}
 
 		}
@@ -325,11 +316,11 @@ class CragPie extends CragCore {
 
 				setTimeout(function() {
 					this._animateSector(360, 360, degrees.start, degrees.end, wedge, this.animationSpeed, this.options.pie.hole, 1);
-				}.bind(this), 50)
+				}.bind(this), 50);
 
-				key.key.style.opacity = 0;
+				key.key.style.opacity = '0';
 
-				label.style.opacity = 0;
+				label.style.opacity = '0';
 
 				setTimeout(function() {
 					wedge.remove();
@@ -369,8 +360,8 @@ class CragPie extends CragCore {
 		let angleInRadians = (angleInDegrees) * Math.PI / 180.0;
 
 		return {
-			x: 0 + (radius * Math.cos(angleInRadians)),
-			y: 0 + (radius * Math.sin(angleInRadians))
+			x: (radius * Math.cos(angleInRadians)),
+			y: (radius * Math.sin(angleInRadians))
 		};
 	}
 
@@ -402,10 +393,10 @@ class CragPie extends CragCore {
 
 		let self = this;
 
-		startNew = startNew - 90;
-		endNew = endNew - 90;
-		startCurrent = startCurrent - 90;
-		endCurrent = endCurrent - 90;
+		startNew -= 90;
+		endNew -= 90;
+		startCurrent -= 90;
+		endCurrent -= 90;
 
 		let startTime = performance.now();
 
@@ -432,8 +423,8 @@ class CragPie extends CragCore {
 		const label = document.createElement('span');
 
 		label.classList.add('cragPieLabel');
-		label.style.opacity = 0;
-		label.textContent = 0;
+		label.style.opacity = '0';
+		label.textContent = '0';
 
 		label.style.top =  label.offsetHeight / 2 +  'px';
 		label.style.left = (this.chart.labelArea.offsetWidth / 2) - (label.offsetWidth / 2) +  'px';
@@ -482,20 +473,20 @@ class CragPie extends CragCore {
 
 		for (const [index, element] of Object.entries(this.chart.elements)) {
 
-			element.wedge.style.opacity = 0.3;
-			element.key.key.style.opacity = 0.1;
-			element.label.style.opacity = 0;
+			element.wedge.style.opacity = '0.3';
+			element.key.key.style.opacity = '0.1';
+			element.label.style.opacity = '0';
 
 			if (index == i) {
 
-				element.key.key.style.opacity = 1;
-				element.wedge.style.opacity = 0.8;
-				element.label.style.opacity = 0;
+				element.key.key.style.opacity = '1';
+				element.wedge.style.opacity = '0.8';
+				element.label.style.opacity = '0';
 
 				this.toolTip.title.textContent = element.name;
-				this.toolTip.label.textContent = element.percentage.toFixed(2) + '%';;
+				this.toolTip.label.textContent = element.percentage.toFixed(2) + '%';
 				this.toolTip.value.textContent = element.text;
-				this.toolTip.container.style.opacity = 1;
+				this.toolTip.container.style.opacity = '1';
 
 				this.chart.area.appendChild(element.wedge);
 
@@ -503,9 +494,9 @@ class CragPie extends CragCore {
 
 				setTimeout(function() {
 					element.wedge.classList.add('cragPieWedgeHover');
-					if (this.options.pie.hole == 0) {
-						element.wedge.style.transform = 'scale(1.05)';
-					}
+
+					if (this.options.pie.hole == 0) element.wedge.style.transform = 'scale(1.05)';
+
 				}.bind(this), 0);
 
 			}
@@ -520,22 +511,25 @@ class CragPie extends CragCore {
 
 		for (const [index, element] of Object.entries(this.chart.elements)) {
 
-			element.wedge.style.opacity = 1;
-			element.key.key.style.opacity = 1;
+			element.wedge.style.opacity = '1';
+			element.key.key.style.opacity = '1';
 
 			if (element.percentage < 2) {
-				element.label.style.opacity = 0;
+				element.label.style.opacity = '0';
 			} else {
-				element.label.style.opacity = 1;
+				element.label.style.opacity = '1';
 			}
 
 			if (index == i) {
+
 				element.wedge.classList.remove('cragPieWedgeHover');
-				if (this.options.pie.hole == 0) {
-					element.wedge.style.transform = 'scale(1)';
-				}
+
+				if (this.options.pie.hole == 0) element.wedge.style.transform = 'scale(1)';
+
 				element.label.style.background = '';
+
 				this._animateSector(element.degrees.start, element.degrees.end, 0.001, 360, element.wedge, this.animationSpeed / 2, this.options.pie.hole, 1);
+
 			}
 
 		}
@@ -615,15 +609,21 @@ class CragPie extends CragCore {
 	 * @param {any} value
 	 */
 	set color(value) {
-		if (this.pallet.hasOwnProperty(value)) {
-			this.options.chart.color = value;
-			if (this._getContrastColor(value) == '#FFFFFF') {
-				this.palletOffset = 6;
-			} else {
-				this.palletOffset = 0;
-			}
-			this.draw();
+
+		if (this._isValidColor(value)) this.options.chart.color = value;
+
+		if (this._getContrastColor(this.options.chart.color) === this.pallet.white) {
+
+			this.palletOffset = 6;
+
+		} else {
+
+			this.palletOffset = 0;
+
 		}
+
+		this.draw();
+
 	}
 
 }
