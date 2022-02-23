@@ -7,7 +7,7 @@ class CragLoader {
 			css: 'crag.charts.core.0.0.2.css'
 		},
 		bar: {
-			js: 'crag.column.1.0.1.js',
+			js: 'crag.column.1.0.2.js',
 			css: 'crag.column.1.0.1.css'
 		},
 		progress: {
