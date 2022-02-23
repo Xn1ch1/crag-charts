@@ -2373,11 +2373,6 @@ class Line extends CragCore {
 
 		}
 
-		/**
-		 * Set new value to null where new title is blank
-		 */
-		this.chart.options.chart.title = value === '' ? null : value;
-
 	}
 
 }
