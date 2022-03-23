@@ -13,7 +13,8 @@ class CragPie extends CragCore {
 			pie: {
 				gap: 0.008,
 				hole: 0,
-				highToLow: true
+				highToLow: true,
+				palletOffset: 0
 			},
 			key: {
 				show: true,
@@ -43,7 +44,7 @@ class CragPie extends CragCore {
 		};
 
 		this.dataLimit = 12;
-		this.animationSpeed = 500;
+		this.animationSpeed = 400;
 
 		this.keyHoverActive = false;
 		this.keyHoverDelay = null;
@@ -67,12 +68,12 @@ class CragPie extends CragCore {
 
 		this.options.chart.title = this.validateOption(options?.chart?.title, 'string', this.options.chart.title);
 		if (this._isValidColor(options?.chart?.color)) this.options.chart.color = options.chart.color;
+
 		this.options.pie.hole = this.validateOption(options?.pie?.hole, 'number', this.options.pie.hole);
+		this.options.pie.palletOffset = this.validateOption(options?.pie?.palletOffset, 'number', this.options.pie.palletOffset);
 		this.options.pie.highToLow = this.validateOption(options?.pie?.highToLow, 'boolean', this.options.pie.highToLow);
 
-		if (this.options.pie.highToLow) {
-			this._sortData();
-		}
+		if (this.options.pie.highToLow) this._sortData();
 
 	}
 
@@ -215,12 +216,12 @@ class CragPie extends CragCore {
 
 		for (const [_, element] of Object.entries(this.chart.elements)) {
 
-			element.wedge.setAttribute('fill', this._getColorByMode('multi', parseInt(_) + this.palletOffset));
+			element.wedge.setAttribute('fill', this._getColorByMode('multi', parseInt(_) + this.options.pie.palletOffset));
 			element.wedge.setAttribute('stroke',  this._resolveColor(this.options.chart.color));
 
 			element.key.marker.style.opacity = 1;
 
-			element.key.marker.style.backgroundColor = this._getColorByMode('multi', parseInt(_) + this.palletOffset);
+			element.key.marker.style.backgroundColor = this._getColorByMode('multi', parseInt(_) + this.options.pie.palletOffset);
 
 			this._animateSector(element.degrees.start, element.degrees.end, element.degrees.oldStart, element.degrees.oldEnd, element.wedge, this.animationSpeed, this.options.pie.hole, 1);
 
@@ -430,7 +431,7 @@ class CragPie extends CragCore {
 		label.textContent = '0';
 
 		label.style.top =  label.offsetHeight / 2 +  'px';
-		label.style.left = (this.chart.labelArea.offsetWidth / 2) - (label.offsetWidth / 2) +  'px';
+		label.style.left = (this.chart.labelArea.offsetWidth / 2) + (label.offsetWidth / 2) +  'px';
 
 		this.chart.labelArea.appendChild(label);
 
@@ -617,11 +618,11 @@ class CragPie extends CragCore {
 
 		if (this._getContrastColor(this.options.chart.color) === this.pallet.white) {
 
-			this.palletOffset = 6;
+			this.options.pie.palletOffset = 6;
 
 		} else {
 
-			this.palletOffset = 0;
+			this.options.pie.palletOffset = 0;
 
 		}
 

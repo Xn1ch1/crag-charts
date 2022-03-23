@@ -3,11 +3,11 @@ class CragLoader {
 	defaultPath = 'https://combinatronics.com/Xn1ch1/Crag-Charts/main/crag/';
 	resources = {
 		core: {
-			js: 'crag.charts.core.0.2.1.js',
+			js: 'crag.charts.core.0.2.2.js',
 			css: 'crag.charts.core.0.0.2.css'
 		},
 		bar: {
-			js: 'crag.column.1.0.2.js',
+			js: 'crag.column.1.0.3.js',
 			css: 'crag.column.1.0.1.css'
 		},
 		progress: {
@@ -19,12 +19,12 @@ class CragLoader {
 			css: 'crag.lines.1.0.2.css'
 		},
 		combo: {
-			js: 'crag.combo.1.0.1.js',
+			js: 'crag.combo.1.1.0.js',
 			css: 'crag.combo.1.0.1.css'
 		},
 		pie: {
-			js: 'crag.pie.0.0.1.js',
-			css: 'crag.pie.0.0.1.css'
+			js: 'crag.pie.0.1.0js',
+			css: 'crag.pie.0.1.0.css'
 		}
 	};
 

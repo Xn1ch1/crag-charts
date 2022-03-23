@@ -540,7 +540,7 @@ Element.prototype.insertChildAtIndex = function(child, index) {
 
 	}
 
-}
+};
 
 class vAxisLines extends CragCore {
 
@@ -555,14 +555,14 @@ class vAxisLines extends CragCore {
 	axis = 'primary';
 
 	/** @type {{VAxisLine}} */
-	lines = {}
+	lines = {};
 
 	scale = {
 		min: 0,
 		max: 0,
 		steps: 0,
 		maj: 0,
-	}
+	};
 
 	constructor(chart, axis = 'primary') {
 		super();
@@ -1511,7 +1511,7 @@ class Columns extends CragCore {
 	/** @type {HTMLDivElement} */
 	labelArea = null;
 
-	columns = {}
+	columns = {};
 
 	chart = null;
 
@@ -1734,6 +1734,15 @@ class Columns extends CragCore {
 				column.color = this._getColorByMode('match', this.chart.options.columns.color);
 
 			}
+
+		}
+
+		if (this.chart.options.columns.specificBarColor !== null) {
+
+			const bar = this.chart.options.columns.specificBarColor[0];
+			const color = this.chart.options.columns.specificBarColor[1];
+
+			this.columns[bar].color = this._getColorByMode('match', color);
 
 		}
 
