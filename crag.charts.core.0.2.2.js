@@ -1739,10 +1739,10 @@ class Columns extends CragCore {
 
 		if (this.chart.options.columns.specificBarColor !== null) {
 
-			const bar = this.chart.options.columns.specificBarColor[0];
+			const bar = Number(this.chart.options.columns.specificBarColor[0]);
 			const color = this.chart.options.columns.specificBarColor[1];
 
-			this.columns[bar].color = this._getColorByMode('match', color);
+			if (bar in this.columns) this.columns[bar].color = this._getColorByMode('match', color);
 
 		}
 
@@ -1831,6 +1831,15 @@ class Columns extends CragCore {
 
 		this.chart.options.columns.labels.position = value;
 		this._positionLabels();
+		this._colorLabels();
+
+	}
+
+	set specificColumnColor(value) {
+
+		this.chart.options.columns.specificBarColor = value;
+
+		this._applyColumnColors();
 		this._colorLabels();
 
 	}
