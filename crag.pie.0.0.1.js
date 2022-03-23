@@ -64,13 +64,15 @@ class CragPie extends CragCore {
 			this.data = this.data.slice(0, this.dataLimit);
 		}
 
-		if (this.options.pie.highToLow) {
-			this._sortData();
-		}
 
 		this.options.chart.title = this.validateOption(options?.chart?.title, 'string', this.options.chart.title);
 		if (this._isValidColor(options?.chart?.color)) this.options.chart.color = options.chart.color;
 		this.options.pie.hole = this.validateOption(options?.pie?.hole, 'number', this.options.pie.hole);
+		this.options.pie.highToLow = this.validateOption(options?.pie?.highToLow, 'boolean', this.options.pie.highToLow);
+
+		if (this.options.pie.highToLow) {
+			this._sortData();
+		}
 
 	}
 
