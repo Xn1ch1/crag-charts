@@ -70,6 +70,7 @@ class CragPie extends CragCore {
 
 		this.options.chart.title = this.validateOption(options?.chart?.title, 'string', this.options.chart.title);
 		if (this._isValidColor(options?.chart?.color)) this.options.chart.color = options.chart.color;
+		this.options.pie.hole = this.validateOption(options?.pie?.hole, 'number', this.options.pie.hole);
 
 	}
 
