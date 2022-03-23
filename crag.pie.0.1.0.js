@@ -104,17 +104,20 @@ class CragPie extends CragCore {
 			this.stoppedMoving = setTimeout(() => {
 
 				if (this.stoppedOn != null) {
+
 					this._showToolTip(this.stoppedOn);
 					this.toolTipVisible = true;
+
 				}
 
-			}, 300);
+			}, 400);
 
 			if (this.toolTipVisible) {
 
-				this.toolTipVisible = false;
 				clearTimeout(this.stoppedMoving);
+
 				this._hideToolTip(this.stoppedOn);
+				this.toolTipVisible = false;
 
 			}
 
@@ -223,7 +226,15 @@ class CragPie extends CragCore {
 
 			element.key.marker.style.backgroundColor = this._getColorByMode('multi', parseInt(_) + this.options.pie.palletOffset);
 
-			this._animateSector(element.degrees.start, element.degrees.end, element.degrees.oldStart, element.degrees.oldEnd, element.wedge, this.animationSpeed, this.options.pie.hole, 1);
+			this._animateSector(
+				element.degrees.start,
+				element.degrees.end,
+				element.degrees.oldStart,
+				element.degrees.oldEnd,
+				element.wedge,
+				this.animationSpeed,
+				this.options.pie.hole,
+				1);
 
 			element.degrees.oldEnd = element.degrees.end;
 			element.degrees.oldStart = element.degrees.start;
@@ -494,12 +505,21 @@ class CragPie extends CragCore {
 
 				this.chart.area.appendChild(element.wedge);
 
-				this._animateSector(0.001, 360, element.degrees.oldStart, element.degrees.oldEnd, element.wedge, this.animationSpeed / 2, this.options.pie.hole, 1);
+				this._animateSector(
+					0.001,
+					360,
+					element.degrees.oldStart,
+					element.degrees.oldEnd,
+					element.wedge,
+					this.animationSpeed / 2,
+					0,
+					1);
 
 				setTimeout(function() {
+
 					element.wedge.classList.add('cragPieWedgeHover');
 
-					if (this.options.pie.hole == 0) element.wedge.style.transform = 'scale(1.05)';
+					if (this.options.pie.hole === 0) element.wedge.style.transform = 'scale(1.05)';
 
 				}.bind(this), 0);
 
