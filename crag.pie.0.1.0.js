@@ -29,12 +29,10 @@ class CragPie extends CragCore {
 			parent: null,
 			container: null,
 			area: null,
-			titleArea: null,
 			labelArea: null,
 			leftKey: null,
 			rightKey: null,
 			bottomKey: null,
-			title: null,
 			elements: {}
 		};
 
@@ -48,8 +46,6 @@ class CragPie extends CragCore {
 		this.dataLimit = 12;
 		this.animationSpeed = 400;
 
-		this.keyHoverActive = false;
-		this.keyHoverDelay = null;
 		this.stoppedOn = null;
 		this.showingWedge = null;
 		this.toolTipVisible = false;
@@ -69,24 +65,63 @@ class CragPie extends CragCore {
 
 	create(e) {
 
-		if (e == undefined) return;
+		if (e === undefined) return;
 
 		this.chart.parent = document.getElementById(e);
-
 		this.chart.container = document.createElement('div');
 		this.chart.area = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+
 		this.chart.labelArea = document.createElement('div');
 		this.chart.leftKey = document.createElement('div');
 		this.chart.rightKey = document.createElement('div');
 		this.chart.bottomKey = document.createElement('div');
+
 		this.toolTip.container = document.createElement('div');
 		this.toolTip.title = document.createElement('h6');
 		this.toolTip.value = document.createElement('h6');
 		this.toolTip.label = document.createElement('h6');
 
 		this.chart.area.setAttribute('viewBox', '-1 -1 2 2');
+		this.chart.area.setAttribute('class', 'cragPieChart');
 
-		// Hide Tooltip on mousemove in document
+		this.chart.container.className = 'cragPieChartContainer';
+		this.chart.labelArea.className = 'cragPieLabels';
+		this.chart.leftKey.className = 'cragPieLeftKey';
+		this.chart.rightKey.className = 'cragPieRightKey';
+		this.chart.bottomKey.className = 'cragPieBottomKey';
+		this.toolTip.container.className = 'cragPieToolTip';
+		this.toolTip.title.className = 'cragPieToolTipTitle';
+		this.toolTip.value.className = 'cragPieToolTipValue';
+		this.toolTip.label.className = 'cragPieToolTipLabel';
+
+		this.chart.parent.appendChild(this.chart.container);
+		this.chart.container.appendChild(this.chart.labelArea);
+		this.chart.container.appendChild(this.chart.area);
+		this.chart.container.appendChild(this.chart.leftKey);
+		this.chart.container.appendChild(this.chart.rightKey);
+		this.chart.container.appendChild(this.chart.bottomKey);
+
+		this.chart.labelArea.appendChild(this.toolTip.container);
+		this.toolTip.container.appendChild(this.toolTip.title);
+		this.toolTip.container.appendChild(this.toolTip.label);
+		this.toolTip.container.appendChild(this.toolTip.value);
+
+		this.title = new Title(this);
+
+		this._applyListeners();
+		this._draw();
+
+		return this;
+
+	}
+
+	/**
+	 * Any default listeners to be applied here
+	 * @private
+	 */
+	_applyListeners() {
+
+		window.addEventListener('resize', () => this._draw());
 		document.addEventListener('mousemove', () => {
 
 			if (this.showingWedge !== null) {
@@ -112,38 +147,9 @@ class CragPie extends CragCore {
 
 		});
 
-		this.chart.area.setAttribute('class', 'cragPieChart');
-		this.chart.container.className = 'cragPieChartContainer';
-		this.chart.labelArea.className = 'cragPieLabels';
-		this.chart.leftKey.className = 'cragPieLeftKey';
-		this.chart.rightKey.className = 'cragPieRightKey';
-		this.chart.bottomKey.className = 'cragPieBottomKey';
-		this.toolTip.container.className = 'cragPieToolTip';
-		this.toolTip.title.className = 'cragPieToolTipTitle';
-		this.toolTip.value.className = 'cragPieToolTipValue';
-		this.toolTip.label.className = 'cragPieToolTipLabel';
-
-		this.chart.parent.appendChild(this.chart.container);
-		this.chart.container.appendChild(this.chart.labelArea);
-		this.chart.container.appendChild(this.chart.area);
-		this.chart.container.appendChild(this.chart.leftKey);
-		this.chart.container.appendChild(this.chart.rightKey);
-		this.chart.container.appendChild(this.chart.bottomKey);
-
-		this.chart.labelArea.appendChild(this.toolTip.container);
-		this.toolTip.container.appendChild(this.toolTip.title);
-		this.toolTip.container.appendChild(this.toolTip.label);
-		this.toolTip.container.appendChild(this.toolTip.value);
-
-		this.title = new Title(this);
-
-		setTimeout(this.draw.bind(this), 500);
-
-		return this;
-
 	}
 
-	draw() {
+	_draw() {
 
 		this._addRemoveSeriesElems();
 
@@ -153,7 +159,7 @@ class CragPie extends CragCore {
 
 		this.chart.container.style.backgroundColor = this._resolveColor(this.options.chart.color);
 
-		if (this.options.pie.hole == '0') {
+		if (this.options.pie.hole === 0) {
 
 			this.toolTip.title.style.color = this._resolveColor(this.options.chart.color);
 			this.toolTip.value.style.color = this._resolveColor(this.options.chart.color);
@@ -170,7 +176,7 @@ class CragPie extends CragCore {
 		for (const [_, elements] of Object.entries(this.chart.elements)) {
 
 			elements.key.label.textContent = elements.name;
-			elements.key.label.style.opacity = 1;
+			elements.key.label.style.opacity = '1';
 
 			elements.key.key.style.top = (28 * _) + (this.chart.leftKey.offsetHeight / 2 - ((28 * ObjectLength(this.chart.elements)) / 2)) + 'px';
 			elements.key.key.style.opacity = '1';
@@ -191,16 +197,14 @@ class CragPie extends CragCore {
 
 		const radius = Math.min(chartAreaHeight, chartAreaWidth);
 
-		// setTimeout(function() {
+		for (const [index, element] of Object.entries(this.chart.elements)) {
 
-		for (const [_, element] of Object.entries(this.chart.elements)) {
-
-			element.wedge.setAttribute('fill', this._getColorByMode('multi', parseInt(_) + this.options.pie.palletOffset));
+			element.wedge.setAttribute('fill', this._getColorByMode('multi', parseInt(index) + this.options.pie.palletOffset));
 			element.wedge.setAttribute('stroke',  this._resolveColor(this.options.chart.color));
 
 			element.key.marker.style.opacity = 1;
 
-			element.key.marker.style.backgroundColor = this._getColorByMode('multi', parseInt(_) + this.options.pie.palletOffset);
+			element.key.marker.style.backgroundColor = this._getColorByMode('multi', parseInt(index) + this.options.pie.palletOffset);
 
 			this._animateSector(
 				element.degrees.start,
@@ -232,8 +236,6 @@ class CragPie extends CragCore {
 			}
 
 		}
-
-		// }.bind(this), 0);
 
 	}
 
@@ -276,21 +278,6 @@ class CragPie extends CragCore {
 				});
 				wedge.addEventListener('mouseout', function() {
 					self.stoppedOn = null;
-				});
-				key.key.addEventListener('mouseover', function() {
-					clearTimeout(self.keyHoverDelay);
-					self.keyHoverActive = false;
-					self.keyHoverDelay = setTimeout(function() {
-						self.keyHoverActive = true;
-						self._showToolTip(index);
-					}, 250);
-				});
-				key.key.addEventListener('mouseout', function() {
-					if (self.keyHoverActive) {
-						self._hideToolTip(index);
-					}
-					clearTimeout(self.keyHoverDelay);
-					self.keyHoverActive = false;
 				});
 
 			}
@@ -492,14 +479,14 @@ class CragPie extends CragCore {
 
 				this.showingWedge = i;
 
-				setTimeout(function() {
+				setTimeout(() => {
 
 					element.wedge.classList.add('cragPieWedgeHover');
 
-					if (this.options.pie.hole === 0) element.wedge.style.transform = 'scale(1.05)';
+					element.wedge.style.transform = 'scale(1.05)';
 
 
-				}.bind(this), 0);
+				}, 0);
 
 			}
 
@@ -528,7 +515,7 @@ class CragPie extends CragCore {
 
 				element.wedge.classList.remove('cragPieWedgeHover');
 
-				if (this.options.pie.hole == 0) element.wedge.style.transform = 'scale(1)';
+				element.wedge.style.transform = 'scale(1)';
 
 				element.label.style.background = '';
 
@@ -567,7 +554,7 @@ class CragPie extends CragCore {
 			this._sortData();
 		}
 
-		this.draw();
+		this._draw();
 
 	}
 
@@ -600,7 +587,7 @@ class CragPie extends CragCore {
 
 		}
 
-		this.draw();
+		this._draw();
 
 	}
 
