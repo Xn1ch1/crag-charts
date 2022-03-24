@@ -8,24 +8,26 @@ class CragPie extends CragCore {
 		this.options = {
 			chart: {
 				title: null,
-				color: 'white'
+				color: 'white',
+			},
+			wedges: {
+				colors: null,
 			},
 			pie: {
 				gap: 0.008,
 				hole: 0,
 				highToLow: true,
-				palletOffset: 0
+				palletOffset: 0,
 			},
 			key: {
 				show: true,
-				position: 'right'
+				position: 'right',
 			}
 		};
 
-		this.parent = null;
-		this.chartContainer = null;
-
 		this.chart = {
+			parent: null,
+			container: null,
 			area: null,
 			titleArea: null,
 			labelArea: null,
@@ -49,22 +51,8 @@ class CragPie extends CragCore {
 		this.keyHoverActive = false;
 		this.keyHoverDelay = null;
 		this.stoppedOn = null;
+		this.showingWedge = null;
 		this.toolTipVisible = false;
-
-		if (this._getContrastColor(this.options.chart.color) === this.pallet.white) {
-
-			this.palletOffset = 6;
-
-		} else {
-
-			this.palletOffset = 0;
-
-		}
-
-		if (this.data.length > this.dataLimit) {
-			this.data = this.data.slice(0, this.dataLimit);
-		}
-
 
 		this.options.chart.title = this.validateOption(options?.chart?.title, 'string', this.options.chart.title);
 		if (this._isValidColor(options?.chart?.color)) this.options.chart.color = options.chart.color;
@@ -73,7 +61,9 @@ class CragPie extends CragCore {
 		this.options.pie.palletOffset = this.validateOption(options?.pie?.palletOffset, 'number', this.options.pie.palletOffset);
 		this.options.pie.highToLow = this.validateOption(options?.pie?.highToLow, 'boolean', this.options.pie.highToLow);
 
+		// Apply data sort before truncating
 		if (this.options.pie.highToLow) this._sortData();
+		if (this.data.length > this.dataLimit) this.data = this.data.slice(0, this.dataLimit);
 
 	}
 
@@ -81,11 +71,10 @@ class CragPie extends CragCore {
 
 		if (e == undefined) return;
 
-		this.parent = document.getElementById(e);
+		this.chart.parent = document.getElementById(e);
 
-		this.chartContainer = document.createElement('div');
+		this.chart.container = document.createElement('div');
 		this.chart.area = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-		this.chart.titleArea = document.createElement('div');
 		this.chart.labelArea = document.createElement('div');
 		this.chart.leftKey = document.createElement('div');
 		this.chart.rightKey = document.createElement('div');
@@ -97,7 +86,16 @@ class CragPie extends CragCore {
 
 		this.chart.area.setAttribute('viewBox', '-1 -1 2 2');
 
-		this.chart.area.onmousemove = () => {
+		// Hide Tooltip on mousemove in document
+		document.addEventListener('mousemove', () => {
+
+			if (this.showingWedge !== null) {
+
+				clearTimeout(this.stoppedMoving);
+				this._hideToolTip(this.showingWedge);
+				this.toolTipVisible = false;
+
+			}
 
 			clearTimeout(this.stoppedMoving);
 
@@ -112,29 +110,10 @@ class CragPie extends CragCore {
 
 			}, 400);
 
-			if (this.toolTipVisible) {
-
-				clearTimeout(this.stoppedMoving);
-
-				this._hideToolTip(this.stoppedOn);
-				this.toolTipVisible = false;
-
-			}
-
-		};
-
-		if (this.options.chart.title != null) {
-
-			this.chart.title = document.createElement('h1');
-			this.chart.title.className = 'cragPieTitleText';
-			this.chart.title.textContent = this.options.chart.title;
-			this.chart.titleArea.appendChild(this.chart.title);
-
-		}
+		});
 
 		this.chart.area.setAttribute('class', 'cragPieChart');
-		this.chartContainer.className = 'cragPieChartContainer';
-		this.chart.titleArea.className = 'cragPieTitle';
+		this.chart.container.className = 'cragPieChartContainer';
 		this.chart.labelArea.className = 'cragPieLabels';
 		this.chart.leftKey.className = 'cragPieLeftKey';
 		this.chart.rightKey.className = 'cragPieRightKey';
@@ -144,18 +123,19 @@ class CragPie extends CragCore {
 		this.toolTip.value.className = 'cragPieToolTipValue';
 		this.toolTip.label.className = 'cragPieToolTipLabel';
 
-		this.parent.appendChild(this.chartContainer);
-		this.chartContainer.appendChild(this.chart.titleArea);
-		this.chartContainer.appendChild(this.chart.labelArea);
-		this.chartContainer.appendChild(this.chart.area);
-		this.chartContainer.appendChild(this.chart.leftKey);
-		this.chartContainer.appendChild(this.chart.rightKey);
-		this.chartContainer.appendChild(this.chart.bottomKey);
+		this.chart.parent.appendChild(this.chart.container);
+		this.chart.container.appendChild(this.chart.labelArea);
+		this.chart.container.appendChild(this.chart.area);
+		this.chart.container.appendChild(this.chart.leftKey);
+		this.chart.container.appendChild(this.chart.rightKey);
+		this.chart.container.appendChild(this.chart.bottomKey);
 
 		this.chart.labelArea.appendChild(this.toolTip.container);
 		this.toolTip.container.appendChild(this.toolTip.title);
 		this.toolTip.container.appendChild(this.toolTip.label);
 		this.toolTip.container.appendChild(this.toolTip.value);
+
+		this.title = new Title(this);
 
 		setTimeout(this.draw.bind(this), 500);
 
@@ -171,11 +151,7 @@ class CragPie extends CragCore {
 		let maxLabelLen = 0;
 		let cumulativeValue = 0;
 
-		if (this.options.chart.title != null) {
-			this.chart.title.style.color = this._getContrastColor(this.options.chart.color);
-		}
-
-		this.chartContainer.style.backgroundColor = this._resolveColor(this.options.chart.color);
+		this.chart.container.style.backgroundColor = this._resolveColor(this.options.chart.color);
 
 		if (this.options.pie.hole == '0') {
 
@@ -210,9 +186,9 @@ class CragPie extends CragCore {
 		}
 
 		this.chart.rightKey.style.width = maxKeyLen + 8 + 'px';
+		let chartAreaWidth = this.chart.container.offsetWidth - maxKeyLen - 16 - this.chart.leftKey.offsetWidth;
+		let chartAreaHeight = this.chart.container.offsetHeight - this.title.area.offsetHeight - this.chart.bottomKey.offsetHeight;
 
-		let chartAreaWidth = this.chartContainer.offsetWidth - maxKeyLen - 16 - this.chart.leftKey.offsetWidth;
-		let chartAreaHeight = this.chartContainer.offsetHeight - this.chart.titleArea.offsetHeight - this.chart.bottomKey.offsetHeight;
 		const radius = Math.min(chartAreaHeight, chartAreaWidth);
 
 		// setTimeout(function() {
@@ -301,7 +277,6 @@ class CragPie extends CragCore {
 				wedge.addEventListener('mouseout', function() {
 					self.stoppedOn = null;
 				});
-
 				key.key.addEventListener('mouseover', function() {
 					clearTimeout(self.keyHoverDelay);
 					self.keyHoverActive = false;
@@ -515,11 +490,14 @@ class CragPie extends CragCore {
 					0,
 					1);
 
+				this.showingWedge = i;
+
 				setTimeout(function() {
 
 					element.wedge.classList.add('cragPieWedgeHover');
 
 					if (this.options.pie.hole === 0) element.wedge.style.transform = 'scale(1.05)';
+
 
 				}.bind(this), 0);
 
@@ -532,6 +510,8 @@ class CragPie extends CragCore {
 	_hideToolTip(i) {
 
 		this.toolTip.container.style.opacity = 0;
+
+		this.showingWedge = null;
 
 		for (const [index, element] of Object.entries(this.chart.elements)) {
 
@@ -600,32 +580,6 @@ class CragPie extends CragCore {
 		}
 
 		return value;
-
-	}
-
-	/**
-	 * @param {any} value
-	 */
-	set title(value) {
-
-		let titleExists = true;
-
-		if (this.chart.title == null) {
-
-			titleExists = false;
-			this.chart.title = document.createElement('h1');
-			this.chart.title.className = 'cragComboTitleText';
-			this.chart.titleArea.appendChild(this.chart.title);
-
-			this.options.chart.title = value;
-
-		}
-
-		this.title.textContent = this.options.chart.title;
-
-		if (!titleExists) {
-			this.draw();
-		}
 
 	}
 

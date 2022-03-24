@@ -7,44 +7,51 @@
 	width: 100%;
 	overflow: hidden;
 	transition: background-color 0.5s;
+	grid-template-areas:
+		". cragTitle ."
+		"cragVAxisPrimary cragPieChartArea cragVAxisSecondary"
+		". cragHAxis .";
 }
-.cragPieTitle { grid-area: 1 / 1 / 2 / 4; }
-.cragPieLeftKey { grid-area: 2 / 1 / 4 / 2; }
-.cragPieRightKey { grid-area: 2 / 3 / 4 / 4; }
-.cragPieBottomKey { grid-area: 3 / 2 / 4 / 3; }
-.cragPieChart { grid-area: 2 / 2 / 3 / 3; }
-.cragPieLabels {
-	grid-area: 2 / 2 / 3 / 3;
+.cragPieChartArea {
+	grid-area: cragPieChartArea;
 	position: relative;
-	pointer-events: none;
-}
-
-.cragPieBottomKey {
-	padding-top: 8px;
-	transition: width 0.66s ease-out;
 }
 .cragPieLeftKey {
+	grid-area: cragVAxisPrimary;
+	position: relative;
 	padding-right: 8px;
 	transition: width 0.66s ease-out;
 }
 .cragPieRightKey {
-	padding-left: 8px;
+	grid-area: cragVAxisSecondary;
 	position: relative;
+	padding-left: 8px;
+	transition: width 0.66s ease-out;
+}
+.cragPieBottomKey {
+	grid-area: cragHAxis;
+	position: relative;
+	padding-top: 8px;
 	transition: width 0.66s ease-out;
 }
 .cragPieChart {
+	grid-area: cragPieChartArea;
 	overflow: visible;
 	transition: width 0.66s ease-out;
 	width: 100%;
 	height: 100%;
+}
+.cragPieLabels {
+	grid-area: cragPieChartArea;
+	position: relative;
+	pointer-events: none;
 }
 .cragPieWedge {
 	transition: opacity 0.5s, transform 0.5s, fill 0.5s, stroke 0.5s;
 	-webkit-transition: opacity 0.5s, transform 0.5s, fill 0.5s, stroke 0.5s;
 	cursor: pointer;
 }
-.cragPieWedgeHover {
-	/* transform: scale(1.05); */
+.cragPieWedgeHover {=
 	stroke-width: 0 !important;
 	opacity: 0.9;
 }
