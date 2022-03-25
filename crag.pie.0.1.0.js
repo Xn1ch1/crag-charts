@@ -1,335 +1,98 @@
-class CragPie extends CragCore {
+class Slice extends CragCore {
 
-	constructor (data, options) {
+	chart = null;
+
+	slice = null;
+	label = null;
+
+	name = null;
+	value = 0;
+	percentage = 0;
+
+	index = 0;
+
+	degrees = {
+		total: 0,
+		start: 0,
+		end: 0,
+		oldStart: 360,
+		oldEnd: 360
+	}
+
+	constructor(chart, index, name, value, percentage) {
 		super();
 
-		this.data = data;
+		this.index = index;
+		this.chart = chart;
+		this.name = name;
+		this.value = value;
+		this.percentage = percentage;
 
-		this.options = {
-			chart: {
-				title: null,
-				color: 'white',
-			},
-			wedges: {
-				colors: null,
-			},
-			pie: {
-				gap: 0.008,
-				hole: 0,
-				highToLow: true,
-				palletOffset: 0,
-			},
-			key: {
-				show: true,
-				position: 'right',
-			}
-		};
-
-		this.chart = {
-			parent: null,
-			container: null,
-			area: null,
-			labelArea: null,
-			leftKey: null,
-			rightKey: null,
-			bottomKey: null,
-			elements: {}
-		};
-
-		this.toolTip = {
-			container: null,
-			title: null,
-			label: null,
-			value: null
-		};
-
-		this.dataLimit = 12;
-		this.animationSpeed = 400;
-
-		this.stoppedOn = null;
-		this.showingWedge = null;
-		this.toolTipVisible = false;
-
-		this.options.chart.title = this.validateOption(options?.chart?.title, 'string', this.options.chart.title);
-		if (this._isValidColor(options?.chart?.color)) this.options.chart.color = options.chart.color;
-
-		this.options.pie.hole = this.validateOption(options?.pie?.hole, 'number', this.options.pie.hole);
-		this.options.pie.palletOffset = this.validateOption(options?.pie?.palletOffset, 'number', this.options.pie.palletOffset);
-		this.options.pie.highToLow = this.validateOption(options?.pie?.highToLow, 'boolean', this.options.pie.highToLow);
-
-		// Apply data sort before truncating
-		if (this.options.pie.highToLow) this._sortData();
-		if (this.data.length > this.dataLimit) this.data = this.data.slice(0, this.dataLimit);
+		this._createSlice();
+		this._createLabel()
+		this.colorize();
+		this._addEventListeners();
 
 	}
 
-	create(e) {
+	_createSlice() {
 
-		if (e === undefined) return;
+		this.slice = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+		const arc = this._describeArc(0, 0, this.chart.options.pie.gap, 1);
 
-		this.chart.parent = document.getElementById(e);
-		this.chart.container = document.createElement('div');
-		this.chart.area = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+		this.slice.classList.add('cragPieSlice');
+		this.slice.setAttribute("d", arc);
+		this.slice.setAttribute('stroke-width', this.chart.options.pie.gap);
 
-		this.chart.labelArea = document.createElement('div');
-		this.chart.leftKey = document.createElement('div');
-		this.chart.rightKey = document.createElement('div');
-		this.chart.bottomKey = document.createElement('div');
-
-		this.toolTip.container = document.createElement('div');
-		this.toolTip.title = document.createElement('h6');
-		this.toolTip.value = document.createElement('h6');
-		this.toolTip.label = document.createElement('h6');
-
-		this.chart.area.setAttribute('viewBox', '-1 -1 2 2');
-		this.chart.area.setAttribute('class', 'cragPieChart');
-
-		this.chart.container.className = 'cragPieChartContainer';
-		this.chart.labelArea.className = 'cragPieLabels';
-		this.chart.leftKey.className = 'cragPieLeftKey';
-		this.chart.rightKey.className = 'cragPieRightKey';
-		this.chart.bottomKey.className = 'cragPieBottomKey';
-		this.toolTip.container.className = 'cragPieToolTip';
-		this.toolTip.title.className = 'cragPieToolTipTitle';
-		this.toolTip.value.className = 'cragPieToolTipValue';
-		this.toolTip.label.className = 'cragPieToolTipLabel';
-
-		this.chart.parent.appendChild(this.chart.container);
-		this.chart.container.appendChild(this.chart.labelArea);
-		this.chart.container.appendChild(this.chart.area);
-		this.chart.container.appendChild(this.chart.leftKey);
-		this.chart.container.appendChild(this.chart.rightKey);
-		this.chart.container.appendChild(this.chart.bottomKey);
-
-		this.chart.labelArea.appendChild(this.toolTip.container);
-		this.toolTip.container.appendChild(this.toolTip.title);
-		this.toolTip.container.appendChild(this.toolTip.label);
-		this.toolTip.container.appendChild(this.toolTip.value);
-
-		this.title = new Title(this);
-
-		this._applyListeners();
-		this._draw();
-
-		return this;
+		this.chart.chart.area.insertChildAtIndex(this.slice, 0);
 
 	}
 
-	/**
-	 * Any default listeners to be applied here
-	 * @private
-	 */
-	_applyListeners() {
+	_createLabel() {
 
-		window.addEventListener('resize', () => this._draw());
-		document.addEventListener('mousemove', () => {
+		this.label = document.createElement('span');
 
-			if (this.showingWedge !== null) {
+		this.label.classList.add('cragPieLabel');
+		this.label.style.opacity = '0';
+		this.label.textContent = '0';
 
-				clearTimeout(this.stoppedMoving);
-				this._hideToolTip(this.showingWedge);
-				this.toolTipVisible = false;
+		this.label.style.top =  this.label.offsetHeight / 2 +  'px';
+		this.label.style.left = (this.chart.chart.labelArea.offsetWidth / 2) + (this.label.offsetWidth / 2) +  'px';
 
-			}
-
-			clearTimeout(this.stoppedMoving);
-
-			this.stoppedMoving = setTimeout(() => {
-
-				if (this.stoppedOn != null) {
-
-					this._showToolTip(this.stoppedOn);
-					this.toolTipVisible = true;
-
-				}
-
-			}, 400);
-
-		});
+		this.chart.chart.labelArea.appendChild(this.label);
 
 	}
 
-	_draw() {
+	_positionLabel(keyWidth) {
 
-		this._addRemoveSeriesElems();
+		const chartAreaWidth = this.chart.chart.parent.offsetWidth - keyWidth - this.chart.chart.leftKey.offsetWidth;
+		const chartAreaHeight = this.chart.chart.parent.offsetHeight - this.chart.title.area.offsetHeight - (this.chart.chart.bottomKey.offsetHeight / 1.5);
 
-		let maxKeyLen = 0;
-		let maxLabelLen = 0;
-		let cumulativeValue = 0;
+		const radius = Math.min(chartAreaWidth, chartAreaHeight);
 
-		this.chart.container.style.backgroundColor = this._resolveColor(this.options.chart.color);
+		const mid = ((this.degrees.end / 2) + this.degrees.start / 2) - 90;
+		const coords = this._polarToCartesian(mid, (radius / 2) - this.label.offsetWidth);
 
-		if (this.options.pie.hole === 0) {
+		this.label.style.top = coords.y + (chartAreaHeight / 2) - (this.label.offsetHeight / 2) +  'px';
+		this.label.style.left = coords.x + (chartAreaWidth / 2) - (this.label.offsetWidth / 2) +  'px';
 
-			this.toolTip.title.style.color = this._resolveColor(this.options.chart.color);
-			this.toolTip.value.style.color = this._resolveColor(this.options.chart.color);
-			this.toolTip.label.style.color = this._resolveColor(this.options.chart.color);
+		if (this.percentage < 2) {
+
+			this.label.style.opacity = '0';
 
 		} else {
 
-			this.toolTip.title.style.color = this._getContrastColor(this.options.chart.color);
-			this.toolTip.value.style.color = this._getContrastColor(this.options.chart.color);
-			this.toolTip.label.style.color = this._getContrastColor(this.options.chart.color);
-
-		}
-
-		for (const [_, elements] of Object.entries(this.chart.elements)) {
-
-			elements.key.label.textContent = elements.name;
-			elements.key.label.style.opacity = '1';
-
-			elements.key.key.style.top = (28 * _) + (this.chart.leftKey.offsetHeight / 2 - ((28 * ObjectLength(this.chart.elements)) / 2)) + 'px';
-			elements.key.key.style.opacity = '1';
-
-			if (elements.key.key.offsetWidth > maxKeyLen) {
-				maxKeyLen = elements.key.key.offsetWidth;
-			}
-
-			if (elements.label.offsetWidth > maxLabelLen) {
-				maxLabelLen = elements.label.offsetWidth;
-			}
-
-		}
-
-		this.chart.rightKey.style.width = maxKeyLen + 8 + 'px';
-		let chartAreaWidth = this.chart.container.offsetWidth - maxKeyLen - 16 - this.chart.leftKey.offsetWidth;
-		let chartAreaHeight = this.chart.container.offsetHeight - this.title.area.offsetHeight - this.chart.bottomKey.offsetHeight;
-
-		const radius = Math.min(chartAreaHeight, chartAreaWidth);
-
-		for (const [index, element] of Object.entries(this.chart.elements)) {
-
-			element.wedge.setAttribute('fill', this._getColorByMode('multi', parseInt(index) + this.options.pie.palletOffset));
-			element.wedge.setAttribute('stroke',  this._resolveColor(this.options.chart.color));
-
-			element.key.marker.style.opacity = 1;
-
-			element.key.marker.style.backgroundColor = this._getColorByMode('multi', parseInt(index) + this.options.pie.palletOffset);
-
-			this._animateSector(
-				element.degrees.start,
-				element.degrees.end,
-				element.degrees.oldStart,
-				element.degrees.oldEnd,
-				element.wedge,
-				this.animationSpeed,
-				this.options.pie.hole,
-				1);
-
-			element.degrees.oldEnd = element.degrees.end;
-			element.degrees.oldStart = element.degrees.start;
-
-			cumulativeValue += element.val;
-
-			const mid = ((element.degrees.end / 2) + element.degrees.start / 2) - 90;
-			const coords = this._polarToCartesian(mid, (radius / 2) - (maxLabelLen));
-
-			element.label.style.top = coords.y + (chartAreaHeight / 2) - (element.label.offsetHeight / 2) +  'px';
-			element.label.style.left = coords.x + (chartAreaWidth / 2) - (element.label.offsetWidth / 2) +  'px';
-
-			element.label.style.color = this._resolveColor(this.options.chart.color);
-
-			if (element.percentage < 2) {
-				element.label.style.opacity = '0';
-			} else {
-				element.label.style.opacity = '1';
-			}
+			this.label.style.opacity = '1';
 
 		}
 
 	}
 
-	_addRemoveSeriesElems() {
+	_addEventListeners() {
 
-		const total = this.total;
-		const self = this;
-		const sE = ObjectLength(this.chart.elements);
-		const sL = this.data.length;
+		this.slice.onmouseover = () => this._showDetail();
+		this.slice.onmouseout = () => this._hideDetail();
 
-		let sum = 0;
-
-		if (sE < sL) {
-			for (let i = 0; i < sL - sE; i++) {
-
-				const index = i + sE;
-
-				this.chart.elements[index] = {
-					val: 0,
-					text: '',
-					name: '',
-					percentage: 0,
-					wedge: this._createWedge(),
-					key: this._createKey(),
-					label: this._createLabel(),
-					degrees: {
-						total: 0,
-						start: 0,
-						end: 0,
-						oldStart: 360,
-						oldEnd: 360
-					}
-				}
-
-				const wedge = this.chart.elements[index].wedge;
-				const key = this.chart.elements[index].key;
-
-				wedge.addEventListener('mouseover', function() {
-					self.stoppedOn = index;
-				});
-				wedge.addEventListener('mouseout', function() {
-					self.stoppedOn = null;
-				});
-
-			}
-
-		} else if (sE > sL) {
-			for (let i = 0; i < sE - sL; i++) {
-
-				const index = i + sL;
-				const degrees = this.chart.elements[index].degrees;
-				const wedge = this.chart.elements[index].wedge;
-				const label = this.chart.elements[index].label;
-				const key = this.chart.elements[index].key;
-
-				setTimeout(function() {
-					this._animateSector(360, 360, degrees.start, degrees.end, wedge, this.animationSpeed, this.options.pie.hole, 1);
-				}.bind(this), 50);
-
-				key.key.style.opacity = '0';
-
-				label.style.opacity = '0';
-
-				setTimeout(function() {
-					wedge.remove();
-					key.key.remove();
-					label.remove();
-				}, this.animationSpeed + 50);
-
-				delete this.chart.elements[index];
-
-			}
-
-		}
-
-		for (const [index, element] of Object.entries(this.chart.elements)) {
-
-			element.name = this.data[index][0];
-			element.val = this.data[index][1];
-			element.text = formatLabel(this.data[index][1]);
-
-			element.degrees.total = 360 / total * element.val;
-			element.degrees.start = 360 / total * sum;
-			element.degrees.end = 360 / total * (sum + element.val);
-
-			element.label.textContent = (100 / total * element.val).toFixed(0) + '%';
-
-			element.key.label.style.color = this._getContrastColor(this.options.chart.color);
-
-			element.percentage = 100 / total * element.val;
-
-			sum += element.val;
-
-		}
 	}
 
 	_polarToCartesian(angleInDegrees, radius) {
@@ -363,10 +126,12 @@ class CragPie extends CragCore {
 	}
 
 	_easeInOutSin(t) {
+
 		return (1 + Math.sin(Math.PI * t - Math.PI / 2)) / 2;
+
 	}
 
-	_animateSector(startNew, endNew, startCurrent, endCurrent, element, duration, inner, outer) {
+	_animate(startNew, endNew, startCurrent, endCurrent, duration, inner, outer) {
 
 		let self = this;
 
@@ -380,12 +145,13 @@ class CragPie extends CragCore {
 		function doAnimationStep() {
 
 			let progressEase = self._easeInOutSin(Math.min((performance.now() - startTime) / duration, 1));
+
 			let startStep = startCurrent + progressEase * (startNew - startCurrent);
 			let endStep = endCurrent + progressEase * (endNew - endCurrent);
 
 			let arc = self._describeArc(startStep, endStep, inner, outer);
 
-			element.setAttribute('d', arc);
+			self.slice.setAttribute('d', arc);
 
 			if (progressEase < 1) requestAnimationFrame(doAnimationStep);
 
@@ -395,35 +161,370 @@ class CragPie extends CragCore {
 
 	}
 
-	_createLabel() {
+	_showDetail() {
 
-		const label = document.createElement('span');
+		for (const element of Object.values(this.chart.elements)) {
 
-		label.classList.add('cragPieLabel');
-		label.style.opacity = '0';
-		label.textContent = '0';
+			element.slice.label.style.opacity = '0';
 
-		label.style.top =  label.offsetHeight / 2 +  'px';
-		label.style.left = (this.chart.labelArea.offsetWidth / 2) + (label.offsetWidth / 2) +  'px';
+		}
 
-		this.chart.labelArea.appendChild(label);
+		this.chart.sliceDetail.title.style.fontSize = this.chart.chart.labelArea.offsetHeight / 16 + 'px';
+		this.chart.sliceDetail.label.style.fontSize = this.chart.chart.labelArea.offsetHeight / 26 + 'px';
+		this.chart.sliceDetail.value.style.fontSize = this.chart.chart.labelArea.offsetHeight / 26 + 'px';
 
-		return label;
+		this.chart.sliceDetail.title.textContent = this.name;
+		this.chart.sliceDetail.label.textContent = this.percentage.toFixed(2) + '%';
+		this.chart.sliceDetail.value.textContent = this.formatLabel(
+			this.value,
+			this.chart.options.slices.format,
+			this.chart.options.slices.currencySymbol,
+			this.chart.options.slices.decimalPlaces
+		);
+
+		this.chart.sliceDetail.container.style.opacity = '1';
+		this.chart.sliceDetail.container.style.color = this._getContrastColor(
+			this._getColorByMode('multi', this.index + this.chart.options.pie.palletOffset)
+		)
+
+		this.chart.chart.area.appendChild(this.slice);
+
+		this._animate(
+			0.001,
+			360,
+			this.degrees.oldStart,
+			this.degrees.oldEnd,
+			this.chart.animationSpeed / 2,
+			0,
+			1);
+
+		this.slice.classList.add('cragPieSliceHover');
+		this.slice.style.transform = 'scale(1.05)';
+
 
 	}
 
-	_createWedge() {
+	_hideDetail() {
 
-		const wedge = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-		const arc = this._describeArc(0, 0, this.options.pie.gap, 1);
+		this.chart.sliceDetail.container.style.opacity = '0';
 
-		wedge.classList = 'cragPieWedge';
-		wedge.setAttribute("d", arc);
-		wedge.setAttribute('stroke-width', this.options.pie.gap);
+		for (const element of Object.values(this.chart.elements)) {
 
-		this.chart.area.insertChildAtIndex(wedge, 0);
+			element.slice.label.style.opacity = '1';
 
-		return wedge;
+		}
+
+		this._animate(this.degrees.start, this.degrees.end, 0.001, 360, this.chart.animationSpeed / 2, this.chart.options.pie.hole, 1);
+
+		this.slice.style.transform = 'scale(1)';
+		this.slice.classList.remove('cragPieSliceHover');
+
+	}
+
+	colorize() {
+
+		this.slice.setAttribute('fill', this._getColorByMode('multi', this.index + this.chart.options.pie.palletOffset));
+		this.slice.setAttribute('stroke',  this._resolveColor(this.chart.options.chart.color));
+
+		this.label.style.color = this._getContrastColor(
+			this._getColorByMode('multi', this.index + this.chart.options.pie.palletOffset)
+		);
+
+	}
+
+	destroy() {
+
+		this.label.style.opacity = '0';
+		this._animate(360, 360, this.degrees.start, this.degrees.end, this.chart.animationSpeed, this.chart.options.pie.hole, 1);
+
+		setTimeout(() => {
+
+			this.label.remove();
+			this.slice.remove();
+
+		}, this.chart.animationSpeed + 100);
+
+	}
+
+}
+class CragPie extends CragCore {
+
+	constructor (data, options) {
+		super();
+
+		this.data = data;
+
+		this.options = {
+			chart: {
+				title: null,
+				color: 'white',
+			},
+			slices: {
+				colors: null,
+				format: 'number',
+				decimalPlaces: 0,
+				currencySymbol: 'GBP',
+			},
+			pie: {
+				gap: 0.008,
+				hole: 0,
+				highToLow: true,
+				palletOffset: 0,
+			},
+			key: {
+				show: true,
+				position: 'right',
+			}
+		};
+
+		this.chart = {
+			parent: null,
+			container: null,
+			area: null,
+			labelArea: null,
+			leftKey: null,
+			rightKey: null,
+			bottomKey: null,
+		};
+
+		this.elements = {}
+
+		this.sliceDetail = {
+			container: null,
+			title: null,
+			label: null,
+			value: null
+		};
+
+		this.dataLimit = 12;
+		this.animationSpeed = 400;
+
+		/* CHART */
+		this.options.chart.title = this.validateOption(options?.chart?.title, 'string', this.options.chart.title);
+		if (this._isValidColor(options?.chart?.color)) this.options.chart.color = options.chart.color;
+
+		/* PIE */
+		this.options.pie.hole = this.validateOption(options?.pie?.hole, 'number', this.options.pie.hole);
+		this.options.pie.palletOffset = this.validateOption(options?.pie?.palletOffset, 'number', this.options.pie.palletOffset);
+		this.options.pie.highToLow = this.validateOption(options?.pie?.highToLow, 'boolean', this.options.pie.highToLow);
+
+		/* SLICES */
+		this.options.slices.format = this.validateOption(options?.slices?.format, this.labelFormats, this.options.slices.format);
+		this.options.slices.decimalPlaces = this.validateOption(options?.slices?.decimalPlaces, 'number', this.options.slices.decimalPlaces);
+
+		// Apply data sort before truncating
+		if (this.options.pie.highToLow) this._sortData();
+		if (this.data.length > this.dataLimit) this.data = this.data.slice(0, this.dataLimit);
+
+	}
+
+	create(e) {
+
+		if (e === undefined) return;
+
+		this.chart.parent = document.getElementById(e);
+		this.chart.container = document.createElement('div');
+		this.chart.area = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+
+		this.chart.labelArea = document.createElement('div');
+		this.chart.leftKey = document.createElement('div');
+		this.chart.rightKey = document.createElement('div');
+		this.chart.bottomKey = document.createElement('div');
+
+		this.chart.area.setAttribute('viewBox', '-1 -1 2 2');
+		this.chart.area.setAttribute('class', 'cragPieChart');
+
+		this.chart.container.className = 'cragPieChartContainer';
+		this.chart.labelArea.className = 'cragPieLabels';
+		this.chart.rightKey.className = 'cragPieRightKey';
+
+		this.chart.parent.appendChild(this.chart.container);
+		this.chart.container.appendChild(this.chart.labelArea);
+		this.chart.container.appendChild(this.chart.area);
+		this.chart.container.appendChild(this.chart.leftKey);
+		this.chart.container.appendChild(this.chart.rightKey);
+		this.chart.container.appendChild(this.chart.bottomKey);
+
+		this.title = new Title(this);
+
+		this._createSliceDetail();
+		this._applyListeners();
+
+		setTimeout(() => {
+
+			this._draw();
+			this._colorize();
+
+		}, this.animationSpeed);
+
+		return this;
+
+	}
+
+	_createSliceDetail() {
+
+		this.sliceDetail.container = document.createElement('div');
+		this.sliceDetail.title = document.createElement('h6');
+		this.sliceDetail.value = document.createElement('h6');
+		this.sliceDetail.label = document.createElement('h6');
+
+		this.sliceDetail.container.className = 'cragPieSliceDetail';
+		this.sliceDetail.title.className = 'cragPieSliceDetailTitle';
+		this.sliceDetail.value.className = 'cragPieSliceDetailValue';
+		this.sliceDetail.label.className = 'cragPieSliceDetailLabel';
+
+		this.chart.labelArea.appendChild(this.sliceDetail.container);
+		this.sliceDetail.container.appendChild(this.sliceDetail.title);
+		this.sliceDetail.container.appendChild(this.sliceDetail.label);
+		this.sliceDetail.container.appendChild(this.sliceDetail.value);
+
+	}
+
+	_colorize() {
+
+		this.chart.container.style.backgroundColor = this._resolveColor(this.options.chart.color);
+		this.title._colorize();
+
+		for (const element of Object.values(this.elements)) {
+
+			element.slice.colorize();
+			element.key.label.style.color = this._getContrastColor(this.options.chart.color);
+
+		}
+
+	}
+
+	/**
+	 * Any default listeners to be applied here
+	 * @private
+	 */
+	_applyListeners() {
+
+		window.addEventListener('resize', () => {
+			setTimeout(() => {
+				this._draw();
+			}, this.animationSpeed);
+		});
+
+	}
+
+	_draw() {
+
+		this._addRemoveSeriesElems();
+
+		let maxKeyLength = 0;
+
+		for (const [_, elements] of Object.entries(this.elements)) {
+
+			elements.key.label.textContent = elements.slice.name;
+			elements.key.label.style.opacity = '1';
+
+			elements.key.key.style.top = (28 * _) + (this.chart.rightKey.offsetHeight / 2 - ((28 * ObjectLength(this.elements)) / 2)) + 'px';
+			elements.key.key.style.opacity = '1';
+
+			if (elements.key.key.offsetWidth + 8 > maxKeyLength) {
+
+				maxKeyLength = elements.key.key.offsetWidth + 8;
+
+			}
+
+		}
+
+		this.chart.rightKey.style.width = `${maxKeyLength}px`;
+
+		for (const [index, element] of Object.entries(this.elements)) {
+
+			element.key.marker.style.opacity = '1';
+
+			element.key.marker.style.backgroundColor = this._getColorByMode('multi', parseInt(index) + this.options.pie.palletOffset);
+
+			element.slice._animate(
+				element.slice.degrees.start,
+				element.slice.degrees.end,
+				element.slice.degrees.oldStart,
+				element.slice.degrees.oldEnd,
+				this.animationSpeed,
+				this.options.pie.hole,
+				1);
+
+			element.slice.degrees.oldEnd = element.slice.degrees.end;
+			element.slice.degrees.oldStart = element.slice.degrees.start;
+
+			element.slice._positionLabel(maxKeyLength);
+
+		}
+
+	}
+
+	_addRemoveSeriesElems() {
+
+		const total = this.total;
+
+		let runningTotal = 0;
+
+		/**
+		 * Update the DataPoints with new data, DataPoints will be created where they don't yet exist
+		 */
+		for (let i = 0; i < this.data.length; i++) {
+
+			if (!this.elements[i]) {
+
+				/**
+				 * Create new DataPoint
+				 */
+				this.elements[i] = {
+					slice: new Slice(
+						this,
+						i,
+						this.data[i][0],
+						this.data[i][1],
+						100 / total * this.data[i][1]
+					),
+					key: this._createKey(),
+					// label: this._createLabel(),
+				}
+
+			} else {
+
+				this.elements[i].slice.index = i;
+				this.elements[i].slice.name = this.data[i][0];
+				this.elements[i].slice.value = this.data[i][1];
+				this.elements[i].slice.percentage = 100 / total * this.data[i][1];
+
+			}
+
+			this.elements[i].slice.degrees.total = 360 / total * this.data[i][1];
+			this.elements[i].slice.degrees.start = 360 / total * runningTotal;
+			this.elements[i].slice.degrees.end = 360 / total * (runningTotal + this.data[i][1]);
+			this.elements[i].slice.label.textContent = (100 / total * this.data[i][1]).toFixed(0) + '%';
+
+			this.elements[i].key.label.style.color = this._getContrastColor(this.options.chart.color);
+
+			runningTotal += this.data[i][1];
+
+		}
+
+		/**
+		 * Remove any DataPoints that are beyond the current data set length.
+		 * This will happen when a new data set is loaded that is smaller than the old data set
+		 */
+		for (let i = Object.values(this.elements).length + 1; i >= this.data.length; i--) {
+
+			if (!this.elements[i]) continue;
+
+			const key = this.elements[i].key;
+
+			this.elements[i].slice.destroy();
+
+			key.key.style.opacity = '0';
+
+			setTimeout(function() {
+				key.key.remove();
+			}, this.animationSpeed + 75);
+
+			delete this.elements[i];
+
+		}
 
 	}
 
@@ -443,87 +544,6 @@ class CragPie extends CragCore {
 		this.chart.rightKey.appendChild(parent);
 
 		return {'key': parent, 'marker': marker, 'label': label};
-
-	}
-
-	_showToolTip(i) {
-
-		for (const [index, element] of Object.entries(this.chart.elements)) {
-
-			element.wedge.style.opacity = '0.3';
-			element.key.key.style.opacity = '0.1';
-			element.label.style.opacity = '0';
-
-			if (index == i) {
-
-				element.key.key.style.opacity = '1';
-				element.wedge.style.opacity = '0.8';
-				element.label.style.opacity = '0';
-
-				this.toolTip.title.textContent = element.name;
-				this.toolTip.label.textContent = element.percentage.toFixed(2) + '%';
-				this.toolTip.value.textContent = element.text;
-				this.toolTip.container.style.opacity = '1';
-
-				this.chart.area.appendChild(element.wedge);
-
-				this._animateSector(
-					0.001,
-					360,
-					element.degrees.oldStart,
-					element.degrees.oldEnd,
-					element.wedge,
-					this.animationSpeed / 2,
-					0,
-					1);
-
-				this.showingWedge = i;
-
-				setTimeout(() => {
-
-					element.wedge.classList.add('cragPieWedgeHover');
-
-					element.wedge.style.transform = 'scale(1.05)';
-
-
-				}, 0);
-
-			}
-
-		}
-
-	}
-
-	_hideToolTip(i) {
-
-		this.toolTip.container.style.opacity = 0;
-
-		this.showingWedge = null;
-
-		for (const [index, element] of Object.entries(this.chart.elements)) {
-
-			element.wedge.style.opacity = '1';
-			element.key.key.style.opacity = '1';
-
-			if (element.percentage < 2) {
-				element.label.style.opacity = '0';
-			} else {
-				element.label.style.opacity = '1';
-			}
-
-			if (index == i) {
-
-				element.wedge.classList.remove('cragPieWedgeHover');
-
-				element.wedge.style.transform = 'scale(1)';
-
-				element.label.style.background = '';
-
-				this._animateSector(element.degrees.start, element.degrees.end, 0.001, 360, element.wedge, this.animationSpeed / 2, this.options.pie.hole, 1);
-
-			}
-
-		}
 
 	}
 
@@ -577,17 +597,7 @@ class CragPie extends CragCore {
 
 		if (this._isValidColor(value)) this.options.chart.color = value;
 
-		if (this._getContrastColor(this.options.chart.color) === this.pallet.white) {
-
-			this.options.pie.palletOffset = 6;
-
-		} else {
-
-			this.options.pie.palletOffset = 0;
-
-		}
-
-		this._draw();
+		this._colorize();
 
 	}
 
