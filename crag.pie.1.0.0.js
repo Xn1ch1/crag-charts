@@ -272,8 +272,7 @@ class CragPie extends CragCore {
 				palletOffset: 0,
 			},
 			key: {
-				show: true,
-				position: 'right',
+				show: true
 			}
 		};
 
@@ -311,6 +310,9 @@ class CragPie extends CragCore {
 		/* SLICES */
 		this.options.slices.format = this.validateOption(options?.slices?.format, this.labelFormats, this.options.slices.format);
 		this.options.slices.decimalPlaces = this.validateOption(options?.slices?.decimalPlaces, 'number', this.options.slices.decimalPlaces);
+
+		/* KEY */
+		this.options.key.show = this.validateOption(options?.key?.show, 'boolean', this.options.key.show);
 
 		// Apply data sort before truncating
 		if (this.options.pie.highToLow) this._sortData();
@@ -541,7 +543,7 @@ class CragPie extends CragCore {
 		parent.appendChild(label);
 		parent.appendChild(marker);
 
-		this.chart.rightKey.appendChild(parent);
+		if (this.options.key.show) this.chart.rightKey.appendChild(parent);
 
 		return {'key': parent, 'marker': marker, 'label': label};
 
