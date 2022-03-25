@@ -1225,7 +1225,17 @@ class ToolTip extends CragCore {
 
 		} else {
 
-			this.container.style.top = `${Math.max(0, elementRect.top)}px`;
+			if (this.container.offsetHeight > elementRect.height) {
+
+				/* Align to top of elem */
+				this.container.style.top = `${elementRect.top - this.container.offsetHeight}px`;
+
+			} else {
+
+				/* Align to top of elem */
+				this.container.style.top = `${Math.max(0, elementRect.top)}px`;
+
+			}
 
 		}
 
