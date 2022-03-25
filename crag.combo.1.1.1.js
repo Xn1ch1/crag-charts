@@ -89,7 +89,7 @@ class CragCombo extends CragCore {
 					min: 'auto'
 				},
 			},
-		}
+		};
 
 		/**
 		 * Column Options

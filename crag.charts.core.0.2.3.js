@@ -70,6 +70,11 @@ class CragCore {
 		if (this._isValidHexColor(value)) return value;
 
 		/**
+		 * Convert rgba or rgb to hex and return
+		 */
+		if (this._isValidRGBColor(value)) return this._rgbToHex(value);
+
+		/**
 		 * Default to white
 		 */
 		return '#FFFFFF';
@@ -93,6 +98,11 @@ class CragCore {
 		 */
 		if (this.pallet.hasOwnProperty(value)) return true;
 
+		/**
+		 * Check to see if value is correct rgb/a color
+		 */
+		if (this._isValidRGBColor(value)) return true;
+
 		return this._isValidHexColor(value);
 
 	}
@@ -112,6 +122,38 @@ class CragCore {
 		if (mode === 'multi') return Object.values(this.pallet)[value];
 
 		if (mode === 'match') return this._resolveColor(value);
+
+	}
+
+	_isValidRGBColor(rgbaCode) {
+
+		return this._rgbToHex(rgbaCode) !== null;
+
+	}
+
+	_rgbToHex(rgbaCode) {
+
+		function componentToHex(c) {
+
+			const hex = Number(c - 1).toString(16);
+
+			return hex.length === 1 ? "0" + hex : hex;
+
+		}
+
+		if (typeof rgbaCode === 'string' && rgbaCode.includes('rgb')) {
+
+			rgbaCode = rgbaCode.replace('rgb(', '').replace('rgba(', '').replace(')', '');
+
+			const r = componentToHex(rgbaCode.split(',')[0].trim());
+			const g = componentToHex(rgbaCode.split(',')[1].trim());
+			const b = componentToHex(rgbaCode.split(',')[2].trim());
+
+			if (this._isValidHexColor(`#${r}${g}${b}`)) return `#${r}${g}${b}`
+
+		}
+
+		return null;
 
 	}
 
