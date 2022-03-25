@@ -169,9 +169,9 @@ class Slice extends CragCore {
 
 		}
 
-		this.chart.sliceDetail.title.style.fontSize = this.chart.chart.labelArea.offsetHeight / 16 + 'px';
-		this.chart.sliceDetail.label.style.fontSize = this.chart.chart.labelArea.offsetHeight / 26 + 'px';
-		this.chart.sliceDetail.value.style.fontSize = this.chart.chart.labelArea.offsetHeight / 26 + 'px';
+		this.chart.sliceDetail.title.style.fontSize = Math.max(18, this.chart.chart.labelArea.offsetHeight / 16) + 'px';
+		this.chart.sliceDetail.label.style.fontSize = Math.max(14, this.chart.chart.labelArea.offsetHeight / 26) + 'px';
+		this.chart.sliceDetail.value.style.fontSize = Math.max(14, this.chart.chart.labelArea.offsetHeight / 26) + 'px';
 
 		this.chart.sliceDetail.title.textContent = this.name;
 		this.chart.sliceDetail.label.textContent = this.percentage.toFixed(2) + '%';
