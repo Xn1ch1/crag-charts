@@ -3,7 +3,7 @@ class CragLoader {
 	defaultPath = 'https://combinatronics.com/Xn1ch1/Crag-Charts/main/crag/';
 	resources = {
 		core: {
-			js: 'crag.charts.core.0.2.3.js',
+			js: 'crag.charts.core.0.2.4.js',
 			css: 'crag.charts.core.0.0.2.css'
 		},
 		bar: {

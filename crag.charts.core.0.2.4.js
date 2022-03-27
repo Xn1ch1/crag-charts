@@ -131,11 +131,17 @@ class CragCore {
 
 	}
 
+	/**
+	 *
+	 * @param rgbaCode
+	 * @returns {string|null}
+	 * @private
+	 */
 	_rgbToHex(rgbaCode) {
 
 		function componentToHex(c) {
 
-			const hex = Number(c - 1).toString(16);
+			const hex = Number(c).toString(16);
 
 			return hex.length === 1 ? "0" + hex : hex;
 

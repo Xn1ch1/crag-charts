@@ -1,34 +1,26 @@
 .cragPieChartContainer {
 	display: grid;
-	grid-template-columns: 30px 1fr auto;
-	grid-template-rows: minmax(5%, auto) minmax(0, 1fr) 30px;
+	grid-template-columns: 30px 1fr minmax(30px, auto);
+	grid-template-rows: minmax(30px, auto) minmax(0, 1fr) 30px;
 	gap: 0 0;
 	height: 100%;
 	width: 100%;
-	overflow: hidden;
 	transition: background-color 0.5s;
 	grid-template-areas:
 		". cragTitle ."
 		"cragVAxisPrimary cragPieChartArea cragVAxisSecondary"
 		". cragHAxis .";
+	overflow: visible;
 }
 .cragPieChartArea {
 	grid-area: cragPieChartArea;
 	position: relative;
 	transition: width 0.66s ease-out;
 }
-.cragPieLeftKey {
-	grid-area: cragVAxisPrimary;
-	position: relative;
-}
 .cragPieRightKey {
 	grid-area: cragVAxisSecondary;
 	position: relative;
 	transition: width 0.66s ease-out;
-}
-.cragPieBottomKey {
-	grid-area: cragHAxis;
-	position: relative;
 }
 .cragPieChart {
 	grid-area: cragPieChartArea;
@@ -67,7 +59,6 @@
 	height: 20px;
 	width: 20px;
 	border-radius: 10px;
-	opacity: 0;
 }
 .cragPieKeyLabel {
 	transition: opacity 0.5s;
@@ -76,7 +67,6 @@
 	font-family: Roboto, sans-serif;
 	white-space: nowrap;
 	font-size: 16px;
-	opacity: 0;
 	font-weight: 300;
 }
 .cragPieLabel {
@@ -86,7 +76,7 @@
 	font-size: 0.75rem;
 	font-weight: 400;
 	transition: all 0.4s;
-	text-shadow: 0 0 4px rgba(0, 0, 0, 1);
+	line-height: 1;
 }
 .cragPieSliceDetail {
 	position: absolute;
