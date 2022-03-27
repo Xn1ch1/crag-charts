@@ -5,11 +5,17 @@ class Slice extends CragCore {
 	slice = null;
 	label = null;
 
+	keyContainer = null;
+	keyLabel = null;
+	keyDot = null;
+
 	name = null;
 	value = 0;
 	percentage = 0;
 
 	index = 0;
+
+	labelPosition = 'inside';
 
 	degrees = {
 		total: 0,
@@ -29,8 +35,9 @@ class Slice extends CragCore {
 		this.percentage = percentage;
 
 		this._createSlice();
-		this._createLabel()
-		this.colorize();
+		this._createLabel();
+		this._createKey();
+		this._colorize();
 		this._addEventListeners();
 
 	}
@@ -63,20 +70,59 @@ class Slice extends CragCore {
 
 	}
 
+	_createKey() {
+
+		this.keyContainer = document.createElement('div');
+		this.keyContainer.classList.add('cragPieKey');
+
+		this.keyLabel = document.createElement('span');
+		this.keyLabel.classList.add('cragPieKeyLabel');
+		this.keyLabel.textContent = this.name;
+
+		this.keyDot = document.createElement('span');
+		this.keyDot.classList.add('cragPieKeyMarker');
+
+		this.keyContainer.append(this.keyLabel, this.keyDot);
+
+		this.chart.chart.rightKey.appendChild(this.keyContainer);
+
+	}
+
 	_positionLabel(keyWidth) {
 
-		const chartAreaWidth = this.chart.chart.parent.offsetWidth - keyWidth - this.chart.chart.leftKey.offsetWidth;
-		const chartAreaHeight = this.chart.chart.parent.offsetHeight - this.chart.title.area.offsetHeight - (this.chart.chart.bottomKey.offsetHeight / 1.5);
-
+		const chartAreaWidth = this.chart.chart.parent.offsetWidth - Math.max(keyWidth, 30) - 30;
+		const chartAreaHeight = this.chart.chart.parent.offsetHeight - this.chart.title.area.offsetHeight - 30;
 		const radius = Math.min(chartAreaWidth, chartAreaHeight);
 
+		const labelOffset = this.chart.options.slices.labelPosition === 'inside' ? -this.label.offsetWidth : +this.label.offsetWidth;
 		const mid = ((this.degrees.end / 2) + this.degrees.start / 2) - 90;
-		const coords = this._polarToCartesian(mid, (radius / 2) - this.label.offsetWidth);
+		const coords = this._polarToCartesian(mid, (radius / 2) + labelOffset);
 
-		this.label.style.top = coords.y + (chartAreaHeight / 2) - (this.label.offsetHeight / 2) +  'px';
-		this.label.style.left = coords.x + (chartAreaWidth / 2) - (this.label.offsetWidth / 2) +  'px';
+		const labelLeft = coords.x + (chartAreaWidth / 2) - (this.label.offsetWidth / 2);
+		const labelTop = coords.y + (chartAreaHeight / 2) - (this.label.offsetHeight / 2);
 
-		if (this.percentage < 2) {
+		this.label.style.top = `${labelTop}px`;
+		this.label.style.left = `${labelLeft}px`;
+
+		this.labelPosition = this.chart.options.slices.labelPosition;
+
+		if (labelLeft + this.label.offsetWidth > chartAreaWidth && this.chart.options.slices.labelPosition === 'outside') {
+
+			/* Position is outside but falls inside the key area, force back to inside */
+			const mid = ((this.degrees.end / 2) + this.degrees.start / 2) - 90;
+			const coords = this._polarToCartesian(mid, (radius / 2) - this.label.offsetWidth);
+
+			const labelLeft = coords.x + (chartAreaWidth / 2) - (this.label.offsetWidth / 2);
+			const labelTop = coords.y + (chartAreaHeight / 2) - (this.label.offsetHeight / 2);
+
+			this.label.style.top = `${labelTop}px`;
+			this.label.style.left = `${labelLeft}px`;
+
+			this.labelPosition = 'inside'
+
+		}
+
+		if (this.percentage < 2 || this.chart.options.slices.labelPosition === 'none') {
 
 			this.label.style.opacity = '0';
 
@@ -85,6 +131,8 @@ class Slice extends CragCore {
 			this.label.style.opacity = '1';
 
 		}
+
+		this._colorize();
 
 	}
 
@@ -114,7 +162,7 @@ class Slice extends CragCore {
 
 		let arcSweep = endAngle - startAngle <= 180 ? 0 : 1;
 
-		let d = [
+		return [
 			"M", start.x, start.y,
 			"A", outsideRadius, outsideRadius, 0, arcSweep, 0, end.x, end.y,
 			"L", endInside.x, endInside.y,
@@ -122,7 +170,6 @@ class Slice extends CragCore {
 			"L", start.x, start.y
 		].join(" ");
 
-		return d;
 	}
 
 	_easeInOutSin(t) {
@@ -183,9 +230,8 @@ class Slice extends CragCore {
 		);
 
 		this.chart.sliceDetail.container.style.opacity = '1';
-		this.chart.sliceDetail.container.style.color = this._getContrastColor(
-			this._getColorByMode('multi', this.index + this.chart.options.pie.palletOffset)
-		)
+
+		this.chart.sliceDetail.container.style.color = this._getContrastColor(this.slice.getAttribute('fill'));
 
 		this.chart.chart.area.appendChild(this.slice);
 
@@ -221,28 +267,190 @@ class Slice extends CragCore {
 
 	}
 
-	colorize() {
+	_colorize() {
 
-		this.slice.setAttribute('fill', this._getColorByMode('multi', this.index + this.chart.options.pie.palletOffset));
+		if (this.chart.options.slices.colors == null) {
+
+			this.slice.setAttribute('fill', this._getColorByMode('multi', this.index + this.chart.options.pie.palletOffset));
+
+		} else {
+
+			this.slice.setAttribute('fill', this._resolveColor( this.chart.options.slices.colors[this.index]));
+
+		}
+
 		this.slice.setAttribute('stroke',  this._resolveColor(this.chart.options.chart.color));
 
-		this.label.style.color = this._getContrastColor(
-			this._getColorByMode('multi', this.index + this.chart.options.pie.palletOffset)
-		);
+		if (this.labelPosition === 'outside') {
+
+			this.label.style.color = this._getContrastColor(this.chart.options.chart.color);
+
+		} else {
+
+			this.label.style.color = this._getContrastColor(this.slice.getAttribute('fill'));
+
+		}
+
+		this.keyLabel.style.color = this._getContrastColor(this.chart.options.chart.color);
 
 	}
 
 	destroy() {
 
+		this.keyContainer.style.opacity = '0';
 		this.label.style.opacity = '0';
+
 		this._animate(360, 360, this.degrees.start, this.degrees.end, this.chart.animationSpeed, this.chart.options.pie.hole, 1);
 
 		setTimeout(() => {
 
+			this.keyContainer.remove();
 			this.label.remove();
 			this.slice.remove();
 
 		}, this.chart.animationSpeed + 100);
+
+	}
+
+}
+class Slices extends CragCore {
+
+	chart;
+	slices = {};
+
+	constructor(chart) {
+
+		super();
+
+		this.chart = chart;
+		this.update()
+
+	}
+
+
+	update() {
+
+		const total = this.chart.total;
+
+		let runningTotal = 0;
+
+		/**
+		 * Update the DataPoints with new data, DataPoints will be created where they don't yet exist
+		 */
+		for (let i = 0; i < this.chart.data.length; i++) {
+
+			if (!this.slices[i]) {
+
+				/**
+				 * Create new DataPoint
+				 */
+				this.slices[i] = new Slice(
+						this.chart,
+						i,
+						this.chart.data[i][0],
+						this.chart.data[i][1],
+						100 / total * this.chart.data[i][1]
+					);
+
+			} else {
+
+				this.slices[i].index = i;
+				this.slices[i].name = this.chart.data[i][0];
+				this.slices[i].value = this.chart.data[i][1];
+				this.slices[i].percentage = 100 / total * this.chart.data[i][1];
+
+			}
+
+			this.slices[i].degrees.total = 360 / total * this.chart.data[i][1];
+			this.slices[i].degrees.start = 360 / total * runningTotal;
+			this.slices[i].degrees.end = 360 / total * (runningTotal + this.chart.data[i][1]);
+
+			if (this.chart.options.slices.showValues) {
+
+				this.slices[i].label.textContent = this.formatLabel(
+					this.slices[i].value,
+					this.chart.options.slices.format,
+					this.chart.options.slices.currencySymbol,
+					this.chart.options.slices.decimalPlaces
+				);
+
+			} else {
+
+				this.slices[i].label.textContent = (100 / total * this.chart.data[i][1]).toFixed(0) + '%';
+
+			}
+
+			runningTotal += this.chart.data[i][1];
+
+		}
+
+		/**
+		 * Remove any DataPoints that are beyond the current data set length.
+		 * This will happen when a new data set is loaded that is smaller than the old data set
+		 */
+		for (let i = Object.values(this.slices).length + 1; i >= this.chart.data.length; i--) {
+
+			if (!this.slices[i]) continue;
+
+			this.slices[i].destroy();
+			delete this.slices[i];
+
+		}
+
+	}
+
+	draw() {
+
+		let maxKeyLength = 0;
+
+		for (const [_, slice] of Object.entries(this.slices)) {
+
+			slice.keyLabel.textContent = this.chart.data[_][0];
+			slice.keyLabel.style.opacity = '1';
+
+			slice.keyContainer.style.top = (28 * _) + (this.chart.chart.rightKey.offsetHeight / 2 - ((28 * ObjectLength(this.slices)) / 2)) + 'px';
+			slice.keyContainer.style.opacity = '1';
+
+			if (slice.keyContainer.offsetWidth + 8 > maxKeyLength) {
+
+				maxKeyLength = slice.keyContainer.offsetWidth + 8;
+
+			}
+
+			slice.keyDot.style.backgroundColor = slice.slice.getAttribute('fill');
+
+		}
+
+		this.chart.chart.rightKey.style.width = `${maxKeyLength}px`;
+
+		for (const slice of Object.values(this.slices)) {
+
+			slice._animate(
+				slice.degrees.start,
+				slice.degrees.end,
+				slice.degrees.oldStart,
+				slice.degrees.oldEnd,
+				this.chart.animationSpeed,
+				this.chart.options.pie.hole,
+				1);
+
+			slice.degrees.oldEnd = slice.degrees.end;
+			slice.degrees.oldStart = slice.degrees.start;
+
+			slice._positionLabel(maxKeyLength);
+
+		}
+
+
+	}
+
+	_colorize() {
+
+		for (const slice of Object.values(this.slices)) {
+
+			slice._colorize();
+
+		}
 
 	}
 
@@ -264,6 +472,7 @@ class CragPie extends CragCore {
 				format: 'number',
 				decimalPlaces: 0,
 				currencySymbol: 'GBP',
+				labelPosition: 'inside',
 			},
 			pie: {
 				gap: 0.008,
@@ -281,9 +490,7 @@ class CragPie extends CragCore {
 			container: null,
 			area: null,
 			labelArea: null,
-			leftKey: null,
 			rightKey: null,
-			bottomKey: null,
 		};
 
 		this.elements = {}
@@ -310,6 +517,9 @@ class CragPie extends CragCore {
 		/* SLICES */
 		this.options.slices.format = this.validateOption(options?.slices?.format, this.labelFormats, this.options.slices.format);
 		this.options.slices.decimalPlaces = this.validateOption(options?.slices?.decimalPlaces, 'number', this.options.slices.decimalPlaces);
+		this.options.slices.showValues = this.validateOption(options?.slices?.showValues, 'boolean', this.options.slices.showValues);
+		this.options.slices.labelPosition = this.validateOption(options?.slices?.labelPosition, this.labelPositions, this.options.slices.labelPosition);
+		this.options.slices.colors = this.validateOption(options?.slices?.colors, 'object', this.options.slices.colors);
 
 		/* KEY */
 		this.options.key.show = this.validateOption(options?.key?.show, 'boolean', this.options.key.show);
@@ -329,9 +539,7 @@ class CragPie extends CragCore {
 		this.chart.area = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 
 		this.chart.labelArea = document.createElement('div');
-		this.chart.leftKey = document.createElement('div');
 		this.chart.rightKey = document.createElement('div');
-		this.chart.bottomKey = document.createElement('div');
 
 		this.chart.area.setAttribute('viewBox', '-1 -1 2 2');
 		this.chart.area.setAttribute('class', 'cragPieChart');
@@ -343,11 +551,10 @@ class CragPie extends CragCore {
 		this.chart.parent.appendChild(this.chart.container);
 		this.chart.container.appendChild(this.chart.labelArea);
 		this.chart.container.appendChild(this.chart.area);
-		this.chart.container.appendChild(this.chart.leftKey);
 		this.chart.container.appendChild(this.chart.rightKey);
-		this.chart.container.appendChild(this.chart.bottomKey);
 
 		this.title = new Title(this);
+		this.slices = new Slices(this);
 
 		this._createSliceDetail();
 		this._applyListeners();
@@ -382,20 +589,6 @@ class CragPie extends CragCore {
 
 	}
 
-	_colorize() {
-
-		this.chart.container.style.backgroundColor = this._resolveColor(this.options.chart.color);
-		this.title._colorize();
-
-		for (const element of Object.values(this.elements)) {
-
-			element.slice.colorize();
-			element.key.label.style.color = this._getContrastColor(this.options.chart.color);
-
-		}
-
-	}
-
 	/**
 	 * Any default listeners to be applied here
 	 * @private
@@ -412,171 +605,24 @@ class CragPie extends CragCore {
 
 	_draw() {
 
-		this._addRemoveSeriesElems();
-
-		let maxKeyLength = 0;
-
-		for (const [_, elements] of Object.entries(this.elements)) {
-
-			elements.key.label.textContent = elements.slice.name;
-			elements.key.label.style.opacity = '1';
-
-			elements.key.key.style.top = (28 * _) + (this.chart.rightKey.offsetHeight / 2 - ((28 * ObjectLength(this.elements)) / 2)) + 'px';
-			elements.key.key.style.opacity = '1';
-
-			if (elements.key.key.offsetWidth + 8 > maxKeyLength) {
-
-				maxKeyLength = elements.key.key.offsetWidth + 8;
-
-			}
-
-		}
-
-		this.chart.rightKey.style.width = `${maxKeyLength}px`;
-
-		for (const [index, element] of Object.entries(this.elements)) {
-
-			element.key.marker.style.opacity = '1';
-
-			element.key.marker.style.backgroundColor = this._getColorByMode('multi', parseInt(index) + this.options.pie.palletOffset);
-
-			element.slice._animate(
-				element.slice.degrees.start,
-				element.slice.degrees.end,
-				element.slice.degrees.oldStart,
-				element.slice.degrees.oldEnd,
-				this.animationSpeed,
-				this.options.pie.hole,
-				1);
-
-			element.slice.degrees.oldEnd = element.slice.degrees.end;
-			element.slice.degrees.oldStart = element.slice.degrees.start;
-
-			element.slice._positionLabel(maxKeyLength);
-
-		}
+		this.slices.update();
+		this.slices.draw();
 
 	}
 
-	_addRemoveSeriesElems() {
+	_colorize() {
 
-		const total = this.total;
-
-		let runningTotal = 0;
-
-		/**
-		 * Update the DataPoints with new data, DataPoints will be created where they don't yet exist
-		 */
-		for (let i = 0; i < this.data.length; i++) {
-
-			if (!this.elements[i]) {
-
-				/**
-				 * Create new DataPoint
-				 */
-				this.elements[i] = {
-					slice: new Slice(
-						this,
-						i,
-						this.data[i][0],
-						this.data[i][1],
-						100 / total * this.data[i][1]
-					),
-					key: this._createKey(),
-					// label: this._createLabel(),
-				}
-
-			} else {
-
-				this.elements[i].slice.index = i;
-				this.elements[i].slice.name = this.data[i][0];
-				this.elements[i].slice.value = this.data[i][1];
-				this.elements[i].slice.percentage = 100 / total * this.data[i][1];
-
-			}
-
-			this.elements[i].slice.degrees.total = 360 / total * this.data[i][1];
-			this.elements[i].slice.degrees.start = 360 / total * runningTotal;
-			this.elements[i].slice.degrees.end = 360 / total * (runningTotal + this.data[i][1]);
-			this.elements[i].slice.label.textContent = (100 / total * this.data[i][1]).toFixed(0) + '%';
-
-			this.elements[i].key.label.style.color = this._getContrastColor(this.options.chart.color);
-
-			runningTotal += this.data[i][1];
-
-		}
-
-		/**
-		 * Remove any DataPoints that are beyond the current data set length.
-		 * This will happen when a new data set is loaded that is smaller than the old data set
-		 */
-		for (let i = Object.values(this.elements).length + 1; i >= this.data.length; i--) {
-
-			if (!this.elements[i]) continue;
-
-			const key = this.elements[i].key;
-
-			this.elements[i].slice.destroy();
-
-			key.key.style.opacity = '0';
-
-			setTimeout(function() {
-				key.key.remove();
-			}, this.animationSpeed + 75);
-
-			delete this.elements[i];
-
-		}
-
-	}
-
-	_createKey() {
-
-		const parent = document.createElement('div');
-		const marker = document.createElement('div');
-		const label = document.createElement('span');
-
-		parent.classList.add('cragPieKey');
-		marker.classList.add('cragPieKeyMarker');
-		label.classList.add('cragPieKeyLabel');
-
-		parent.appendChild(label);
-		parent.appendChild(marker);
-
-		if (this.options.key.show) this.chart.rightKey.appendChild(parent);
-
-		return {'key': parent, 'marker': marker, 'label': label};
+		this.chart.container.style.backgroundColor = this._resolveColor(this.options.chart.color);
+		this.title._colorize();
+		this.slices._colorize();
 
 	}
 
 	_sortData() {
 
-		this.data = this.data.sort(sortFunction);
-
-		function sortFunction(a, b) {
-			if (a[1] === b[1]) {
-				return 0;
-			}
-			else {
-				return (a[1] > b[1]) ? -1 : 1;
-			}
-		}
-
-	}
-
-	update(data) {
-
-		if (data.length > this.dataLimit) {
-			data = data.slice(0, this.dataLimit);
-		}
-
-		this.data = data;
-
-		if (this.options.pie.highToLow) {
-			this._sortData();
-		}
-
-		this._draw();
+		this.data.sort((a, b) => {
+			return b[1] - a[1];
+		});
 
 	}
 
@@ -600,6 +646,18 @@ class CragPie extends CragCore {
 		if (this._isValidColor(value)) this.options.chart.color = value;
 
 		this._colorize();
+
+	}
+
+	update(data) {
+
+		this.data = data;
+
+		if (this.options.pie.highToLow) this._sortData();
+
+		if (data.length > this.dataLimit) this.data = data.slice(0, this.dataLimit);
+
+		this._draw();
 
 	}
 
