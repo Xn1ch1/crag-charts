@@ -210,11 +210,7 @@ class Slice extends CragCore {
 
 	_showDetail() {
 
-		for (const element of Object.values(this.chart.elements)) {
-
-			element.slice.label.style.opacity = '0';
-
-		}
+		this.chart.slices.hideLabels()
 
 		this.chart.sliceDetail.title.style.fontSize = Math.max(18, this.chart.chart.labelArea.offsetHeight / 16) + 'px';
 		this.chart.sliceDetail.label.style.fontSize = Math.max(14, this.chart.chart.labelArea.offsetHeight / 26) + 'px';
@@ -251,6 +247,8 @@ class Slice extends CragCore {
 	}
 
 	_hideDetail() {
+
+		this.chart.slices.showLabels()
 
 		this.chart.sliceDetail.container.style.opacity = '0';
 
@@ -327,6 +325,27 @@ class Slices extends CragCore {
 
 	}
 
+	hideLabels() {
+
+		for (const slice of Object.values(this.slices)) {
+
+			slice.label.style.opacity = '0';
+
+		}
+
+	}
+
+	showLabels() {
+
+		if (this.chart.options.slices.labelPosition === 'none') return;
+
+		for (const slice of Object.values(this.slices)) {
+
+			slice.label.style.opacity = '1';
+
+		}
+
+	}
 
 	update() {
 
