@@ -1179,13 +1179,8 @@ class ToolTip extends CragCore {
 
 	_colorize() {
 
-		this.container.style.backgroundColor = this._getContrastColor(this.chart.options.chart.color);
-
-		this.title.style.color = this._resolveColor(this.chart.options.chart.color);
-		this.primaryLabel.style.color = this._resolveColor(this.chart.options.chart.color);
-		this.primaryValue.style.color = this._resolveColor(this.chart.options.chart.color);
-		this.secondaryLabel.style.color = this._resolveColor(this.chart.options.chart.color);
-		this.secondaryValue.style.color = this._resolveColor(this.chart.options.chart.color);
+		this.container.style.backgroundColor = this._resolveColor(this.chart.options.chart.color);
+		this.container.style.color = this._getContrastColor(this.chart.options.chart.color);
 
 	}
 
