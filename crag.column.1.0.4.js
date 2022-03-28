@@ -67,6 +67,7 @@ class CragColumn extends CragCore {
 					position: 'none',
 					color: 'auto'
 				},
+				specificBarColor: null,
 			}
 		}
 
@@ -91,6 +92,8 @@ class CragColumn extends CragCore {
 		this.options.columns.onClick = this.validateOption(options?.columns?.onClick, 'function', this.options.columns.onClick);
 
 		this.options.columns.labels.position = this.validateOption(options?.columns?.labels?.position, this.labelPositions, this.options.columns.labels.position);
+
+		this.options.columns.specificBarColor = options?.columns?.specificBarColor;
 
 		/**
 		 * Chart Options
