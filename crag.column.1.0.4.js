@@ -93,7 +93,7 @@ class CragColumn extends CragCore {
 
 		this.options.columns.labels.position = this.validateOption(options?.columns?.labels?.position, this.labelPositions, this.options.columns.labels.position);
 
-		this.options.columns.specificBarColor = options?.columns?.specificBarColor;
+		this.options.columns.specificBarColor = options?.columns?.specificBarColor ?? null;
 
 		/**
 		 * Chart Options

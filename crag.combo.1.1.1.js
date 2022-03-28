@@ -107,6 +107,8 @@ class CragCombo extends CragCore {
 
 		this.options.columns.labels.position = this.validateOption(options?.columns?.labels?.position, this.labelPositions, this.options.columns.labels.position);
 
+		this.options.columns.specificBarColor = options?.columns?.specificBarColor ?? null;
+		
 		/**
 		 * Line Options
 		 */
@@ -141,8 +143,6 @@ class CragCombo extends CragCore {
 		this.options.vAxes.secondary.format = this.validateOption(options?.vAxes?.secondary?.format, this.labelFormats, this.options.vAxes.secondary.format);
 		if (options?.vAxes?.secondary?.min === 'auto' || !isNaN(options?.vAxes?.secondary?.min)) this.options.vAxes.secondary.min = options?.vAxes?.secondary?.min;
 		this.options.vAxes.secondary.decimalPlaces = this.validateOption(options?.vAxes?.secondary?.decimalPlaces, 'number', this.options.vAxes.secondary.decimalPlaces);
-
-		this.options.columns.specificBarColor = options?.columns?.specificBarColor;
 
 		this.chart = {
 			parent: null,
