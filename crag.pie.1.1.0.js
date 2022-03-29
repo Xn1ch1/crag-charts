@@ -84,6 +84,8 @@ class Slice extends CragCore {
 
 		this.keyContainer.append(this.keyLabel, this.keyDot);
 
+		if (!this.chart.options.key.show) return;
+
 		this.chart.chart.rightKey.appendChild(this.keyContainer);
 
 	}
@@ -210,7 +212,7 @@ class Slice extends CragCore {
 
 	_showDetail() {
 
-		this.chart.slices.hideLabels()
+		this.chart.slices.hideLabels();
 
 		this.chart.sliceDetail.title.style.fontSize = Math.max(18, this.chart.chart.labelArea.offsetHeight / 16) + 'px';
 		this.chart.sliceDetail.label.style.fontSize = Math.max(14, this.chart.chart.labelArea.offsetHeight / 26) + 'px';
@@ -248,15 +250,9 @@ class Slice extends CragCore {
 
 	_hideDetail() {
 
-		this.chart.slices.showLabels()
+		this.chart.slices.showLabels();
 
 		this.chart.sliceDetail.container.style.opacity = '0';
-
-		for (const element of Object.values(this.chart.elements)) {
-
-			element.slice.label.style.opacity = '1';
-
-		}
 
 		this._animate(this.degrees.start, this.degrees.end, 0.001, 360, this.chart.animationSpeed / 2, this.chart.options.pie.hole, 1);
 
@@ -341,7 +337,15 @@ class Slices extends CragCore {
 
 		for (const slice of Object.values(this.slices)) {
 
-			slice.label.style.opacity = '1';
+			if (slice.percentage < 2 || this.chart.options.slices.labelPosition === 'none') {
+
+				slice.label.style.opacity = '0';
+
+			} else {
+
+				slice.label.style.opacity = '1';
+
+			}
 
 		}
 
@@ -364,12 +368,12 @@ class Slices extends CragCore {
 				 * Create new DataPoint
 				 */
 				this.slices[i] = new Slice(
-						this.chart,
-						i,
-						this.chart.data[i][0],
-						this.chart.data[i][1],
-						100 / total * this.chart.data[i][1]
-					);
+					this.chart,
+					i,
+					this.chart.data[i][0],
+					this.chart.data[i][1],
+					100 / total * this.chart.data[i][1]
+				);
 
 			} else {
 
