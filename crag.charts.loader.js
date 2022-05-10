@@ -11,7 +11,7 @@ class CragLoader {
 			css: 'crag.column.1.0.2.css'
 		},
 		progress: {
-			js: 'crag.progress.1.1.0.js',
+			js: 'crag.progress.1.1.1.js',
 			css: 'crag.progress.1.2.0.css'
 		},
 		lines: {
