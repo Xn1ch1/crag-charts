@@ -401,6 +401,11 @@ class CragProgress extends CragCore {
 			this.chart.lines.target.style.left = '0px';
 			this._lineSmall(this.chart.lines.target);
 			this._hideTarget();
+			
+			this.chart.labels.target.style.left = `4px`;
+			this.chart.valueLabels.target.style.left = `4px`;
+
+			this.chart.valueLabels.target.textContent = `0`;
 
 		} else {
 
