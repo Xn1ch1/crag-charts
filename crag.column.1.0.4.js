@@ -41,7 +41,7 @@ class CragColumn extends CragCore {
 		this.options = {
 			chart: {
 				title: null,
-				color: 'white'
+				color: CragPallet.white
 			},
 			vAxes: {
 				primary: {
@@ -57,7 +57,7 @@ class CragColumn extends CragCore {
 			},
 			columns: {
 				width: 90,
-				color: 'multi',
+				color: CragPallet.multi,
 				rounding: 0,
 				shadow: 0,
 				stripes: false,
@@ -65,7 +65,7 @@ class CragColumn extends CragCore {
 				onClick: null,
 				labels: {
 					position: 'none',
-					color: 'auto'
+					color: CragPallet.auto,
 				},
 				specificBarColor: null,
 			}

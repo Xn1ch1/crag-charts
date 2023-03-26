@@ -37,7 +37,7 @@ class CragLine extends CragCore {
 			 */
 			chart: {
 				title: null,
-				color: 'white'
+				color: CragPallet.white
 			},
 			/**
 			 * @type optionsLine
@@ -45,7 +45,7 @@ class CragLine extends CragCore {
 			line: {
 				thickness: 3,
 				pointSize: 3,
-				color: 'auto',
+				color: CragPallet.auto,
 				smooth: true
 			},
 			/**
@@ -55,31 +55,31 @@ class CragLine extends CragCore {
 				0: {
 					thickness: 3,
 					pointSize: 3,
-					color: 'auto',
+					color: CragPallet.auto,
 					smooth: true
 				},
 				1: {
 					thickness: 3,
 					pointSize: 3,
-					color: 'auto',
+					color: CragPallet.auto,
 					smooth: true
 				},
 				2: {
 					thickness: 3,
 					pointSize: 3,
-					color: 'auto',
+					color: CragPallet.auto,
 					smooth: true
 				},
 				3: {
 					thickness: 3,
 					pointSize: 3,
-					color: 'auto',
+					color: CragPallet.auto,
 					smooth: true
 				},
 				4: {
 					thickness: 3,
 					pointSize: 3,
-					color: 'auto',
+					color: CragPallet.auto,
 					smooth: true
 				},
 			},
