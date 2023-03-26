@@ -488,7 +488,7 @@ class CragPie extends CragCore {
 		this.options = {
 			chart: {
 				title: null,
-				color: 'white',
+				color: CragPallet.white,
 			},
 			slices: {
 				colors: null,

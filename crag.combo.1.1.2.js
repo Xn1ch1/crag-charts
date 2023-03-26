@@ -39,14 +39,14 @@ class CragCombo extends CragCore {
 			 */
 			chart: {
 				title: null,
-				color: 'white'
+				color: CragPallet.white
 			},
 			/**
 			 * @type optionsColumn
 			 */
 			columns: {
 				width: 90,
-				color: 'multi',
+				color: CragPallet.multi,
 				rounding: 0,
 				shadow: 0,
 				stripes: false,
@@ -54,7 +54,7 @@ class CragCombo extends CragCore {
 				onClick: null,
 				labels: {
 					position: 'none',
-					color: 'auto'
+					color: CragPallet.auto
 				},
 				specificBarColor: null,
 			},
@@ -64,7 +64,7 @@ class CragCombo extends CragCore {
 			line: {
 				thickness: 2,
 				pointSize: 4,
-				color: 'auto',
+				color: CragPallet.auto,
 				smooth: true
 			},
 			vAxes: {
@@ -100,7 +100,7 @@ class CragCombo extends CragCore {
 		if (this._isValidColor(options?.columns?.labels?.color)) this.options.columns.labels.color = options.columns.labels.color;
 
 		this.options.columns.rounding = this.validateOption(options?.columns?.rounding, 'number', this.options.columns.rounding);
-		this.options.columns.shadow = this.validateOption(options?.columns?.inset, 'number', this.options.columns.inset);
+		this.options.columns.shadow = this.validateOption(options?.columns?.shadow, 'number', this.options.columns.shadow);
 		this.options.columns.striped = this.validateOption(options?.columns?.striped, 'boolean', this.options.columns.striped);
 		this.options.columns.animated = this.validateOption(options?.columns?.animated, 'boolean', this.options.columns.animated);
 		this.options.columns.onClick = this.validateOption(options?.columns?.onClick, 'function', this.options.columns.onClick);
@@ -116,7 +116,7 @@ class CragCombo extends CragCore {
 
 		this.options.line.smooth = this.validateOption(options?.line?.smooth, 'boolean', this.options.line.smooth);
 		if (options?.line?.thickness > 0 && options?.line?.thickness < 11) this.options.line.thickness = options.line.thickness;
-		if (options?.line?.pointSize > 0 && options?.line?.pointSize < 51) this.options.line.pointSize = options.line.pointSize;
+		if (options?.line?.pointSize >= 0 && options?.line?.pointSize < 51) this.options.line.pointSize = options.line.pointSize;
 
 		/**
 		 * Chart Options
@@ -149,6 +149,9 @@ class CragCombo extends CragCore {
 			container: null,
 			area: null,
 		};
+
+		console.log(options);
+		console.log(this.options);
 
 	}
 

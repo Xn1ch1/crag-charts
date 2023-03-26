@@ -11,7 +11,7 @@ class CragProgress extends CragCore {
 
 		this.options = {
 			chart: {
-				color: 'white',
+				color: CragPallet.white,
 				title: null
 			},
 			bar: {
@@ -28,7 +28,7 @@ class CragProgress extends CragCore {
 			current: {
 				value: 0,
 				label: 'Current',
-				color: 'blue',
+				color: CragPallet.blue,
 				percentage: false,
 				inside: false,
 				show: true

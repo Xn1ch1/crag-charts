@@ -1,3 +1,37 @@
+class CragPallet {
+	static red = '#f44336';
+	static pink = '#ec407a';
+	static purple = '#ba68c8';
+	static deepPurple = '#7e57c2';
+	static indigo = '#5c6bc0';
+	static blue = '#2196f3';
+	static lightBlue = '#03a9f4';
+	static cyan = '#00bcd4';
+	static teal = '#009688';
+	static green = '#4caf50';
+	static lightGreen = '#8bc34a';
+	static lime = '#cddc39';
+	static yellow = '#ffeb3b';
+	static amber = '#ffc107';
+	static orange = '#ff9800';
+	static deepOrange = '#ff5722';
+	static brown = '#8d6e63';
+	static grey = '#9e9e9e';
+	static blueGrey = '#607d8b';
+	static darkBlueGrey = '#192841';
+	static black = '#000000';
+	static almostBlack = '#222222';
+	static charcoal = '#333333';
+	static darkgrey = '#555555';
+	static lightgrey = '#DDDDDD';
+	static white = '#FFFFFF';
+
+	static auto = 1;
+	static match = 2;
+	static multi = 3;
+	static redGreen = 4;
+
+}
 /**
  * @typedef optionsChart Chart options.
  * @property {null|string} [title] Title to show above the chart.
@@ -17,39 +51,39 @@
 class CragCore {
 
 	pallet = {
-		red: '#f44336',
-		pink: '#ec407a',
-		purple: '#ba68c8',
-		deepPurple: '#7e57c2',
-		indigo: '#5c6bc0',
-		blue: '#2196f3',
-		lightBlue: '#03a9f4',
-		cyan: '#00bcd4',
-		teal: '#009688',
-		green: '#4caf50',
-		lightGreen: '#8bc34a',
-		lime: '#cddc39',
-		yellow: '#ffeb3b',
-		amber: '#ffc107',
-		orange: '#ff9800',
-		deepOrange: '#ff5722',
-		brown: '#8d6e63',
-		grey: '#9e9e9e',
-		blueGrey: '#607d8b',
-		darkBlueGrey: '#192841',
-		black: '#000000',
-		almostBlack: '#222222',
-		charcoal: '#333333',
-		darkgrey: '#555555',
-		lightgrey: '#DDDDDD',
-		white: '#FFFFFF',
+		red: CragPallet.red,
+		pink: CragPallet.pink,
+		purple: CragPallet.purple,
+		deepPurple: CragPallet.deepPurple,
+		indigo: CragPallet.indigo,
+		blue: CragPallet.blue,
+		lightBlue: CragPallet.lightBlue,
+		cyan: CragPallet.cyan,
+		teal: CragPallet.teal,
+		green: CragPallet.green,
+		lightGreen: CragPallet.lightGreen,
+		lime: CragPallet.lime,
+		yellow: CragPallet.yellow,
+		amber: CragPallet.amber,
+		orange: CragPallet.orange,
+		deepOrange: CragPallet.deepOrange,
+		brown: CragPallet.brown,
+		grey: CragPallet.grey,
+		blueGrey: CragPallet.blueGrey,
+		darkBlueGrey: CragPallet.darkBlueGrey,
+		black: CragPallet.black,
+		almostBlack: CragPallet.almostBlack,
+		charcoal: CragPallet.charcoal,
+		darkgrey: CragPallet.darkgrey,
+		lightgrey: CragPallet.lightgrey,
+		white: CragPallet.white,
 	}
 
-	modes = ['auto', 'match', 'multi', 'redGreen'];
+	modes = [CragPallet.auto, CragPallet.match, CragPallet.multi, CragPallet.redGreen];
 
 	/**
 	 * Resolves a color value, from either a hex code, pallet name or mode.
-	 * @param {string} value Pallet id, hex code or color mode.
+	 * @param {string|int} value Pallet id, hex code or color mode.
 	 * @return {string} Returns hex code. Or returns mode name if valid mode provided
 	 */
 	_resolveColor(value) {
@@ -77,13 +111,13 @@ class CragCore {
 		/**
 		 * Default to white
 		 */
-		return '#FFFFFF';
+		return CragPallet.white;
 
 	}
 
 	/**
 	 * Resolves a color value, from either a hex code, pallet name or mode.
-	 * @param {string} value Pallet id, hex code or color mode.
+	 * @param {string|int} value Pallet id, hex code or color mode.
 	 * @return {boolean} True if value is pallet name, hex code or mode
 	 */
 	_isValidColor(value) {
@@ -111,7 +145,7 @@ class CragCore {
 
 		if (value === undefined) throw "Value needs to be set for mode to function correctly";
 
-		if (mode === 'redGreen') {
+		if (mode === CragPallet.redGreen) {
 
 			if (value < 0) return this.pallet.red;
 
@@ -119,9 +153,9 @@ class CragCore {
 
 		}
 
-		if (mode === 'multi') return Object.values(this.pallet)[value];
+		if (mode === CragPallet.multi) return Object.values(this.pallet)[value];
 
-		if (mode === 'match') return this._resolveColor(value);
+		if (mode === CragPallet.match) return this._resolveColor(value);
 
 	}
 
@@ -1523,11 +1557,11 @@ class Column extends CragCore {
 
 		} else {
 
-			if (color === 'match') {
+			if (color === CragPallet.match) {
 
 				this.label.style.color = this.color;
 
-			} else if (color === 'auto') {
+			} else if (color === CragPallet.auto) {
 
 				this.label.style.color = this._getContrastColor(backgroundColor);
 
@@ -1774,17 +1808,17 @@ class Columns extends CragCore {
 
 		for (const column of Object.values(this.columns)) {
 
-			if (this.chart.options.columns.color === 'multi') {
+			if (this.chart.options.columns.color === CragPallet.multi) {
 
-				column.color = this._getColorByMode('multi', column.index);
+				column.color = this._getColorByMode(CragPallet.multi, column.index);
 
-			} else if (this.chart.options.columns.color === 'redGreen') {
+			} else if (this.chart.options.columns.color === CragPallet.redGreen) {
 
-				column.color = this._getColorByMode('redGreen', column.value);
+				column.color = this._getColorByMode(CragPallet.redGreen, column.value);
 
 			} else {
 
-				column.color = this._getColorByMode('match', this.chart.options.columns.color);
+				column.color = this._getColorByMode(CragPallet.match, this.chart.options.columns.color);
 
 			}
 
@@ -1795,7 +1829,7 @@ class Columns extends CragCore {
 			const bar = Number(this.chart.options.columns.specificBarColor[0]);
 			const color = this.chart.options.columns.specificBarColor[1];
 
-			if (bar in this.columns) this.columns[bar].color = this._getColorByMode('match', color);
+			if (bar in this.columns) this.columns[bar].color = this._getColorByMode(CragPallet.match, color);
 
 		}
 
@@ -1991,7 +2025,7 @@ class Lines extends CragCore {
 
 		for (let i = 0; i < this.count; i++) {
 
-			if (this.chart.options.lines[i].color === 'auto') {
+			if (this.chart.options.lines[i].color === CragPallet.auto) {
 
 				this.lines[i].color = this.colors[i];
 
@@ -2020,7 +2054,7 @@ class Lines extends CragCore {
 
 		this.chart.options.lines[index].color = value;
 
-		if (value === 'auto') {
+		if (value === CragPallet.auto) {
 
 			this.lines[index].color = this._resolveColor(this.colors[index]);
 
@@ -2374,7 +2408,7 @@ class Line extends CragCore {
 
 		if (this.index !== -1) return;
 
-		if (this.chart.options.line.color === 'auto' || this.chart.options.line.color === null) {
+		if (this.chart.options.line.color === CragPallet.auto || this.chart.options.line.color === null) {
 
 			this.color = this._getContrastColor(this.chart.options.chart.color);
 
@@ -2430,7 +2464,7 @@ class Line extends CragCore {
 
 		if (this.index === -1) {
 
-			if (color === 'auto') color = this._getContrastColor(this.chart.options.chart.color);
+			if (color === CragPallet.auto) color = this._getContrastColor(this.chart.options.chart.color);
 
 		}
 
