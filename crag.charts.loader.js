@@ -6,7 +6,7 @@ class CragLoader {
 			js: 'crag.charts.core.0.2.5.js',
 			css: 'crag.charts.core.0.1.0.css'
 		},
-		bar: {
+		column: {
 			js: 'crag.column.1.0.4.js',
 			css: 'crag.column.1.0.2.css'
 		},
@@ -19,7 +19,7 @@ class CragLoader {
 			css: 'crag.lines.1.0.2.css'
 		},
 		combo: {
-			js: 'crag.combo.1.1.2.js',
+			js: ['crag.lines.1.0.1.js', 'crag.column.1.0.4.js', 'crag.combo.1.1.2.js'],
 			css: 'crag.combo.1.0.1.css'
 		},
 		pie: {
@@ -58,7 +58,9 @@ class CragLoader {
 		 * Attach chart specific resources
 		 */
 		for (let i = 0; i < charts.length; i++) {
+
 			await this.attachResources(charts[i]);
+
 		}
 
 	}
@@ -76,8 +78,8 @@ class CragLoader {
 					css = this.resources.progress.css;
 					break;
 				case 'column':
-					js = this.resources.bar.js;
-					css = this.resources.bar.css;
+					js = this.resources.column.js;
+					css = this.resources.column.css;
 					break;
 				case 'combo':
 					js = this.resources.combo.js;
@@ -110,14 +112,33 @@ class CragLoader {
 
 			}
 
-			const script = document.createElement('script');
+			if (Array.isArray(js)) {
 
-			script.type = 'text/javascript';
-			script.src = this.defaultPath + js;
+				for (const resource of js) {
 
-			head.appendChild(script);
+					const script = document.createElement('script');
 
-			script.onload = () => resolve(true);
+					script.type = 'text/javascript';
+					script.src = this.defaultPath + resource;
+
+					head.appendChild(script);
+
+					if (resource === js[js.length -1]) script.onload = () => resolve(true);
+
+				}
+
+			} else {
+
+				const script = document.createElement('script');
+
+				script.type = 'text/javascript';
+				script.src = this.defaultPath + js;
+
+				head.appendChild(script);
+
+				script.onload = () => resolve(true);
+
+			}
 
 		});
 
