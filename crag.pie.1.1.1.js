@@ -265,7 +265,7 @@ class Slice extends CragCore {
 
 		if (this.chart.options.slices.colors == null) {
 
-			this.slice.setAttribute('fill', this._getColorByMode('multi', this.index + this.chart.options.pie.palletOffset));
+			this.slice.setAttribute('fill', this._getColorByMode(CragPallet.multi, this.index + this.chart.options.pie.palletOffset));
 
 		} else {
 
