@@ -114,18 +114,17 @@ class CragLoader {
 
 			if (Array.isArray(js)) {
 
+				const loader = new ScriptLoader();
+				let i = 0;
+
 				for (const resource of js) {
 
-					const script = document.createElement('script');
-
-					script.type = 'text/javascript';
-					script.src = this.defaultPath + resource;
-
-					head.appendChild(script);
-
-					if (resource === js[js.length -1]) script.onload = () => resolve(true);
+					loader.addScript(new Script(this.defaultPath + resource, i++));
 
 				}
+
+				loader.loadScripts()
+					.then(() => resolve(true));
 
 			} else {
 
@@ -144,4 +143,58 @@ class CragLoader {
 
 	}
 
+}
+
+class Script {
+	constructor(path, dependencyOrder) {
+		this.path = path;
+		this.dependencyOrder = dependencyOrder;
+	}
+}
+class ScriptLoader {
+	constructor() {
+		this.scripts = [];
+
+	}
+	addScript(script) {
+		const exists = this.scripts.find( s => s.path.toLowerCase() === script.path.toLowerCase());
+		if (!exists) {
+			this.scripts.push(script);
+		}
+	}
+	async loadScripts() {
+		if (Array.isArray(this.scripts)) {
+			const orderedScripts = this.orderScriptsByDependency();
+			let scriptsLoaded = false;
+			let counter = 0;
+			while (!scriptsLoaded) {
+				const _script = orderedScripts[counter]
+				await this.loadScript(_script, _script.dependencyOrder > -1);
+				counter += 1;
+				scriptsLoaded = counter === orderedScripts.length;
+			}
+		}
+	}
+	async loadScript(script, waitToLoad) {
+		return new Promise( (resolve, reject) => {
+			const scriptTag = document.createElement('script');
+			scriptTag.src = script.path;
+			if (waitToLoad) {
+				scriptTag.async = true;
+				document.body.appendChild(scriptTag);
+				scriptTag.onload = () => { resolve(); }
+			} else {
+				document.body.appendChild(scriptTag);
+				resolve();
+			}
+		} );
+	}
+	orderScriptsByDependency() {
+		if (Array.isArray(this.scripts)) {
+			return this.scripts.sort( (a, b) => {
+				return a.dependencyOrder - b.dependencyOrder;
+			});
+		}
+		return null;
+	}
 }
