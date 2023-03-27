@@ -150,9 +150,6 @@ class CragCombo extends CragCore {
 			area: null,
 		};
 
-		console.log(options);
-		console.log(this.options);
-
 	}
 
 	create(e) {
@@ -169,8 +166,8 @@ class CragCombo extends CragCore {
 		this.chart.parent.appendChild(this.chart.container);
 		this.chart.container.append(this.chart.area);
 
-		this.primaryVAxis = new vAxisLines(this, 'primary');
-		this.secondaryVAxis = new vAxisLines(this, 'secondary');
+		this.primaryVAxis = new VAxis(this, VAxis.primary);
+		this.secondaryVAxis = new VAxis(this, VAxis.secondary);
 		this.hAxis = new HAxis(this);
 		this.toolTip = new ToolTip(this);
 		this.columns = new Columns(this);
@@ -191,9 +188,7 @@ class CragCombo extends CragCore {
 	 */
 	_applyListeners() {
 
-		const self = this;
-
-		window.addEventListener('resize', () => self._draw());
+		window.addEventListener('resize', () => this._draw());
 
 	}
 
