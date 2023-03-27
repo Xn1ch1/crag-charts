@@ -22,15 +22,15 @@ class CragPallet {
 	static black = '#000000';
 	static almostBlack = '#222222';
 	static charcoal = '#333333';
-	static darkgrey = '#555555';
-	static lightgrey = '#DDDDDD';
+	static darkGrey = '#555555';
+	static lightGrey = '#DDDDDD';
 	static white = '#FFFFFF';
 	static transparent = 'transparent';
 
-	static auto = 1;
-	static match = 2;
-	static multi = 3;
-	static redGreen = 4;
+	static auto = '1';
+	static match = '2';
+	static multi = '3';
+	static redGreen = '4';
 
 }
 /**
@@ -75,8 +75,8 @@ class CragCore {
 		black: CragPallet.black,
 		almostBlack: CragPallet.almostBlack,
 		charcoal: CragPallet.charcoal,
-		darkgrey: CragPallet.darkgrey,
-		lightgrey: CragPallet.lightgrey,
+		darkGrey: CragPallet.darkGrey,
+		lightGrey: CragPallet.lightGrey,
 		white: CragPallet.white,
 	}
 
