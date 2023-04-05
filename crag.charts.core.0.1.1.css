@@ -52,12 +52,10 @@
 .cragVAxisPrimary {
 	grid-area: cragVAxisPrimary;
 	position: relative;
-	transition: all 0.8s ease;
 }
 .cragVAxisSecondary {
 	grid-area: cragVAxisSecondary;
 	position: relative;
-	transition: all 0.8s ease;
 }
 .cragVAxisLabel {
 	position: absolute;
@@ -65,7 +63,7 @@
 	display: block;
 	font-family: Roboto, sans-serif;
 	font-size: 12px;
-	transition: all 0.5s ease;
+	transition: all 0.2s ease;
 	right: 0;
 	bottom: 100%;
 	pointer-events: none;
@@ -79,8 +77,7 @@
 .cragVAxisSecondary .cragVAxisLabel {
 	text-align: left;
 	padding-right: 4px;
-	padding-left: 10
-	px;
+	padding-left: 10px;
 }
 .cragAxisLineMajor {
 	position: absolute;
@@ -184,6 +181,6 @@
 	paint-order: stroke;
 }
 .cragLine {
-	transition: all 0.8s ease;
-	-webkit-transition: all 0.8s ease;
+	transition: all 0.5s ease;
+	-webkit-transition: all 0.5s ease;
 }

@@ -4,7 +4,7 @@ class CragLoader {
 	resources = {
 		core: {
 			js: 'crag.charts.core.0.3.0.js',
-			css: 'crag.charts.core.0.1.0.css'
+			css: 'crag.charts.core.0.1.1.css'
 		},
 		column: {
 			js: 'crag.column.1.1.0.js',
