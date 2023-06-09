@@ -103,7 +103,7 @@ class CragLine extends CragCore {
 		if (this._isValidColor(options?.line?.color)) this.options.line.color = options.line.color;
 		this.options.line.smooth = this.validateOption(options?.line?.smooth, 'boolean', this.options.line.smooth);
 		if (options?.line?.thickness > 0 && options?.line?.thickness < 11) this.options.line.thickness = options.line.thickness;
-		if (options?.line?.pointSize > 0 && options?.line?.pointSize < 51) this.options.line.pointSize = options.line.pointSize;
+		if (options?.line?.pointSize >= 0 && options?.line?.pointSize < 51) this.options.line.pointSize = options.line.pointSize;
 
 		for (let i = 0; i < this.data.series[0].length - 1; i++) {
 
@@ -112,7 +112,7 @@ class CragLine extends CragCore {
 			if (this._isValidColor(options?.lines[i]?.color)) this.options.lines[i].color = options.lines[i].color;
 			this.options.lines[i].smooth = this.validateOption(options?.lines[i]?.smooth, 'boolean', this.options.lines[i].smooth);
 			if (options?.lines[i]?.thickness > 0 && options?.lines[i]?.thickness < 11) this.options.lines[i].thickness = options.lines[i].thickness;
-			if (options?.lines[i]?.pointSize > 0 && options?.lines[i]?.pointSize < 51) this.options.lines[i].pointSize = options.lines[i].pointSize;
+			if (options?.lines[i]?.pointSize >= 0 && options?.lines[i]?.pointSize < 51) this.options.lines[i].pointSize = options.lines[i].pointSize;
 
 		}
 		/**
