@@ -53,30 +53,35 @@ class CragLine extends CragCore {
 			 */
 			lines: {
 				0: {
+					name: 'Series 1',
 					thickness: 3,
 					pointSize: 3,
 					color: CragPallet.auto,
 					smooth: true
 				},
 				1: {
+					name: 'Series 2',
 					thickness: 3,
 					pointSize: 3,
 					color: CragPallet.auto,
 					smooth: true
 				},
 				2: {
+					name: 'Series 3',
 					thickness: 3,
 					pointSize: 3,
 					color: CragPallet.auto,
 					smooth: true
 				},
 				3: {
+					name: 'Series 4',
 					thickness: 3,
 					pointSize: 3,
 					color: CragPallet.auto,
 					smooth: true
 				},
 				4: {
+					name: 'Series 5',
 					thickness: 3,
 					pointSize: 3,
 					color: CragPallet.auto,
@@ -103,7 +108,7 @@ class CragLine extends CragCore {
 		if (this._isValidColor(options?.line?.color)) this.options.line.color = options.line.color;
 		this.options.line.smooth = this.validateOption(options?.line?.smooth, 'boolean', this.options.line.smooth);
 		if (options?.line?.thickness > 0 && options?.line?.thickness < 11) this.options.line.thickness = options.line.thickness;
-		if (options?.line?.pointSize >= 0 && options?.line?.pointSize < 51) this.options.line.pointSize = options.line.pointSize;
+		if (options?.line?.pointSize > 0 && options?.line?.pointSize < 51) this.options.line.pointSize = options.line.pointSize;
 
 		for (let i = 0; i < this.data.series[0].length - 1; i++) {
 
@@ -112,7 +117,7 @@ class CragLine extends CragCore {
 			if (this._isValidColor(options?.lines[i]?.color)) this.options.lines[i].color = options.lines[i].color;
 			this.options.lines[i].smooth = this.validateOption(options?.lines[i]?.smooth, 'boolean', this.options.lines[i].smooth);
 			if (options?.lines[i]?.thickness > 0 && options?.lines[i]?.thickness < 11) this.options.lines[i].thickness = options.lines[i].thickness;
-			if (options?.lines[i]?.pointSize >= 0 && options?.lines[i]?.pointSize < 51) this.options.lines[i].pointSize = options.lines[i].pointSize;
+			if (options?.lines[i]?.pointSize > 0 && options?.lines[i]?.pointSize < 51) this.options.lines[i].pointSize = options.lines[i].pointSize;
 
 		}
 		/**
@@ -275,6 +280,7 @@ class Line extends CragCore {
 
 	/** @type {null|SVGSVGElement} */
 	area = null;
+	name = '';
 
 	constructor(chart, index = -1) {
 		super();
@@ -667,6 +673,7 @@ class Lines extends CragCore {
 
 			this.lines[i] = new Line(chart, i);
 
+			this.lines[i].name = chart.options.lines[i].name;
 			this.setThickness(i, chart.options.lines[i].thickness);
 			this.setPointSize(i, chart.options.lines[i].pointSize);
 			this.setSmooth(i, chart.options.lines[i].smooth);
