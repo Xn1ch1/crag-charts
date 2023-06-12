@@ -252,7 +252,7 @@ class CragLine extends CragCore {
 	 */
 	update(data) {
 
-		this.data.series = data.slice(0, 20);
+		this.data.series = data;
 
 		this._draw();
 
