@@ -102,9 +102,10 @@ class CragLine extends CragCore {
 			},
 			trendLine: {
 				color: CragPallet.grey,
-				thickness: 2
+				thickness: 2,
+				name: 'Trend'
 			}
-		}
+		};
 
 		/**
 		 * Line Options
@@ -144,6 +145,7 @@ class CragLine extends CragCore {
 
 		if (options?.trendLine?.thickness > 0 && options?.trendLine?.thickness < 11) this.options.trendLine.thickness = options.trendLine.thickness;
 		if (this._isValidColor(options?.trendLine?.color)) this.options.trendLine.color = options.trendLine.color;
+		this.options.trendLine.name = this.validateOption(options?.trendLine?.name, 'string', this.options.trendLine.name);
 
 		this.chart = {
 			parent: null,
@@ -671,7 +673,10 @@ class TrendLine extends CragCore {
 	/** @type {null|SVGSVGElement} */
 	area = null;
 
+	label = null;
+
 	value= 0;
+	name = '';
 
 	constructor(chart) {
 		super();
@@ -679,15 +684,27 @@ class TrendLine extends CragCore {
 		this.chart = chart;
 
 		this.area = createSVGChartArea();
+		this._createLabel();
 		this._createLine();
 
 		this.thickness = this.chart.options.trendLine.thickness;
-		this.color = this.chart.options.color;
+		this.color = this.chart.options.trendLine.color;
 
 		this.chart.chart.area.append(this.area);
 
 	}
 
+	_createLabel() {
+
+		this.label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+
+		this.label.style.color = this._getContrastColor(this.chart.options.color);
+		this.label.classList.add('cragVAxisLabel');
+		this.label.textContent = this.chart.options.trendLine.name;
+
+		this.area.append(this.label);
+
+	}
 
 	_calcStartEndPoints() {
 
@@ -753,11 +770,15 @@ class TrendLine extends CragCore {
 
 	}
 
-	updateLine() {
+	updateLine() {console.log(this.label);
 
 		const position = this._calcStartEndPoints();
 
 		this.line.setAttribute('d', `M ${position.cx},${position.cy} ${position.cx2},${position.cy}`);
+
+		this.label.setAttribute('y', position.cy - 4);
+		this.label.setAttribute('x', position.cx + 2);
+
 
 	}
 
@@ -778,7 +799,7 @@ class TrendLine extends CragCore {
 class Lines extends CragCore {
 
 	colors = ['blue', 'green', 'purple', 'deepOrange', 'blueGrey'];
-	lines = {}
+	lines = {};
 	count = 0;
 	chart = null;
 
