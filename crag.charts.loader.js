@@ -15,11 +15,11 @@ class CragLoader {
 			css: 'crag.progress.1.2.0.css'
 		},
 		lines: {
-			js: 'crag.lines.1.2.0.js',
+			js: 'crag.lines.1.2.1.js',
 			css: 'crag.lines.1.0.2.css'
 		},
 		combo: {
-			js: ['crag.lines.1.2.0.js', 'crag.column.1.1.0.js', 'crag.combo.1.2.0.js'],
+			js: ['crag.lines.1.2.1.js', 'crag.column.1.1.0.js', 'crag.combo.1.2.0.js'],
 			css: 'crag.combo.1.0.1.css'
 		},
 		pie: {
