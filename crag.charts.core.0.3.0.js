@@ -625,6 +625,21 @@ Element.prototype.insertChildAtIndex = function(child, index) {
 
 };
 
+function createSVGChartArea() {
+
+	const area = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+
+	area.setAttribute('width', '100%');
+	area.setAttribute('height', '100%');
+	area.style.position = 'absolute';
+	area.style.pointerEvents = 'none';
+	area.style.left = '0';
+	area.style.top = '0';
+
+	return area;
+
+}
+
 class VAxis extends CragCore {
 
 	static primary = 0;
