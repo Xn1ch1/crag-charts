@@ -21,8 +21,8 @@ class CragLine extends CragCore {
 		super();
 
 		this.data = {
-			labels: data.slice(0, 20).map((e) => e.slice(0, 1)).flat(),
-			series: data.slice(0, 20),
+			labels: data.map((e) => e.slice(0, 1)).flat(),
+			series: data,
 			max: {
 				primary: 0,
 			},
