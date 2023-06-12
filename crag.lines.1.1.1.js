@@ -100,6 +100,10 @@ class CragLine extends CragCore {
 					min: 'auto'
 				},
 			},
+			trendLine: {
+				color: CragPallet.grey,
+				thickness: 2
+			}
 		}
 
 		/**
@@ -138,6 +142,9 @@ class CragLine extends CragCore {
 		this.options.vAxes.primary.format = this.validateOption(options?.vAxes?.primary?.format, this.labelFormats, this.options.vAxes.primary.format);
 		if (options?.vAxes?.primary?.min === 'auto' || !isNaN(options?.vAxes?.primary?.min)) this.options.vAxes.primary.min = options?.vAxes?.primary?.min;
 
+		if (options?.trendLine?.thickness > 0 && options?.trendLine?.thickness < 11) this.options.trendLine.thickness = options.trendLine.thickness;
+		if (this._isValidColor(options?.trendLine?.color)) this.options.trendLine.color = options.trendLine.color;
+
 		this.chart = {
 			parent: null,
 			container: null,
@@ -165,6 +172,7 @@ class CragLine extends CragCore {
 		this.toolTip = new ToolTip(this);
 		this.title = new Title(this);
 		this.lines = new Lines(this, this.data.series[0].length - 1)
+		this.trendLine = new TrendLine(this, null);
 
 		setTimeout(this._draw.bind(this), 500);
 
@@ -261,8 +269,6 @@ class CragLine extends CragCore {
 	}
 
 }
-
-
 
 class Line extends CragCore {
 
@@ -418,7 +424,6 @@ class Line extends CragCore {
 			dot.cx = (seriesItemWidth * dot.index) + (seriesItemWidth / 2);
 
 		}
-
 
 	}
 
@@ -651,6 +656,120 @@ class Line extends CragCore {
 			dot.fill = this._resolveColor(color);
 
 		}
+
+	}
+
+}
+
+class TrendLine extends CragCore {
+
+	chart = null;
+
+	/** @type {null|SVGPathElement} */
+	line = null;
+
+	/** @type {null|SVGSVGElement} */
+	area = null;
+
+	value= 0;
+
+	constructor(chart) {
+		super();
+
+		this.chart = chart;
+
+		this.area = createSVGChartArea();
+		this._createLine();
+
+		this.thickness = this.chart.options.trendLine.thickness;
+		this.color = this.chart.options.color;
+
+		this.chart.chart.area.append(this.area);
+
+	}
+
+
+	_calcStartEndPoints() {
+
+		const seriesItemWidth = this.area.width.baseVal.value / this.chart.data.series.length;
+
+		let zeroLine = 0;
+
+		/** Scale is all negative, zero line will be at bottom of container */
+		if (this.chart.primaryVAxis.scale.min >= 0) zeroLine = this.area.height.baseVal.value;
+		/** Scale is positive to negative, zero line will be a part way through */
+		if (this.chart.primaryVAxis.scale.min < 0 && this.chart.primaryVAxis.scale.max > 0) zeroLine = this.area.height.baseVal.value / (this.chart.primaryVAxis.scale.max - this.chart.primaryVAxis.scale.min) * this.chart.primaryVAxis.scale.max;
+
+		let cy;
+
+		if (this.value < 0) {
+
+			cy = (this.area.height.baseVal.value - zeroLine) / (this.chart.primaryVAxis.scale.min - Math.min(0, this.chart.primaryVAxis.scale.max)) * (this.value - Math.min(0, this.chart.primaryVAxis.scale.max));
+
+		} else {
+
+			if (zeroLine === this.area.height.baseVal.value) {
+
+				cy = -this.area.height.baseVal.value / (this.chart.primaryVAxis.scale.max - this.chart.primaryVAxis.scale.min) * (this.value - this.chart.primaryVAxis.scale.min);
+
+			} else {
+
+				cy = -(zeroLine - this.area.height.baseVal.value) / (this.chart.primaryVAxis.scale.min - Math.min(0, this.chart.primaryVAxis.scale.max)) * (this.value - Math.min(0, this.chart.primaryVAxis.scale.max));
+
+			}
+
+		}
+
+		return {
+			cy: zeroLine + cy,
+			cx: (seriesItemWidth / 2),
+			cx2: (seriesItemWidth * (this.chart.data.series.length - 1)) + (seriesItemWidth / 2)
+		}
+
+	}
+
+	_createLine() {
+
+		this.line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+		this.line.setAttribute('fill', 'none');
+		this.line.setAttribute('class', 'cragLine');
+		this.line.setAttribute('d', 'M 0,0 0,0');
+
+		this.area.append(this.line);
+
+	}
+
+	update(data) {
+
+		if (data === null) {
+			this.line.style.opacty = 0;
+			return;
+		}
+
+		this.line.style.opacty = 1;
+
+		this.value = data;
+		this.updateLine();
+
+	}
+
+	updateLine() {
+
+		const position = this._calcStartEndPoints();
+
+		this.line.setAttribute('d', `M ${position.cx},${position.cy} ${position.cx2},${position.cy}`);
+
+	}
+
+	set thickness(value) {
+
+		this.line.setAttribute('stroke-width', value.toString());
+
+	}
+
+	set color(color) {
+
+		this.line.setAttribute('stroke', this._resolveColor(color));
 
 	}
 
