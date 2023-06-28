@@ -253,6 +253,7 @@ class CragLine extends CragCore {
 	update(data) {
 
 		this.data.series = data;
+		this.data.labels = data.map((e) => e.slice(0, 1)).flat();
 
 		this._draw();
 
@@ -353,10 +354,12 @@ class Line extends CragCore {
 				 */
 				this.dots[i].index = i;
 				this.dots[i].value = data[i];
+				this.dots[i].name = this.chart.data.labels[i];
 
 			} else {
 
 				this.dots[i] = new Dot(i, data[i]);
+				this.dots[i].name = this.chart.data.labels[i];
 
 				if (this.index === -1) {
 
@@ -365,7 +368,8 @@ class Line extends CragCore {
 
 				}
 
-				this.area.append(this.dots[i].dot);
+				this.area.append(this.dots[i].element);
+				this.chart.toolTip.attach(this.dots[i]);
 
 			}
 
@@ -431,7 +435,7 @@ class Line extends CragCore {
 
 	updateLine() {
 
-		const newPoints = Object.values(this.dots).map((a) => a.dot);
+		const newPoints = Object.values(this.dots).map((a) => a.element);
 
 		if (newPoints.length === 0) return;
 
@@ -498,6 +502,7 @@ class Line extends CragCore {
 		 * overcome this new points are placed in the same location as
 		 * the last existing point so when the re-draw happens, it looks like nothing changed
 		 */
+
 		if (Object.values(newPoints).length > this.points.length) {
 
 			const lastExistingPoint = this.points[this.points.length - 1];
@@ -770,7 +775,7 @@ class TrendLine extends CragCore {
 
 	}
 
-	updateLine() {console.log(this.label);
+	updateLine() {
 
 		const position = this._calcStartEndPoints();
 
@@ -892,14 +897,16 @@ class Lines extends CragCore {
 
 class Dot {
 
-	dot = null;
-	value = 0;
-	index = 0;
+	element = null;
+
+	#value = 0;
+	#index = 0;
+	#name = '';
 
 	constructor(index, value) {
 
-		this.index = index;
-		this.value = value;
+		this.#index = index;
+		this.#value = value;
 
 		this._createDot();
 
@@ -907,21 +914,21 @@ class Dot {
 
 	_createDot() {
 
-		this.dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+		this.element = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
 
-		this.dot.setAttribute('cx', '100%');
-		this.dot.setAttribute('cy', '100%');
-		this.dot.setAttribute('class', 'cragPoint');
+		this.element.setAttribute('cx', '100%');
+		this.element.setAttribute('cy', '100%');
+		this.element.setAttribute('class', 'cragPoint');
 
 	}
 
 	_destroy() {
 
-		this.dot.style.opacity = '0';
+		this.element.style.opacity = '0';
 
 		setTimeout(() => {
 
-			this.dot.remove();
+			this.element.remove();
 
 		}, 700);
 
@@ -929,26 +936,62 @@ class Dot {
 
 	set r(value) {
 
-		this.dot.setAttribute('r', value);
+		this.element.setAttribute('r', value);
 
 	}
 
 	set cy(value) {
 
-		this.dot.setAttribute('cy', `${value}px`);
+		this.element.setAttribute('cy', `${value}px`);
 
 	}
 
 	set cx(value) {
 
-		this.dot.setAttribute('cx', `${value}px`);
+		this.element.setAttribute('cx', `${value}px`);
 
 	}
 
 	set fill(value) {
 
-		this.dot.style.fill = value;
+		this.element.style.fill = value;
 
+	}
+
+	/**
+	 * @param {number} value
+	 */
+	set value(value) {
+
+		this.#value = value;
+
+	}
+	get value() {
+		return this.#value;
+	}
+
+	/**
+	 * @param {string} value
+	 */
+	set name(value) {
+
+		this.#name = value;
+
+	}
+	get name() {
+		return this.#name;
+	}
+
+	/**
+	 * @param {number} value
+	 */
+	set index(value) {
+
+		this.#index = value;
+
+	}
+	get index() {
+		return this.#index;
 	}
 
 }

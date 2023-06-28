@@ -30,7 +30,7 @@ class CragColumn extends CragCore {
 		super();
 
 		this.data = {
-			series: data.slice(0, 20),
+			series: data,
 			max: 0,
 			min: 0
 		};
@@ -209,7 +209,7 @@ class CragColumn extends CragCore {
 	 */
 	update(data) {
 
-		this.data.series = data.slice(0, 20);
+		this.data.series = data;
 
 		this._draw();
 
@@ -232,27 +232,29 @@ class CragColumn extends CragCore {
 
 class Column extends CragCore {
 
-	index = 0;
-	columnValue = 0;
+	#index = 0;
+	#value = 0;
+	#name = '';
+
+	#height = 0;
+	#bottom = 0;
+	#left = 0;
+	#width = 0;
+	#color = null;
+	#labelPosition = 'none';
 
 	/** @type {HTMLDivElement} */
-	column = null;
+	element = null;
 
 	/** @type {HTMLSpanElement} */
 	label = null;
 
-	calculatedHeight = 0;
-	calculatedBottom = 0;
-	calculatedLeft = 0;
-	calculatedWidth = 0;
-	calculatedColor = null;
-	calculatedLabelPosition = 'none';
-
-	constructor (index, value) {
+	constructor (index, value, name) {
 		super();
 
-		this.index = index;
-		this.columnValue = value;
+		this.#index = index;
+		this.#value = value;
+		this.#name = name;
 
 		this._createColumn();
 		this._createLabel();
@@ -261,8 +263,8 @@ class Column extends CragCore {
 
 	_createColumn() {
 
-		this.column = document.createElement('div');
-		this.column.className = 'cragColumn';
+		this.element = document.createElement('div');
+		this.element.className = 'cragColumn';
 
 	}
 
@@ -275,14 +277,14 @@ class Column extends CragCore {
 
 	_destroy() {
 
-		this.column.style.left = `calc(100% + ${parseInt(this.column.style.width.replace('px', '')) * this.index}px)`;
+		this.element.style.left = `calc(100% + ${parseInt(this.element.style.width.replace('px', '')) * this.index}px)`;
 
 		this.label.style.opacity = '0';
 		this.label.style.left = '100%';
 
 		setTimeout(() => {
 
-			this.column.remove();
+			this.element.remove();
 
 			if (this.label != null) this.label.remove();
 
@@ -295,51 +297,75 @@ class Column extends CragCore {
 	 */
 	set value(value) {
 
-		this.columnValue = value;
+		this.#value = value;
 
 	}
 	get value() {
-		return this.columnValue;
+		return this.#value;
+	}
+
+	/**
+	 * @param {string} value
+	 */
+	set name(value) {
+
+		this.#name = value;
+
+	}
+	get name() {
+		return this.#name;
+	}
+
+	/**
+	 * @param {number} value
+	 */
+	set index(value) {
+
+		this.#index = value;
+
+	}
+	get index() {
+		return this.#index;
 	}
 
 	set color(value) {
-		this.calculatedColor = value;
-		this.column.style.backgroundColor = value;
+		this.#color = value;
+		this.element.style.backgroundColor = value;
 	}
 	get color() {
-		return this.calculatedColor;
+		return this.#color;
 	}
 
 	set height(value) {
-		this.calculatedHeight = value;
-		this.column.style.height = `${value}px`;
+		this.#height = value;
+		this.element.style.height = `${value}px`;
 	}
 	get height() {
-		return this.calculatedHeight;
+		return this.#height;
 	}
 
 	set width(value) {
-		this.calculatedWidth = value;
-		this.column.style.width = `${value}px`;
+		this.#width = value;
+		this.element.style.width = `${value}px`;
 	}
 	get width() {
-		return this.calculatedWidth;
+		return this.#width;
 	}
 
 	set left(value) {
-		this.calculatedLeft = value;
-		this.column.style.left = `${value}px`;
+		this.#left = value;
+		this.element.style.left = `${value}px`;
 	}
 	get left() {
-		return this.calculatedLeft;
+		return this.#left;
 	}
 
 	set bottom(value) {
-		this.calculatedBottom = value;
-		this.column.style.bottom = `${value}px`;
+		this.#bottom = value;
+		this.element.style.bottom = `${value}px`;
 	}
 	get bottom() {
-		return this.calculatedBottom;
+		return this.#bottom;
 	}
 
 	set rounding(value) {
@@ -348,17 +374,17 @@ class Column extends CragCore {
 
 			if (this.value < 0) {
 
-				this.column.style.borderRadius = `0 0 ${value}px ${value}px`;
+				this.element.style.borderRadius = `0 0 ${value}px ${value}px`;
 
 			} else {
 
-				this.column.style.borderRadius = `${value}px ${value}px 0 0`;
+				this.element.style.borderRadius = `${value}px ${value}px 0 0`;
 
 			}
 
 		} else {
 
-			this.column.style.borderRadius = '0';
+			this.element.style.borderRadius = '0';
 
 		}
 
@@ -373,29 +399,29 @@ class Column extends CragCore {
 			const verticalDirection = Math.abs(value);
 			const spread = Math.abs(value) * 2.5;
 
-			this.column.style.boxShadow = `${shadowType}0 ${verticalModifier}${verticalDirection}px ${spread}px 0 rgba(0, 0, 0, 0.35)`;
+			this.element.style.boxShadow = `${shadowType}0 ${verticalModifier}${verticalDirection}px ${spread}px 0 rgba(0, 0, 0, 0.35)`;
 
 		} else {
 
-			this.column.style.boxShadow = 'none';
+			this.element.style.boxShadow = 'none';
 
 		}
 
 	}
 
 	set stripes(hasStripes) {
-		this.column.classList.toggle('cragColumnStriped', hasStripes);
+		this.element.classList.toggle('cragColumnStriped', hasStripes);
 	}
 
 	set animatedStripes(hasAnimatedStripes) {
-		this.column.classList.toggle('cragColumnStripedAnimate', hasAnimatedStripes);
+		this.element.classList.toggle('cragColumnStripedAnimate', hasAnimatedStripes);
 	}
 
 	set labelPosition(value) {
-		this.calculatedLabelPosition = value;
+		this.#labelPosition = value;
 	}
 	get labelPosition() {
-		return this.calculatedLabelPosition;
+		return this.#labelPosition;
 	}
 
 	set labelText(value) {
@@ -552,8 +578,8 @@ class Columns extends CragCore {
 				 * Update existing DataPoint at this index with new data
 				 */
 				this.columns[i].index = i;
+				this.columns[i].name = this.chart.data.series[i][0];
 				this.columns[i].value = this.chart.data.series[i][1];
-
 				this.columns[i].columnOptions = this.chart.options.columns;
 
 			} else {
@@ -561,27 +587,19 @@ class Columns extends CragCore {
 				/**
 				 * Create new DataPoint
 				 */
-				this.columns[i] = new Column(i, this.chart.data.series[i][1], this.chart.options.vAxes.primary.format, this.chart.options.vAxes.primary.currencySymbol, this.chart.options.vAxes.primary.decimalPlaces);
+				this.columns[i] = new Column(i, this.chart.data.series[i][1], this.chart.data.series[i][0]);
 
-				this.labelArea.appendChild(this.columns[i].label);
-				this.columnArea.appendChild(this.columns[i].column);
+				this.labelArea.append(this.columns[i].label);
+				this.columnArea.append(this.columns[i].element);
 
-				this.columns[i].column.onmouseover = () => {
-					this.chart.toolTip.show(i, this.columns[i].column);
-					this._focusOne(i);
-				}
-
-				this.columns[i].column.onmouseout = () => {
-					this.chart.toolTip.hide();
-					this._clearFocus();
-				}
+				this.chart.toolTip.attach(this.columns[i]);
 
 				/**
 				 * Add onclick if set on creation
 				 */
 				if (this.chart.options.columns.onClick !== null) {
 
-					this.columns[i].column.onclick = () => this.chart.options.columns.onClick(this.columns[i]);
+					this.columns[i].element.onclick = () => this.chart.options.columns.onClick(this.columns[i]);
 
 				}
 
@@ -631,28 +649,6 @@ class Columns extends CragCore {
 		for (const column of Object.values(this.columns)) {
 
 			column.setLabelColor(this.chart.options.columns.labels.color, this.chart.options.chart.color);
-
-		}
-
-	}
-
-	_focusOne(index) {
-
-		for (const column of Object.values(this.columns)) {
-
-			if (column.index === index) continue;
-
-			column.column.style.opacity = '0.2';
-
-		}
-
-	}
-
-	_clearFocus() {
-
-		for (const column of Object.values(this.columns)) {
-
-			column.column.style.opacity = '1';
 
 		}
 
