@@ -443,41 +443,7 @@ function calculateScale(min, max, base) {
 
 			break;
 
-		case (base === 3600):
-
-			switch (true) {
-				case (factor < 1.25):
-					scalar = 0.25;
-					break;
-
-				case (factor < 2.5):
-					scalar = 1;
-					break;
-
-				case (factor < 10):
-					scalar = 2;
-					break;
-
-				case (factor < 100):
-					scalar = 60;
-					break;
-
-				case (factor < 1000):
-					scalar = 120;
-					break;
-
-				case (factor < 10000):
-					scalar = 600;
-					break;
-
-				default:
-					scalar = 600;
-					break;
-			}
-
-			break;
-
-		case (base === 42300):
+		case (base === 3600 || base === 42300):
 
 			switch (true) {
 				case (factor < 1.25):
