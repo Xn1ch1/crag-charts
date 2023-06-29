@@ -130,11 +130,12 @@
 	-moz-box-shadow: 1px 1px 4px 1px rgb(0 0 0 / 50%) !important;
 	box-shadow: 1px 1px 4px 1px rgb(0 0 0 / 50%) !important;
 	pointer-events: none;
+	font-size: 13px;
 }
 .cragToolTipLabel {
 	display: inline;
 	font-family: Roboto, sans-serif;
-	font-size: 14px;
+	font-size: inherit;
 	padding: 4px;
 	margin: 0;
 	text-align: right;
@@ -146,7 +147,7 @@
 .cragToolTipValue {
 	display: inline;
 	font-family: Roboto, sans-serif;
-	font-size: 14px;
+	font-size: inherit;
 	margin: 0;
 	padding: 4px 4px 4px 8px;
 	text-align: right;
