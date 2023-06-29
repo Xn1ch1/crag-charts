@@ -22,7 +22,8 @@ class CragCombo extends CragCore {
 		super();
 
 		this.data = {
-			series: data.slice(0, 20),
+			series: data,
+			labels: data.map((e) => e.slice(0, 1)).flat(),
 			max: {
 				primary: 0,
 				secondary: 0,
@@ -266,13 +267,15 @@ class CragCombo extends CragCore {
 	 */
 	update(data) {
 
-		this.data.series = data.slice(0, 20);
+		this.data.series = data;
+		this.data.labels = data.map((e) => e.slice(0, 1)).flat();
 
 		this._draw();
 
 	}
 
 	/**
+	 * @description Applies a new background color to the chart.
 	 * @description Applies a new background color to the chart.
 	 * @param {string} color
 	 */

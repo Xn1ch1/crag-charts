@@ -121,8 +121,8 @@
 	top: 0;
 	left: 0;
 	opacity: 0;
-	padding: 8px 16px;
-	transition: all 0.3s ease;
+	padding: 4px;
+	transition: opacity 0.3s;
 	-webkit-border-radius: 8px;
 	-moz-border-radius: 8px;
 	border-radius: 8px;
@@ -130,41 +130,31 @@
 	-moz-box-shadow: 1px 1px 4px 1px rgb(0 0 0 / 50%) !important;
 	box-shadow: 1px 1px 4px 1px rgb(0 0 0 / 50%) !important;
 	pointer-events: none;
-}
-.cragToolTipTitle {
-	font-family: Roboto, sans-serif;
-	font-size: 14px;
-	margin: 2px 0;
-	width: 100%;
-	text-align: center;
-	font-weight: 400;
-	color: inherit;
+	font-size: 13px;
 }
 .cragToolTipLabel {
 	display: inline;
 	font-family: Roboto, sans-serif;
-	font-size: 14px;
-	padding: 8px 16px 6px 4px;
+	font-size: inherit;
+	padding: 4px;
 	margin: 0;
 	text-align: right;
 	font-weight: 300;
 	float: left;
 	clear: left;
 	color: inherit;
-	line-height: 16px;
 }
 .cragToolTipValue {
 	display: inline;
 	font-family: Roboto, sans-serif;
-	font-size: 16px;
-	padding: 8px 4px 6px 16px;
+	font-size: inherit;
 	margin: 0;
+	padding: 4px 4px 4px 8px;
 	text-align: right;
 	float: right;
-	font-weight: 400;
+	font-weight: 500;
 	clear: right;
 	color: inherit;
-	line-height: 16px;
 }
 @keyframes barber-pole {
 	100% {

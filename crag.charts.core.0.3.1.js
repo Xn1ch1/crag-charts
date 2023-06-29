@@ -443,41 +443,7 @@ function calculateScale(min, max, base) {
 
 			break;
 
-		case (base === 3600):
-
-			switch (true) {
-				case (factor < 1.25):
-					scalar = 0.25;
-					break;
-
-				case (factor < 2.5):
-					scalar = 1;
-					break;
-
-				case (factor < 10):
-					scalar = 2;
-					break;
-
-				case (factor < 100):
-					scalar = 60;
-					break;
-
-				case (factor < 1000):
-					scalar = 120;
-					break;
-
-				case (factor < 10000):
-					scalar = 600;
-					break;
-
-				default:
-					scalar = 600;
-					break;
-			}
-
-			break;
-
-		case (base === 42300):
+		case (base === 3600 || base === 42300):
 
 			switch (true) {
 				case (factor < 1.25):
@@ -1185,12 +1151,9 @@ class ToolTip extends CragCore {
 	chart = null;
 
 	container = null;
-	title = null;
-	primaryLabel = null;
-	primaryValue = null;
 
-	secondaryLabel = null;
-	secondaryValue = null;
+	label = null;
+	value = null;
 
 	constructor(chart) {
 		super();
@@ -1205,31 +1168,20 @@ class ToolTip extends CragCore {
 	_create() {
 
 		this.container = document.createElement('div');
-		this.title = document.createElement('h6');
 
-		this.primaryLabel = document.createElement('h6');
-		this.primaryValue = document.createElement('h6');
-
-		this.secondaryLabel = document.createElement('h6');
-		this.secondaryValue = document.createElement('h6');
+		this.label = document.createElement('h6');
+		this.value = document.createElement('h6');
 
 		this.container.className = 'cragToolTip';
-		this.title.className = 'cragToolTipTitle';
 
-		this.primaryLabel.className = 'cragToolTipLabel';
-		this.primaryValue.className = 'cragToolTipValue';
-
-		this.secondaryLabel.className = 'cragToolTipLabel';
-		this.secondaryValue.className = 'cragToolTipValue';
+		this.label.className = 'cragToolTipLabel';
+		this.value.className = 'cragToolTipValue';
 
 		document.body.appendChild(this.container);
 
 		this.container.append(
-			this.title,
-			this.primaryLabel,
-			this.primaryValue,
-			this.secondaryLabel,
-			this.secondaryValue,
+			this.label,
+			this.value,
 		);
 
 	}
@@ -1241,104 +1193,43 @@ class ToolTip extends CragCore {
 
 	}
 
-	_position(index, element) {
+	_position(event) {
 
-		const elementRect = element.getBoundingClientRect();
+		if (event.clientX < window.innerWidth / 2) {
 
-		const chartWidth = window.innerWidth;
-		const columnWidth = element.offsetWidth;
-		const tipWidth = this.container.offsetWidth;
-
-		const alignments = [false, true, false];
-
-		if (elementRect.left - 8 > tipWidth) alignments[0] = true;
-		if (chartWidth - elementRect.left - columnWidth - 8 > tipWidth) alignments[2] = true;
-
-		this.container.style.opacity = '1';
-
-		/**
-		 * If the column is on the left side of screen, see if the tool tip will fit on the left of the column first
-		 * Otherwise check to see if it will fit on the right.
-		 * If the preferred side can not fit, use the other.
-		 * If neither fits, it will default to center over the columns.
-		 */
-		if (alignments[0] && elementRect.left - 8 > tipWidth) {
-
-			this.container.style.left = `${elementRect.left - tipWidth - 8}px`;
-
-		} else if (alignments[2]) {
-
-			this.container.style.left = `${elementRect.left + columnWidth + 8}px`;
+			this.container.style.left = `${event.clientX + 8}px`;
 
 		} else {
 
-			this.container.style.left = `${elementRect.left + (columnWidth / 2) - (tipWidth / 2)}px`;
-			this.container.style.opacity = '0.8';
+			this.container.style.left = `${event.clientX - this.container.offsetWidth - 8}px`;
 
 		}
 
-		if (this.chart.data.series[index][1] < 0) {
-
-			this.container.style.top = `${Math.max(0, elementRect.bottom)}px`;
-
-		} else {
-
-			if (this.container.offsetHeight > elementRect.height) {
-
-				/* Align to top of elem */
-				this.container.style.top = `${elementRect.top - this.container.offsetHeight}px`;
-
-			} else {
-
-				/* Align to top of elem */
-				this.container.style.top = `${Math.max(0, elementRect.top)}px`;
-
-			}
-
-		}
+		this.container.style.top = `${event.clientY + 2}px`;
 
 	}
 
-	show(index, caller) {
+	attach(object) {
 
-		this.title.textContent = this.chart.data.series[index][0];
+		object.element.onmouseover = (e) => this.chart.toolTip.show(e, object.name, object.value);
+		object.element.onmousemove = (e) => this.chart.toolTip._position(e);
+		object.element.onmouseout = () => this.chart.toolTip.hide();
 
-		this.primaryLabel.textContent = this.chart.options.vAxes.primary.name;
-		this.primaryValue.textContent = this.formatLabel(
-			this.chart.data.series[index][1],
+	}
+
+	show(event, label, value) {
+
+		this.label.textContent = label;
+		this.value.textContent = this.formatLabel(
+			value,
 			this.chart.options.vAxes.primary.format,
 			this.chart.options.vAxes.primary.currencySymbol,
 			this.chart.options.vAxes.primary.decimalPlaces
 		);
 
-		if (this.chart.data.series[index][2]) {
-			this.secondaryLabel.textContent = this.chart.options.vAxes.secondary?.name;
-			this.secondaryValue.textContent = this.formatLabel(
-				this.chart.data.series[index][2],
-				this.chart.options.vAxes?.secondary?.format,
-				this.chart.options.vAxes?.secondary?.currencySymbol,
-				this.chart.options.vAxes?.secondary?.decimalPlaces
-			);
-		} else {
-			this.secondaryLabel.textContent = '';
-			this.secondaryValue.textContent = '';
-		}
-
-		if (this.secondaryLabel.textContent === '') {
-
-			this.secondaryLabel.style.display = 'none';
-			this.secondaryValue.style.display = 'none';
-
-		} else {
-
-			this.secondaryLabel.style.display = '';
-			this.secondaryValue.style.display = '';
-
-		}
-
 		this.container.style.opacity = '1';
 
-		this._position(index, caller);
+		this._position(event);
 
 	}
 
