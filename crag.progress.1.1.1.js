@@ -676,7 +676,6 @@ class CragProgress extends CragCore {
 
 		if (this._isValidColor(value)) this.options.chart.color = value;
 
-		console.log(this.options.chart.color);
 		this._colorize();
 
 	}

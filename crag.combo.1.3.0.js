@@ -12,6 +12,7 @@
  * @property {optionsColumn} [columns]
  * @property {optionsLine} [line]
  */
+
 class CragCombo extends CragCore {
 
 	/**
@@ -22,8 +23,8 @@ class CragCombo extends CragCore {
 		super();
 
 		this.data = {
-			series: data,
-			labels: data.map((e) => e.slice(0, 1)).flat(),
+			labels: data[0],
+			series: data.slice(1, data.length),
 			max: {
 				primary: 0,
 				secondary: 0,
@@ -62,12 +63,7 @@ class CragCombo extends CragCore {
 			/**
 			 * @type optionsLine
 			 */
-			line: {
-				thickness: 2,
-				pointSize: 4,
-				color: CragPallet.auto,
-				smooth: true
-			},
+			lines: {},
 			vAxes: {
 				primary: {
 					name: 'Series 1',
@@ -113,11 +109,20 @@ class CragCombo extends CragCore {
 		/**
 		 * Line Options
 		 */
-		if (this._isValidColor(options?.line?.color)) this.options.line.color = options.line.color;
+		for (let i = 0; i < this.data.series.length - 1; i++) {
 
-		this.options.line.smooth = this.validateOption(options?.line?.smooth, 'boolean', this.options.line.smooth);
-		if (options?.line?.thickness > 0 && options?.line?.thickness < 11) this.options.line.thickness = options.line.thickness;
-		if (options?.line?.pointSize >= 0 && options?.line?.pointSize < 51) this.options.line.pointSize = options.line.pointSize;
+			this.options.lines[i] = {... defaultLineOptions};
+
+			/**
+			 * Line Options
+			 */
+			if (this._isValidColor(options?.lines[i]?.color)) this.options.lines[i].color = options.lines[i].color;
+			this.options.lines[i].smooth = this.validateOption(options?.lines[i]?.smooth, 'boolean', this.options.lines[i].smooth);
+			this.options.lines[i].showLabel = this.validateOption(options?.lines[i]?.showLabel, 'boolean', this.options.lines[i].showLabel);
+			if (options?.lines[i]?.thickness > 0 && options?.lines[i]?.thickness < 11) this.options.lines[i].thickness = options.lines[i].thickness;
+			if (options?.lines[i]?.pointSize > 0 && options?.lines[i]?.pointSize < 51) this.options.lines[i].pointSize = options.lines[i].pointSize;
+
+		}
 
 		/**
 		 * Chart Options
@@ -171,8 +176,8 @@ class CragCombo extends CragCore {
 		this.secondaryVAxis = new VAxis(this, VAxis.secondary);
 		this.hAxis = new HAxis(this);
 		this.toolTip = new ToolTip(this);
-		this.columns = new Columns(this);
-		this.line = new Line(this);
+		this.columns = new Columns(this, this.data.series[0]);
+		this.line = new Line(this, this.data.series[1]);
 		this.title = new Title(this);
 
 		setTimeout(this._draw.bind(this), 500);
@@ -206,8 +211,8 @@ class CragCombo extends CragCore {
 
 		this.primaryVAxis.update(this.data.min.primary, this.data.max.primary);
 		this.secondaryVAxis.update(this.data.min.secondary, this.data.max.secondary);
-		this.columns.update(this.data.series, this.primaryVAxis.scale);
-		this.line.update(this.data.series.map((e) => e[2]), this.secondaryVAxis.scale);
+		this.columns.update(this.data.series[0], this.primaryVAxis.scale);
+		this.line.update(this.data.series[1], this.secondaryVAxis.scale);
 		this.hAxis.update();
 
 		this._colorize();
@@ -228,7 +233,6 @@ class CragCombo extends CragCore {
 		this.title._colorize();
 		this.hAxis._colorize();
 		this.columns._colorLabels();
-		this.toolTip._colorize();
 		this.line._colorize();
 		this.primaryVAxis._colorize();
 		this.secondaryVAxis._colorize();
@@ -238,23 +242,23 @@ class CragCombo extends CragCore {
 	_getDataMinMax() {
 
 		this.data.max = {
-			primary: Math.max(...this.data.series.map((e) => e[1])),
-			secondary: Math.max(...this.data.series.map((e) => e[2]))
+			primary: findMaxValue(this.data.series[0]),
+			secondary: findMaxValue(this.data.series[1])
 		};
 		this.data.min = {
-			primary: Math.min(...this.data.series.map((e) => e[1])),
-			secondary: Math.min(...this.data.series.map((e) => e[2]))
+			primary: findMinValue(this.data.series[0]),
+			secondary: findMinValue(this.data.series[1])
 		};
 
 		if (this.options.vAxes?.secondary?.showOnPrimary) {
 
 			this.data.max = {
-				primary: Math.max(...this.data.series.map((e) => e.slice(1)).flat()),
-				secondary: Math.max(...this.data.series.map((e) => e.slice(1)).flat()),
+				primary: findMaxValue(this.data.series),
+				secondary: findMaxValue(this.data.series)
 			};
 			this.data.min = {
-				primary: Math.min(...this.data.series.map((e) => e.slice(1)).flat()),
-				secondary: Math.min(...this.data.series.map((e) => e.slice(1)).flat()),
+				primary: findMinValue(this.data.series),
+				secondary: findMinValue(this.data.series)
 			};
 
 		}
@@ -267,8 +271,8 @@ class CragCombo extends CragCore {
 	 */
 	update(data) {
 
-		this.data.series = data;
-		this.data.labels = data.map((e) => e.slice(0, 1)).flat();
+		this.data.labels = data[0];
+		this.data.series = data.slice(1, data.length);
 
 		this._draw();
 
