@@ -401,6 +401,8 @@ class Line extends CragCore {
 			dot.cy = zeroLine + cy;
 			dot.cx = (seriesItemWidth * dot.index) + (seriesItemWidth / 2);
 
+			dot.labelVisible = dot.label.offsetWidth <= seriesItemWidth;
+
 		}
 
 	}
@@ -936,10 +938,8 @@ class Dot {
 	 * @param {number} value
 	 */
 	set value(value) {
-
 		this.#value = value;
 		this.label.textContent = formatLabel(value);
-
 	}
 	get value() {
 		return this.#value;
@@ -949,9 +949,7 @@ class Dot {
 	 * @param {string} value
 	 */
 	set name(value) {
-
 		this.#name = value;
-
 	}
 	get name() {
 		return this.#name;
@@ -961,20 +959,15 @@ class Dot {
 	 * @param {number} value
 	 */
 	set index(value) {
-
 		this.#index = value;
-
 	}
 	get index() {
 		return this.#index;
 	}
 
 	set labelVisible(value) {
-
 		this.label.style.opacity = value ? '1' : '0';
-
 	}
-
 	get labelVisible() {
 		return this.label.style.opacity === '1';
 	}

@@ -347,7 +347,7 @@ class Column extends CragCore {
 		return this.#height;
 	}
 
-	set width(value) {
+	set width(value) {console.log(value);
 		this.#width = value;
 		this.element.style.width = `${value}px`;
 	}
@@ -437,6 +437,8 @@ class Column extends CragCore {
 
 		if (preferredPosition === 'none') return this.labelPosition = 'none';
 
+		if (this.label.offsetWidth > this.#width)  return this.labelPosition = 'none';
+
 		if (
 			(preferredPosition === 'inside' && this.height > this.label.offsetHeight) ||
 			(this.value < 0 && this.bottom < this.label.offsetHeight) ||
@@ -509,8 +511,7 @@ class Column extends CragCore {
 
 	setLabelPosition(preferredPosition, maxHeight) {
 
-		this.label.style.left = `${this.left}px`;
-		this.label.style.width = `${this.width}px`;
+		this.label.style.left = `${this.#left + (this.#width / 2) - (this.label.offsetWidth / 2)}px`;
 
 		this._calculateLabelPosition(preferredPosition, maxHeight);
 		this._moveLabel();
@@ -638,6 +639,9 @@ class Columns extends CragCore {
 	}
 
 	_positionLabels() {
+
+		const columnWidthSpace = (this.chart.chart.container.offsetWidth - this.chart.primaryVAxis.calculatedWidth - (this.chart?.secondaryVAxis?.calculatedWidth ?? 0)) / this.data.length;
+		const columnWidth = columnWidthSpace * (this.chart.options.columns.width / 100);
 
 		for (const column of Object.values(this.columns)) {
 
