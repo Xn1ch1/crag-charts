@@ -82,6 +82,16 @@ class CragCore {
 
 	modes = [CragPallet.auto, CragPallet.match, CragPallet.multi, CragPallet.redGreen];
 
+	_colorByIndex(index) {
+
+		const colorKeys = Object.keys(this.pallet);
+		const numColors = colorKeys.length;
+		const colorIndex = (index % numColors + numColors) % numColors;
+
+		return colorKeys[colorIndex];
+
+	}
+
 	/**
 	 * Resolves a color value, from either a hex code, pallet name or mode.
 	 * @param {string|int} value Pallet id, hex code or color mode.
@@ -1058,14 +1068,14 @@ class HAxis extends CragCore {
 		/**
 		 * Update the labels with new data, labels will be created where they don't yet exist
 		 */
-		for (let i = 0; i < this.chart.data.series.length; i++) {
+		for (let i = 0; i < this.chart.data.labels.length; i++) {
 
 			if (this.labels[i]) {
 
 				/**
 				 * Update existing label at this index with new data
 				 */
-				this.labels[i].textContent = this.chart.data.series[i][0];
+				this.labels[i].textContent = this.chart.data.labels[i];
 
 			} else {
 
@@ -1076,7 +1086,7 @@ class HAxis extends CragCore {
 
 				this.labels[i].className = 'cragHAxisLabel';
 				this.labels[i].style.color = this._getContrastColor(this.chart.options.chart.color);
-				this.labels[i].textContent = this.chart.data.series[i][0];
+				this.labels[i].textContent = this.chart.data.labels[i];
 
 				this.area.append(this.labels[i]);
 
@@ -1088,7 +1098,7 @@ class HAxis extends CragCore {
 		 * Remove any labels that are beyond the current data set length.
 		 * This will happen when a new data set is loaded that is smaller than the old data set
 		 */
-		for (let i = Object.values(this.labels).length + 1; i >= this.chart.data.series.length; i--) {
+		for (let i = Object.values(this.labels).length + 1; i >= this.chart.data.labels.length; i--) {
 
 			if (!this.labels[i]) continue;
 
@@ -1125,8 +1135,8 @@ class HAxis extends CragCore {
 
 			if (!label) continue;
 
-			label.style.left = `${axisWidth / this.chart.data.series.length * index}px`;
-			label.style.width = `${axisWidth / this.chart.data.series.length}px`;
+			label.style.left = `${axisWidth / this.chart.data.labels.length * index}px`;
+			label.style.width = `${axisWidth / this.chart.data.labels.length}px`;
 
 		}
 
@@ -1161,7 +1171,6 @@ class ToolTip extends CragCore {
 		this.chart = chart;
 
 		this._create();
-		this._colorize();
 
 	}
 
@@ -1186,13 +1195,6 @@ class ToolTip extends CragCore {
 
 	}
 
-	_colorize() {
-
-		this.container.style.backgroundColor = this._resolveColor(this.chart.options.chart.color);
-		this.container.style.color = this._getContrastColor(this.chart.options.chart.color);
-
-	}
-
 	_position(event) {
 
 		if (event.clientX < window.innerWidth / 2) {
@@ -1211,13 +1213,23 @@ class ToolTip extends CragCore {
 
 	attach(object) {
 
-		object.element.onmouseover = (e) => this.chart.toolTip.show(e, object.name, object.value);
+		object.element.onmouseover = (e) => {
+			this.chart.toolTip.show(e, object.name, object.value, !object?.labelVisible);
+		}
 		object.element.onmousemove = (e) => this.chart.toolTip._position(e);
-		object.element.onmouseout = () => this.chart.toolTip.hide();
+		object.element.onmouseout = () => {
+			this.chart.toolTip.hide();
+		}
 
 	}
 
-	show(event, label, value) {
+	show(event, label, value, showValue = true) {
+
+		if (showValue) {
+			this.value.style.display = '';
+		} else {
+			this.value.style.display = 'none';
+		}
 
 		this.label.textContent = label;
 		this.value.textContent = this.formatLabel(
@@ -1306,3 +1318,74 @@ class Title extends CragCore {
 	}
 
 }
+
+function findMaxValue(data) {
+	let maxValue = Number.MIN_SAFE_INTEGER;
+
+	function traverseArray(arr) {
+		for (let i = 0; i < arr.length; i++) {
+			if (Array.isArray(arr[i])) {
+				traverseArray(arr[i]);
+			} else {
+				maxValue = Math.max(maxValue, arr[i]);
+			}
+		}
+	}
+
+	if (Array.isArray(data)) {
+		traverseArray(data);
+	} else {
+		// If it's a single array of numbers
+		if (Array.isArray(data[0])) {
+			// Flatten the array of arrays and find the max
+			const flattenedArray = data.flat();
+			maxValue = Math.max(...flattenedArray);
+		} else {
+			maxValue = Math.max(...data);
+		}
+	}
+
+	return maxValue;
+}
+
+function findMinValue(data) {
+
+	let minValue = Number.MAX_SAFE_INTEGER;
+
+	function traverseArray(arr) {
+		for (let i = 0; i < arr.length; i++) {
+			if (Array.isArray(arr[i])) {
+				traverseArray(arr[i]);
+			} else {
+				minValue = Math.min(minValue, arr[i]);
+			}
+		}
+	}
+
+	if (Array.isArray(data)) {
+		traverseArray(data);
+	} else {
+		// If it's a single array of numbers
+		if (Array.isArray(data[0])) {
+			// Flatten the array of arrays and find the min
+			const flattenedArray = data.flat();
+			minValue = Math.min(...flattenedArray);
+		} else {
+			minValue = Math.min(...data);
+		}
+	}
+
+	return minValue;
+}
+
+/**
+ * @type optionsLine
+ */
+const defaultLineOptions = {
+	thickness: 3,
+	pointSize: 3,
+	color: CragPallet.auto,
+	smooth: true,
+	showLabel: true,
+	name: 'Series',
+};

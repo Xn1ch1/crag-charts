@@ -41,6 +41,7 @@
 }
 .cragColumnLabel {
 	position: absolute;
+	text-anchor: middle;
 	text-align: center;
 	font-size: 12px;
 	transition: all 0.7s, opacity 0s;
@@ -131,6 +132,7 @@
 	box-shadow: 1px 1px 4px 1px rgb(0 0 0 / 50%) !important;
 	pointer-events: none;
 	font-size: 13px;
+	background: #FFFFFFCC;
 }
 .cragToolTipLabel {
 	display: inline;
@@ -169,6 +171,8 @@
 	stroke-width: 24px;
 	stroke: transparent;
 	paint-order: stroke;
+	transform-origin: 50% 50%;
+	transform-box: fill-box;
 }
 .cragLine {
 	transition: all 0.5s ease;

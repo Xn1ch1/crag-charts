@@ -30,7 +30,8 @@ class CragColumn extends CragCore {
 		super();
 
 		this.data = {
-			series: data,
+			labels: data[0],
+			series: data[1],
 			max: 0,
 			min: 0
 		};
@@ -129,7 +130,7 @@ class CragColumn extends CragCore {
 		this.chart.container.append(this.chart.area);
 
 		this.primaryVAxis = new VAxis(this, VAxis.primary);
-		this.columns = new Columns(this);
+		this.columns = new Columns(this, this.data.series);
 		this.hAxis = new HAxis(this);
 		this.toolTip = new ToolTip(this);
 		this.title = new Title(this);
@@ -191,15 +192,14 @@ class CragColumn extends CragCore {
 		this.title._colorize();
 		this.hAxis._colorize();
 		this.columns._colorLabels();
-		this.toolTip._colorize();
 		this.primaryVAxis._colorize();
 
 	}
 
 	_getDataMinMax() {
 
-		this.data.max = Math.max(...this.data.series.map((e) => e[1]));
-		this.data.min = Math.min(...this.data.series.map((e) => e[1]));
+		this.data.max = findMaxValue(this.data.series);
+		this.data.min = findMinValue(this.data.series);
 
 	}
 
@@ -209,7 +209,10 @@ class CragColumn extends CragCore {
 	 */
 	update(data) {
 
-		this.data.series = data;
+		this.data.labels = data[0];
+		this.data.series = data[1];
+
+		this.columns.data = data[1];
 
 		this._draw();
 
@@ -518,6 +521,10 @@ class Column extends CragCore {
 		this._colorLabel(color, backgroundColor);
 	}
 
+	get labelVisible() {
+		return this.label.style.opacity !== '0';
+	}
+
 }
 
 class Columns extends CragCore {
@@ -531,10 +538,13 @@ class Columns extends CragCore {
 
 	chart = null;
 
-	constructor(chart) {
+	data = [];
+
+	constructor(chart, data) {
 		super();
 
 		this.chart = chart;
+		this.data = data;
 		this._createAreas();
 
 	}
@@ -553,7 +563,9 @@ class Columns extends CragCore {
 
 	}
 
-	update() {
+	update(data) {
+
+		this.data = data;
 
 		this._refactorColumns();
 		this._setColumnDimensions();
@@ -570,7 +582,8 @@ class Columns extends CragCore {
 		/**
 		 * Update the DataPoints with new data, DataPoints will be created where they don't yet exist
 		 */
-		for (let i = 0; i < this.chart.data.series.length; i++) {
+
+		for (let i = 0; i < this.data.length; i++) {
 
 			if (this.columns[i]) {
 
@@ -578,8 +591,8 @@ class Columns extends CragCore {
 				 * Update existing DataPoint at this index with new data
 				 */
 				this.columns[i].index = i;
-				this.columns[i].name = this.chart.data.series[i][0];
-				this.columns[i].value = this.chart.data.series[i][1];
+				this.columns[i].name = this.chart.data.labels[i];
+				this.columns[i].value = this.data[i];
 				this.columns[i].columnOptions = this.chart.options.columns;
 
 			} else {
@@ -587,7 +600,7 @@ class Columns extends CragCore {
 				/**
 				 * Create new DataPoint
 				 */
-				this.columns[i] = new Column(i, this.chart.data.series[i][1], this.chart.data.series[i][0]);
+				this.columns[i] = new Column(i, this.data[i], this.chart.data.labels[i]);
 
 				this.labelArea.append(this.columns[i].label);
 				this.columnArea.append(this.columns[i].element);
@@ -611,7 +624,7 @@ class Columns extends CragCore {
 		 * Remove any DataPoints that are beyond the current data set length.
 		 * This will happen when a new data set is loaded that is smaller than the old data set
 		 */
-		for (let i = Object.values(this.columns).length + 1; i >= this.chart.data.series.length; i--) {
+		for (let i = Object.values(this.columns).length + 1; i >= this.data.length; i--) {
 
 			if (!this.columns[i]) continue;
 
@@ -690,7 +703,7 @@ class Columns extends CragCore {
 
 			}
 
-			const columnWidthSpace = (this.chart.chart.container.offsetWidth - this.chart.primaryVAxis.calculatedWidth - (this.chart?.secondaryVAxis?.calculatedWidth ?? 0)) / this.chart.data.series.length;
+			const columnWidthSpace = (this.chart.chart.container.offsetWidth - this.chart.primaryVAxis.calculatedWidth - (this.chart?.secondaryVAxis?.calculatedWidth ?? 0)) / this.data.length;
 			const columnWidth = columnWidthSpace * (this.chart.options.columns.width / 100);
 
 			/** Series width space * column width option % */
