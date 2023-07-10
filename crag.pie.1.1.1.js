@@ -683,6 +683,7 @@ class Slices extends CragCore {
 
 			}
 
+			slice.keyDot.style.backgroundColor = slice.slice.getAttribute('fill');
 
 			slice._colorize();
 
