@@ -34,8 +34,8 @@
 	pointer-events: none;
 }
 .cragPieSlice {
-	transition: opacity 0.5s, transform 0.5s, fill 0.5s, stroke 0.5s;
-	-webkit-transition: opacity 0.5s, transform 0.5s, fill 0.5s, stroke 0.5s;
+	transition: opacity 0.4s, transform 0.4s, fill 0.4s, stroke 0.4s;
+	-webkit-transition: opacity 0.4s, transform 0.4s, fill 0.4s, stroke 0.4s;
 	cursor: pointer;
 }
 .cragPieSliceHover {

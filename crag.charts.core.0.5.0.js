@@ -185,12 +185,6 @@ class CragCore {
 		CragPallet.dynamicCoolGradient,
 	];
 
-	_isValidMode(mode) {
-
-		return this.modes.includes(mode);
-
-	}
-
 	_colorByIndex(index) {
 
 		const colorKeys = Object.keys(this.pallet);
@@ -501,7 +495,7 @@ function formatLabel(value, type = 'number', currencySymbol = 'GBP', decimalPlac
 
 }
 
-function calculateScale(min, max, base) {
+function calculateScale(min, max, base) {console.log(min, max, base);
 
 	let pMin = 0;
 	let pMax = 0;
@@ -681,7 +675,7 @@ function calculateScale(min, max, base) {
 	}
 
 	xMaj = scalar * Math.pow(base, Math.floor(power));
-	xMin = xMaj * Math.floor(pMin / xMaj);
+	xMin = pMin === 0 ? 0 : xMaj * Math.floor(pMin / xMaj);
 	xMax = xMaj * (Math.floor(pMax / xMaj) + 1);
 	xSteps = Math.round((xMax - xMin) / xMaj);
 
