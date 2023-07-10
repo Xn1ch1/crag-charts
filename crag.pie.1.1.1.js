@@ -469,20 +469,6 @@ class Slice extends CragCore {
 
 	_colorize() {
 
-		if (this.chart.options.slices.colors === CragPallet.warmGradient) {
-
-			this.slice.setAttribute('fill', this._getColorByMode(CragPallet.warmGradient, this.index + this.chart.options.pie.palletOffset));
-
-		} else if (this.chart.options.slices.colors === CragPallet.coolGradient) {
-
-			this.slice.setAttribute('fill', this._getColorByMode(CragPallet.coolGradient, this.index + this.chart.options.pie.palletOffset));
-
-		} else {
-
-			this.slice.setAttribute('fill', this._getColorByMode(CragPallet.multi, this.index + this.chart.options.pie.palletOffset));
-
-		}
-
 		this.slice.setAttribute('stroke',  this._resolveColor(this.chart.options.chart.color));
 
 		if (this.labelPosition === 'outside') {
@@ -674,12 +660,29 @@ class Slices extends CragCore {
 
 		}
 
+		this._colorize();
+
 
 	}
 
 	_colorize() {
 
 		for (const slice of Object.values(this.slices)) {
+
+			if (this.chart.options.slices.colors === CragPallet.warmGradient) {
+
+				slice.slice.setAttribute('fill', this._getColorByMode(CragPallet.warmGradient, this.chart.data.series.length - 1 - slice.index));
+
+			} else if (this.chart.options.slices.colors === CragPallet.coolGradient) {
+
+				slice.slice.setAttribute('fill', this._getColorByMode(CragPallet.coolGradient, this.chart.data.series.length - 1 - slice.index));
+
+			} else {
+
+				slice.slice.setAttribute('fill', this._getColorByMode(CragPallet.multi, slice.index));
+
+			}
+
 
 			slice._colorize();
 
