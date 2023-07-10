@@ -495,7 +495,7 @@ function formatLabel(value, type = 'number', currencySymbol = 'GBP', decimalPlac
 
 }
 
-function calculateScale(min, max, base) {console.log(min, max, base);
+function calculateScale(min, max, base) {
 
 	let pMin = 0;
 	let pMax = 0;
