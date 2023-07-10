@@ -72,11 +72,11 @@ class CragLine extends CragCore {
 			/**
 			 * Line Options
 			 */
-			if (this._isValidColor(options?.lines[i]?.color)) this.options.lines[i].color = options.lines[i].color;
-			this.options.lines[i].smooth = this.validateOption(options?.lines[i]?.smooth, 'boolean', this.options.lines[i].smooth);
-			this.options.lines[i].showLabel = this.validateOption(options?.lines[i]?.showLabel, 'boolean', this.options.lines[i].showLabel);
-			if (options?.lines[i]?.thickness > 0 && options?.lines[i]?.thickness < 11) this.options.lines[i].thickness = options.lines[i].thickness;
-			if (options?.lines[i]?.pointSize > 0 && options?.lines[i]?.pointSize < 51) this.options.lines[i].pointSize = options.lines[i].pointSize;
+			if (this._isValidColor(options?.lines?.[i]?.color)) this.options.lines[i].color = options.lines?.[i]?.color;
+			this.options.lines[i].smooth = this.validateOption(options?.lines?.[i]?.smooth, 'boolean', this.options.lines[i].smooth);
+			this.options.lines[i].labelVisible = this.validateOption(options?.lines?.[i]?.labelVisible, 'boolean', this.options.lines[i].labelVisible);
+			if (options?.lines?.[i]?.thickness > 0 && options?.lines?.[i]?.thickness < 11) this.options.lines[i].thickness = options.lines?.[i].thickness;
+			if (options?.lines?.[i]?.pointSize > 0 && options?.lines?.[i]?.pointSize < 51) this.options.lines[i].pointSize = options.lines?.[i].pointSize;
 
 		}
 
@@ -147,7 +147,6 @@ class CragLine extends CragCore {
 
 		const self = this;
 
-		// this.chart.parent.addEventListener('onresize', ()=> self._draw());
 		window.addEventListener('resize', () => self._draw());
 
 	}
@@ -333,7 +332,6 @@ class Line extends CragCore {
 
 				this.dots[i] = new Dot(i, this.data[i]);
 				this.dots[i].name = this.chart.data.labels[i];
-				this.dots[i].labelVisible = this.options.showLabel;
 
 				this.dots[i].r = this.options.pointSize;
 				this.dots[i].fill = this._getContrastColor(this.chart.options.chart.color);
@@ -401,7 +399,15 @@ class Line extends CragCore {
 			dot.cy = zeroLine + cy;
 			dot.cx = (seriesItemWidth * dot.index) + (seriesItemWidth / 2);
 
-			dot.labelVisible = dot.label.offsetWidth <= seriesItemWidth;
+			if (this.options.labelVisible) {
+
+				dot.labelVisible = dot.label.offsetWidth <= seriesItemWidth - 16;
+
+			} else {
+
+				dot.labelVisible = false;
+
+			}
 
 		}
 
@@ -613,6 +619,18 @@ class Line extends CragCore {
 
 	}
 
+	set labelsVisible(value) {
+
+		this.options.labelVisible = value;
+
+		for (const dot of Object.values(this.dots)) {
+
+			dot.labelVisible = value;
+
+		}
+
+	}
+
 }
 
 class TrendLine extends CragCore {
@@ -798,8 +816,6 @@ class Lines extends CragCore {
 
 			this.lines[i].update(this.chart.data.series[i], this.chart.primaryVAxis.scale);
 
-			this.setPointSize(i, this.chart.options.lines[i].pointSize);
-
 		}
 
 	}
@@ -810,7 +826,7 @@ class Lines extends CragCore {
 
 		if (value === CragPallet.auto) {
 
-			this.lines[index].color = this._resolveColor(this.colors[index]);
+			this.lines[index].color = this._colorByIndex(index);
 
 		} else {
 
@@ -838,6 +854,14 @@ class Lines extends CragCore {
 
 		this.chart.options.lines[index].smooth = value;
 		this.lines[index].smooth = value;
+
+	}
+
+	setLabelVisible(index, value) {
+
+		this.chart.options.lines[index].labelVisible = value;
+
+		this.lines[index].labelsVisible = value;
 
 	}
 
