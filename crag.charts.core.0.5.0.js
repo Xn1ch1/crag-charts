@@ -701,19 +701,11 @@ function sToTime(time) {
 
 	}
 
+	const hours = Math.floor(time / 3600); // Convert seconds to hours
+	const minutes = Math.floor((time % 3600) / 60);
 	const seconds = time % 60;
-	const minuets = ((time - seconds) / 60) % 60;
-	const hours = ((((time - seconds) / 60) % 60) - minuets) / 60;
 
-	if (hours > 0) {
-
-		return `${(time < 0 ? '-' : '')}${pad(hours)}:${pad(minuets)}:${pad(seconds)}`;
-
-	} else {
-
-		return `${(time < 0 ? '-' : '')}${pad(minuets)}:${pad(seconds)}`;
-
-	}
+	return `${(time < 0 ? '-' : '')}${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 
 }
 
