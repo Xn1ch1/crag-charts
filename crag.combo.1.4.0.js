@@ -118,7 +118,7 @@ class CragCombo extends CragCore {
 			 */
 			if (this._isValidColor(options?.lines[i]?.color)) this.options.lines[i].color = options.lines[i].color;
 			this.options.lines[i].smooth = this.validateOption(options?.lines[i]?.smooth, 'boolean', this.options.lines[i].smooth);
-			this.options.lines[i].showLabel = this.validateOption(options?.lines[i]?.showLabel, 'boolean', this.options.lines[i].showLabel);
+			this.options.lines[i].labelVisible = this.validateOption(options?.lines[i]?.labelVisible, 'boolean', this.options.lines[i].labelVisible);
 			if (options?.lines[i]?.thickness > 0 && options?.lines[i]?.thickness < 11) this.options.lines[i].thickness = options.lines[i].thickness;
 			if (options?.lines[i]?.pointSize > 0 && options?.lines[i]?.pointSize < 51) this.options.lines[i].pointSize = options.lines[i].pointSize;
 
