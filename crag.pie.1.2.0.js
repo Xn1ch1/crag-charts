@@ -21,7 +21,7 @@ class CragPie extends CragCore {
 				labelPosition: 'inside',
 			},
 			pie: {
-				gap: 0.008,
+				gap: 8,
 				hole: 0,
 				highToLow: true,
 				palletOffset: 0,
@@ -55,9 +55,10 @@ class CragPie extends CragCore {
 		if (this._isValidColor(options?.chart?.color)) this.options.chart.color = options.chart.color;
 
 		/* PIE */
-		this.options.pie.hole = this.validateOption(options?.pie?.hole, 'number', this.options.pie.hole);
+		this.options.pie.hole = this.validateOption(options?.pie?.hole, 'number', this.options.pie.hole) / 100;
 		this.options.pie.palletOffset = this.validateOption(options?.pie?.palletOffset, 'number', this.options.pie.palletOffset);
 		this.options.pie.highToLow = this.validateOption(options?.pie?.highToLow, 'boolean', this.options.pie.highToLow);
+		this.options.pie.gap = this.validateOption(options?.pie?.gap, 'number', this.options.pie.gap) / 1000;
 
 		/* SLICES */
 		this.options.slices.format = this.validateOption(options?.slices?.format, this.labelFormats, this.options.slices.format);
