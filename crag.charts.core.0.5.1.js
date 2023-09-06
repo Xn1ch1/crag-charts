@@ -27,10 +27,60 @@ class CragPallet {
 	static white = '#FFFFFF';
 	static transparent = 'transparent';
 
+	static warm = {
+		softPeach: '#EEDDD0',
+		peach: '#FFDCC2',
+		melon: '#FFD0A9',
+		cantaloupe: '#FFC48C',
+		honey: '#FFB46B',
+		tangerine: '#FFA24D',
+		orange: '#FF9031',
+		carrot: '#FF831C',
+		pumpkin: '#FF7410',
+		marigold: '#FF6400',
+		amber: '#FF5A00',
+		cinnamon: '#FF4D00',
+		terracotta: '#FF3F00',
+		rust: '#FF3100',
+		brick: '#FF2200',
+		tomato: '#FF1600',
+		chili: '#FF0A00',
+		fireEngineRed: '#FF0000',
+		cherryRed: '#FF0013',
+		darkCherry: '#B30000',
+	}
+
+	static cool = {
+		mintyAqua: '#80ffdb',
+		turquoiseHaze: '#7af1dd',
+		coastalBlue: '#74e4df',
+		tranquilSky: '#6ed7e1',
+		sereneAzure: '#68cae3',
+		icyCerulean: '#62bde5',
+		crystalBlue: '#5cb0e7',
+		azureWaters: '#56a3e9',
+		dreamyCobalt: '#5096eb',
+		electricBlue: '#4a89ed',
+		brilliantSapphire: '#448cf0',
+		vividSkyBlue: '#3e8fef',
+		clearRoyalBlue: '#3888ee',
+		deepOceanBlue: '#327fec',
+		intenseIndigo: '#2c72ea',
+		lapisLazuli: '#2665e8',
+		richNavyBlue: '#2058e6',
+		darkSapphire: '#1a4be4',
+		twilightBlue: '#144ee2',
+		midnightBlue: '#0e41e0',
+	}
+
 	static auto = '1';
 	static match = '2';
 	static multi = '3';
 	static redGreen = '4';
+	static warmGradient = '5';
+	static coolGradient = '6';
+	static dynamicWarmGradient = '7';
+	static dynamicCoolGradient = '8';
 
 }
 /**
@@ -78,9 +128,62 @@ class CragCore {
 		darkGrey: CragPallet.darkGrey,
 		lightGrey: CragPallet.lightGrey,
 		white: CragPallet.white,
+		cool: {
+			mintyAqua: CragPallet.cool.mintyAqua,
+			turquoiseHaze: CragPallet.cool.turquoiseHaze,
+			coastalBlue: CragPallet.cool.coastalBlue,
+			tranquilSky: CragPallet.cool.tranquilSky,
+			sereneAzure: CragPallet.cool.sereneAzure,
+			icyCerulean: CragPallet.cool.icyCerulean,
+			crystalBlue: CragPallet.cool.crystalBlue,
+			azureWaters: CragPallet.cool.azureWaters,
+			dreamyCobalt: CragPallet.cool.dreamyCobalt,
+			electricBlue: CragPallet.cool.electricBlue,
+			brilliantSapphire: CragPallet.cool.brilliantSapphire,
+			vividSkyBlue: CragPallet.cool.vividSkyBlue,
+			clearRoyalBlue: CragPallet.cool.clearRoyalBlue,
+			deepOceanBlue: CragPallet.cool.deepOceanBlue,
+			intenseIndigo: CragPallet.cool.intenseIndigo,
+			lapisLazuli: CragPallet.cool.lapisLazuli,
+			richNavyBlue: CragPallet.cool.richNavyBlue,
+			darkSapphire: CragPallet.cool.darkSapphire,
+			twilightBlue: CragPallet.cool.twilightBlue,
+			midnightBlue: CragPallet.cool.midnightBlue,
+		},
+		warm: {
+			softPeach: CragPallet.warm.softPeach,
+			peach: CragPallet.warm.peach,
+			melon: CragPallet.warm.melon,
+			cantaloupe: CragPallet.warm.cantaloupe,
+			honey: CragPallet.warm.honey,
+			tangerine: CragPallet.warm.tangerine,
+			orange: CragPallet.warm.orange,
+			carrot: CragPallet.warm.carrot,
+			pumpkin: CragPallet.warm.pumpkin,
+			marigold: CragPallet.warm.marigold,
+			amber: CragPallet.warm.amber,
+			cinnamon: CragPallet.warm.cinnamon,
+			terracotta: CragPallet.warm.terracotta,
+			rust: CragPallet.warm.rust,
+			brick: CragPallet.warm.brick,
+			tomato: CragPallet.warm.tomato,
+			chili: CragPallet.warm.chili,
+			fireEngineRed: CragPallet.warm.fireEngineRed,
+			cherryRed: CragPallet.warm.cherryRed,
+			darkCherry: CragPallet.warm.darkCherry,
+		}
 	}
 
-	modes = [CragPallet.auto, CragPallet.match, CragPallet.multi, CragPallet.redGreen];
+	modes = [
+		CragPallet.auto,
+		CragPallet.match,
+		CragPallet.multi,
+		CragPallet.redGreen,
+		CragPallet.warmGradient,
+		CragPallet.coolGradient,
+		CragPallet.dynamicWarmGradient,
+		CragPallet.dynamicCoolGradient,
+	];
 
 	_colorByIndex(index) {
 
@@ -108,6 +211,21 @@ class CragCore {
 		 * Check to see if value is name of color from pallet
 		 */
 		if (this.pallet.hasOwnProperty(value)) return this.pallet[value];
+
+		/**
+		 * Value is one of the nested pallets, for example 'cool.aquaHaze'
+		 */
+		if (value && value.includes('.')) {
+
+			const properties = value.split('.');
+
+			if (this.pallet.hasOwnProperty(properties[0]) && this.pallet[properties[0]].hasOwnProperty(properties[1])) {
+
+				return this.pallet[properties[0]][properties[1]];
+
+			}
+
+		}
 
 		/**
 		 * Check to see if the value is a valid hex code color.
@@ -144,6 +262,17 @@ class CragCore {
 		if (this.pallet.hasOwnProperty(value)) return true;
 
 		/**
+		 * Value is one of the nested pallets, for example 'cool.aquaHaze'
+		 */
+		if (value && value.includes('.')) {
+
+			const properties = value.split('.');
+
+			return this.pallet.hasOwnProperty(properties[0]) && this.pallet[properties[0]].hasOwnProperty(properties[1]);
+
+		}
+
+		/**
 		 * Check to see if value is correct rgb/a color
 		 */
 		if (this._isValidRGBColor(value)) return true;
@@ -152,7 +281,7 @@ class CragCore {
 
 	}
 
-	_getColorByMode(mode, value) {
+	_getColorByMode(mode, value, value2 = 0) {
 
 		if (value === undefined) throw "Value needs to be set for mode to function correctly";
 
@@ -164,9 +293,30 @@ class CragCore {
 
 		}
 
-		if (mode === CragPallet.multi) return Object.values(this.pallet)[value];
+		if (mode === CragPallet.dynamicWarmGradient) {
 
+			const intervalSize = 100 / Object.values(CragPallet.warm).length;
+			const index = Math.min(Math.floor(((value2 / value) * 100) / intervalSize), Object.values(CragPallet.warm).length - 1);
+
+			return Object.values(CragPallet.warm)[index];
+
+		}
+
+		if (mode === CragPallet.dynamicCoolGradient) {
+
+			const intervalSize = 100 / Object.values(CragPallet.cool).length;
+			const index = Math.min(Math.floor(((value2 / value) * 100) / intervalSize), Object.values(CragPallet.cool).length - 1);
+
+			return Object.values(CragPallet.cool)[index];
+
+		}
+
+		if (mode === CragPallet.warmGradient) return Object.values(CragPallet.warm)[value];
+		if (mode === CragPallet.coolGradient) return Object.values(CragPallet.cool)[value];
+		if (mode === CragPallet.multi) return Object.values(this.pallet)[value];
 		if (mode === CragPallet.match) return this._resolveColor(value);
+
+		return null;
 
 	}
 
@@ -525,7 +675,7 @@ function calculateScale(min, max, base) {
 	}
 
 	xMaj = scalar * Math.pow(base, Math.floor(power));
-	xMin = xMaj * Math.floor(pMin / xMaj);
+	xMin = pMin === 0 ? 0 : xMaj * Math.floor(pMin / xMaj);
 	xMax = xMaj * (Math.floor(pMax / xMaj) + 1);
 	xSteps = Math.round((xMax - xMin) / xMaj);
 
@@ -551,19 +701,11 @@ function sToTime(time) {
 
 	}
 
+	const hours = Math.floor(time / 3600); // Convert seconds to hours
+	const minutes = Math.floor((time % 3600) / 60);
 	const seconds = time % 60;
-	const minuets = ((time - seconds) / 60) % 60;
-	const hours = ((((time - seconds) / 60) % 60) - minuets) / 60;
 
-	if (hours > 0) {
-
-		return `${(time < 0 ? '-' : '')}${pad(hours)}:${pad(minuets)}:${pad(seconds)}`;
-
-	} else {
-
-		return `${(time < 0 ? '-' : '')}${pad(minuets)}:${pad(seconds)}`;
-
-	}
+	return `${(time < 0 ? '-' : '')}${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 
 }
 
@@ -1386,6 +1528,6 @@ const defaultLineOptions = {
 	pointSize: 3,
 	color: CragPallet.auto,
 	smooth: true,
-	showLabel: true,
+	labelVisible: true,
 	name: 'Series',
 };

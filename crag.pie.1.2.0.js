@@ -198,9 +198,6 @@ class CragPie extends CragCore {
 		this.data.labels = data[0];
 		this.data.series = data[1];
 
-		console.log(this.data.labels);
-		console.log(this.data.series);
-
 		if (this.options.pie.highToLow) this._sortData();
 
 		this._draw();

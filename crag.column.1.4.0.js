@@ -68,7 +68,6 @@ class CragColumn extends CragCore {
 					position: 'none',
 					color: CragPallet.auto,
 				},
-				specificBarColor: null,
 			}
 		}
 
@@ -93,8 +92,6 @@ class CragColumn extends CragCore {
 		this.options.columns.onClick = this.validateOption(options?.columns?.onClick, 'function', this.options.columns.onClick);
 
 		this.options.columns.labels.position = this.validateOption(options?.columns?.labels?.position, this.labelPositions, this.options.columns.labels.position);
-
-		this.options.columns.specificBarColor = options?.columns?.specificBarColor ?? null;
 
 		/**
 		 * Chart Options
@@ -347,7 +344,7 @@ class Column extends CragCore {
 		return this.#height;
 	}
 
-	set width(value) {console.log(value);
+	set width(value) {
 		this.#width = value;
 		this.element.style.width = `${value}px`;
 	}
@@ -437,7 +434,7 @@ class Column extends CragCore {
 
 		if (preferredPosition === 'none') return this.labelPosition = 'none';
 
-		if (this.label.offsetWidth > this.#width)  return this.labelPosition = 'none';
+		if (this.label.offsetWidth > this.#width - 16)  return this.labelPosition = 'none';
 
 		if (
 			(preferredPosition === 'inside' && this.height > this.label.offsetHeight) ||
@@ -511,7 +508,7 @@ class Column extends CragCore {
 
 	setLabelPosition(preferredPosition, maxHeight) {
 
-		this.label.style.left = `${this.#left + (this.#width / 2) - (this.label.offsetWidth / 2)}px`;
+		this.label.style.left = `${this.#left + (this.#width / 2) - (this.label.offsetWidth / 2) - (this.value < 0 ? 1 : 0)}px`;
 
 		this._calculateLabelPosition(preferredPosition, maxHeight);
 		this._moveLabel();
@@ -640,9 +637,6 @@ class Columns extends CragCore {
 
 	_positionLabels() {
 
-		const columnWidthSpace = (this.chart.chart.container.offsetWidth - this.chart.primaryVAxis.calculatedWidth - (this.chart?.secondaryVAxis?.calculatedWidth ?? 0)) / this.data.length;
-		const columnWidth = columnWidthSpace * (this.chart.options.columns.width / 100);
-
 		for (const column of Object.values(this.columns)) {
 
 			column.setLabelPosition(this.chart.options.columns.labels.position, this.columnArea.offsetHeight);
@@ -668,6 +662,18 @@ class Columns extends CragCore {
 			column.setLabelColor(this.chart.options.columns.labels.color, this.chart.options.chart.color);
 
 		}
+
+	}
+
+	_seriesEachWidth() {
+
+		/**
+		 * Get the calculated width of the two axes (secondary optional)
+		 * This is due to actual space being mid-transition
+		 * Subtract these from total container size and / by data length
+		 */
+
+		return (this.chart.chart.container.offsetWidth - this.chart.primaryVAxis.calculatedWidth - (this.chart?.secondaryVAxis?.calculatedWidth ?? 0)) / this.data.length ;
 
 	}
 
@@ -707,14 +713,13 @@ class Columns extends CragCore {
 
 			}
 
-			const columnWidthSpace = (this.chart.chart.container.offsetWidth - this.chart.primaryVAxis.calculatedWidth - (this.chart?.secondaryVAxis?.calculatedWidth ?? 0)) / this.data.length;
-			const columnWidth = columnWidthSpace * (this.chart.options.columns.width / 100);
+			const columnWidth = this._seriesEachWidth() * (this.chart.options.columns.width / 100);
 
 			/** Series width space * column width option % */
 			column.width = columnWidth;
 
 			/** Series width space * column index (start at 0) + half of remaining space of series width */
-			column.left = columnWidthSpace * column.index + ((columnWidthSpace - columnWidth) / 2);
+			column.left = this._seriesEachWidth() * column.index + ((this._seriesEachWidth() - columnWidth) / 2);
 
 		}
 
@@ -724,9 +729,27 @@ class Columns extends CragCore {
 
 		for (const column of Object.values(this.columns)) {
 
-			if (this.chart.options.columns.color === CragPallet.multi) {
+			if ([CragPallet.warmGradient, CragPallet.coolGradient, CragPallet.multi].includes(this.chart.options.columns.color)) {
 
-				column.color = this._getColorByMode(CragPallet.multi, column.index);
+				column.color = this._getColorByMode(this.chart.options.columns.color, column.index);
+
+			} else if ([CragPallet.dynamicWarmGradient, CragPallet.dynamicCoolGradient].includes(this.chart.options.columns.color)) {
+
+				if (column.value < 0) {
+
+					let offset = this.chart.data.max;
+					if (this.chart.data.max > 0) offset = 0;
+
+					column.color = this._getColorByMode(this.chart.options.columns.color, Math.abs(this.chart.data.min) - Math.abs(offset), Math.abs(column.value) - Math.abs(offset));
+
+				} else {
+
+					let offset = 0;
+					if (this.chart.data.min > 0) offset = this.chart.data.min;
+
+					column.color = this._getColorByMode(this.chart.options.columns.color, this.chart.data.max - offset, column.value - offset);
+
+				}
 
 			} else if (this.chart.options.columns.color === CragPallet.redGreen) {
 
@@ -737,15 +760,6 @@ class Columns extends CragCore {
 				column.color = this._getColorByMode(CragPallet.match, this.chart.options.columns.color);
 
 			}
-
-		}
-
-		if (this.chart.options.columns.specificBarColor !== null) {
-
-			const bar = Number(this.chart.options.columns.specificBarColor[0]);
-			const color = this.chart.options.columns.specificBarColor[1];
-
-			if (bar in this.columns) this.columns[bar].color = this._getColorByMode(CragPallet.match, color);
 
 		}
 
@@ -768,6 +782,7 @@ class Columns extends CragCore {
 
 		this.chart.options.columns.width = this.validateOption(value, 'number', this.chart.options.columns.width);
 		this._setColumnDimensions();
+		this._positionLabels();
 
 	}
 
@@ -834,15 +849,6 @@ class Columns extends CragCore {
 
 		this.chart.options.columns.labels.position = value;
 		this._positionLabels();
-		this._colorLabels();
-
-	}
-
-	set specificColumnColor(value) {
-
-		this.chart.options.columns.specificBarColor = value;
-
-		this._applyColumnColors();
 		this._colorLabels();
 
 	}
