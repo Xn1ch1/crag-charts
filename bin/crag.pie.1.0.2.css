@@ -48,7 +48,7 @@
 	text-align: right;
 	position: absolute;
 	top: 100%;
-	right: 0;
+	right: 8px;
 	display: flex;
 	opacity: 0;
 }
@@ -75,7 +75,10 @@
 	font-size: 0.75rem;
 	font-weight: 400;
 	transition: all 0.4s;
-	line-height: 1;
+	line-height: 26px;
+	height: 26px;
+	width: 26px;
+	text-align: center;
 }
 .cragPieSliceDetail {
 	position: absolute;

@@ -204,6 +204,19 @@ class CragPie extends CragCore {
 
 	}
 
+	set labelPosition(value) {
+
+		this.options.slices.labelPosition = value;
+
+		if (this.options.slices.labelPosition === 'none') {
+			this.slices.hideLabels();
+		} else {
+			this.slices.showLabels();
+			this.slices.draw();
+		}
+
+	}
+
 }
 class Slice extends CragCore {
 
@@ -315,7 +328,15 @@ class Slice extends CragCore {
 
 		this.labelPosition = this.chart.options.slices.labelPosition;
 
-		if (labelLeft + this.label.offsetWidth > chartAreaWidth && this.chart.options.slices.labelPosition === 'outside') {
+		if (
+			this.chart.options.slices.labelPosition === 'outside' &&
+			(
+				labelTop < 0 ||
+				labelTop + this.label.offsetHeight > chartAreaHeight ||
+				labelLeft + this.label.offsetWidth > chartAreaWidth ||
+				labelLeft < 0
+			)
+		) {
 
 			/* Position is outside but falls inside the key area, force back to inside */
 			const mid = ((this.degrees.end / 2) + this.degrees.start / 2) - 90;
@@ -631,9 +652,9 @@ class Slices extends CragCore {
 			slice.keyContainer.style.top = (28 * i) + (this.chart.chart.rightKey.offsetHeight / 2 - ((28 * ObjectLength(this.slices)) / 2)) + 'px';
 			slice.keyContainer.style.opacity = '1';
 
-			if (slice.keyContainer.offsetWidth + 8 > maxKeyLength) {
+			if (slice.keyContainer.offsetWidth + 16 > maxKeyLength) {
 
-				maxKeyLength = slice.keyContainer.offsetWidth + 8;
+				maxKeyLength = slice.keyContainer.offsetWidth + 16;
 
 			}
 
