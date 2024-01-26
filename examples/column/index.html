@@ -1,0 +1,324 @@
+<html lang="en">
+
+	<head>
+
+		<link rel="apple-touch-icon" sizes="180x180" href="../src/icons/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="../src/icons/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="../src/icons/favicon-16x16.png">
+		<link rel="manifest" href="../src/icons/site.webmanifest">
+		<meta name="msapplication-TileColor" content="#da532c">
+		<meta name="theme-color" content="#ffffff">
+
+		<link href="../src/chart-creator.1.0.0.css" rel="stylesheet">
+
+		<script src="../src/demo.js"></script>
+
+		<title>Crag Charts Creator: Column</title>
+
+	</head>
+
+	<body>
+
+		<img src="../src/icons/dice.svg" id="shuffle" onclick="newData()" alt="New Data">
+
+		<div id="column-chart" class="chart"></div>
+
+		<div class="menu">
+
+			<h1>Chart</h1>
+
+			<label>Title</label>
+			<input type="text" onkeyup="chartTitle(this)" id="title" />
+
+			<label for="primaryMajorLines">Major Lines</label>
+			<input type="checkbox" onchange="primaryMajorLines(this)" id="primaryMajorLines" checked>
+			<label for="primaryMinorLines">Minor Lines</label>
+			<input type="checkbox" onchange="primaryMinorLines(this)" id="primaryMinorLines" checked>
+			<label for="primaryShadowZeroLine">Shadow on 'Zero Line'</label>
+			<input type="checkbox" onchange="shadowOnZeroLine(this)" id="primaryShadowZeroLine">
+
+			<hr>
+
+			<h1>Columns</h1>
+
+			<label>Colors</label>
+			<select onchange="newColumnColor(this)">
+				<optgroup label="Modes">
+					<option value="3">Spectrum (default)</option>
+					<option value="4">Red/Green</option>
+					<option value="5">Warm Gradient</option>
+					<option value="6">Cool Gradient</option>
+					<option value="7">Dynamic Warm Gradient</option>
+					<option value="8">Dynamic Cool Gradient</option>
+				</optgroup>
+				<optgroup label="Standard">
+					<option value="red">Red</option>
+					<option value="pink">Pink</option>
+					<option value="purple">Purple</option>
+					<option value="deepPurple">Deep Purple</option>
+					<option value="indigo">Indigo</option>
+					<option value="blue">Blue</option>
+					<option value="lightBlue">Light Blue</option>
+					<option value="cyan">Cyan</option>
+					<option value="teal">Teal</option>
+					<option value="green">Green</option>
+					<option value="lightGreen">Light Green</option>
+					<option value="lime">Lime</option>
+					<option value="yellow">Yellow</option>
+					<option value="amber">Amber</option>
+					<option value="orange">Orange</option>
+					<option value="deepOrange">Deep Orange</option>
+				</optgroup>
+				<optgroup label="Warm">
+					<option value="warm.softPeach">Soft Peach</option>
+					<option value="warm.peach">Peach</option>
+					<option value="warm.melon">Melon</option>
+					<option value="warm.cantaloupe">Cantaloupe</option>
+					<option value="warm.honey">Honey</option>
+					<option value="warm.tangerine">Tangerine</option>
+					<option value="warm.orange">Orange</option>
+					<option value="warm.carrot">Carrot</option>
+					<option value="warm.pumpkin">Pumpkin</option>
+					<option value="warm.marigold">Marigold</option>
+					<option value="warm.amber">Amber</option>
+					<option value="warm.cinnamon">Cinnamon Blue</option>
+					<option value="warm.terracotta">Terracotta</option>
+					<option value="warm.rust">Rust</option>
+					<option value="warm.brick">Brick</option>
+					<option value="warm.tomato">Tomato</option>
+					<option value="warm.chili">Chili</option>
+					<option value="warm.fireEngineRed">Fire Engine Red</option>
+					<option value="warm.cherryRed">Cherry Red</option>
+					<option value="warm.darkCherry">Dark Cherry</option>
+				</optgroup>
+				<optgroup label="Cool">
+					<option value="cool.mintyAqua">Minty Aqua</option>
+					<option value="cool.turquoiseHaze">Turquoise Haze</option>
+					<option value="cool.coastalBlue">Coastal Blue</option>
+					<option value="cool.tranquilSky">Tranquil Sky</option>
+					<option value="cool.sereneAzure">Serene Azure</option>
+					<option value="cool.icyCerulean">Icy Cerulean</option>
+					<option value="cool.crystalBlue">Crystal Blue</option>
+					<option value="cool.azureWaters">Azure Waters</option>
+					<option value="cool.dreamyCobalt">Dreamy Cobalt</option>
+					<option value="cool.electricBlue">Electric Blue</option>
+					<option value="cool.brilliantSapphire">Brilliant Sapphire</option>
+					<option value="cool.vividSkyBlue">Vivid Sky Blue</option>
+					<option value="cool.clearRoyalBlue">Clear Royal Blue</option>
+					<option value="cool.deepOceanBlue">Deep Ocean Blue</option>
+					<option value="cool.intenseIndigo">Intense Indigo</option>
+					<option value="cool.lapisLazuli">Lapis Lazuli</option>
+					<option value="cool.richNavyBlue">Rich Navy Blue</option>
+					<option value="cool.darkSapphire">Dark Sapphire</option>
+					<option value="cool.twilightBlue">Twilight Blue</option>
+					<option value="cool.midnightBlue">Midnight Blue</option>
+				</optgroup>
+			</select>
+
+			<label>Width</label>
+			<input type="range" value="95" min="1" max="100" oninput="columnWidth(this)">
+
+			<label>Rounding</label>
+			<input type="range" value="0" min="0" max="64" oninput="columnRounding(this)">
+
+			<label>Shadow</label>
+			<input type="range" value="0" step="1" max="15" min="-15" oninput="columnShadow(this)" id="shadow-outset">
+
+			<label for="striped">Stripes</label>
+			<input type="checkbox" onchange="columnStripes(this)" id="striped">
+
+			<label for="animated">Animated Stripes</label>
+			<input type="checkbox" onchange="columnAnimatedStripes(this)" id="animated" disabled>
+
+			<hr>
+
+			<h1>Column Labels</h1>
+
+			<label>Position</label>
+			<select onchange="columnLabelPosition(this)">
+				<option value="none">None (Default)</option>
+				<option value="inside">Inside</option>
+				<option value="outside">Outside</option>
+			</select>
+
+			<label>Color</label>
+			<select onchange="columnLabelColor(this)">
+				<optgroup label="Modes">
+					<option value="1">Auto (Default)</option>
+					<option value="2">Match Column</option>
+				</optgroup>
+				<optgroup label="Standard">
+					<option value="black">Black</option>
+					<option value="white">White</option>
+					<option value="red">Red</option>
+					<option value="pink">Pink</option>
+					<option value="purple">Purple</option>
+					<option value="deepPurple">Deep Purple</option>
+					<option value="indigo">Indigo</option>
+					<option value="blue">Blue</option>
+					<option value="lightBlue">Light Blue</option>
+					<option value="cyan">Cyan</option>
+					<option value="teal">Teal</option>
+					<option value="green">Green</option>
+					<option value="lightGreen">Light Green</option>
+					<option value="lime">Lime</option>
+					<option value="yellow">Yellow</option>
+					<option value="amber">Amber</option>
+					<option value="orange">Orange</option>
+					<option value="deepOrange">Deep Orange</option>
+				</optgroup>
+			</select>
+
+			<hr>
+
+			<h1>Primary vAxis</h1>
+
+			<label>Format</label>
+			<select onchange="primaryAxisFormat(this)">
+				<option value="decimal">Decimal (Default)</option>
+				<option value="currency">Currency</option>
+				<option value="time">Time</option>
+			</select>
+			<label>Decimal Places</label>
+			<select onchange="primaryAxisDecimals(this)" id="primaryAxisDecimals">
+				<option value="0">0 (Default)</option>
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+			</select>
+			<label>Currency Symbol</label>
+			<select onchange="primaryAxisCurrencySymbol(this)" id="primaryAxisCurrencySymbol" disabled>
+				<option value="GBP">GBP (Default)</option>
+				<option value="USD">USD</option>
+				<option value="EUR">EUR</option>
+				<option value="JPY">JPY</option>
+				<option value="CAD">CAD</option>
+			</select>
+			<label>Minimum Value</label>
+			<select onchange="primaryAxisMinimum(this)">
+				<option value="auto">Auto (Default)</option>
+				<option value="0">0</option>
+			</select>
+
+			<hr>
+
+			<h1>Other</h1>
+			<label>Background Color</label>
+			<select onchange="chartColor(this)">
+				<option value="#FFFFFF" selected>White</option>
+				<option value="#dedede">Light Grey</option>
+				<option value="#232323">Dark Grey</option>
+				<option value="#081B33">Dark Blue</option>
+				<option value="#000000">Black</option>
+			</select>
+
+		</div>
+
+		<script src="../../bin/crag.charts.loader.js"></script>
+		<script>
+
+			let chart;
+
+			new CragLoader(['column'], createChart, '../../bin/');
+
+			function createChart() {
+
+				chart = new CragColumn(newDataGen()).create('column-chart');
+
+			}
+
+		</script>
+
+		<script>
+
+
+			function newData() {
+				chart.update(newDataGen());
+			}
+
+			function chartTitle(elem) {
+				chart.title.text = elem.value;
+			}
+
+			function chartColor(elem) {
+				chart.color = elem.value;
+			}
+			/**
+			 * Primary vAxis
+			 */
+			function shadowOnZeroLine(elem) {
+				chart.primaryVAxis.shadowOnZeroLine = elem.checked;
+			}
+
+			function primaryAxisFormat(elem) {
+				document.getElementById('primaryAxisDecimals').disabled = elem.value === 'time';
+				document.getElementById('primaryAxisCurrencySymbol').disabled = elem.value !== 'currency';
+				chart.primaryVAxis.format = elem.value;
+			}
+
+			function primaryAxisDecimals(elem) {
+				chart.primaryVAxis.decimals = elem.value;
+			}
+
+			function primaryAxisCurrencySymbol(elem) {
+				chart.primaryVAxis.currencySymbol = elem.value;
+			}
+
+			function primaryMajorLines(elem) {
+				chart.primaryVAxis.majorLines = elem.checked;
+			}
+
+			function primaryMinorLines(elem) {
+				chart.primaryVAxis.minorLines = elem.checked;
+			}
+
+			function primaryAxisMinimum(elem) {
+				chart.primaryVAxis.minimum = elem.value === '0' ? 0 : elem.value;
+			}
+
+			/**
+			 * Column Modifications
+			 */
+			function newColumnColor(elem) {
+				chart.columns.color = elem.value;
+			}
+
+			function columnRounding(elem) {
+				chart.columns.rounding = elem.value;
+			}
+
+			function columnShadow(elem) {
+				chart.columns.shadow = elem.value;
+			}
+
+			function columnStripes(elem) {
+				document.getElementById('animated').disabled = !elem.checked;
+				chart.columns.stripes = elem.checked;
+			}
+
+			function columnAnimatedStripes(elem) {
+				chart.columns.animatedStripes = elem.checked;
+			}
+
+			function columnWidth(elem) {
+				chart.columns.width = Number(elem.value);
+			}
+
+			/**
+			 * Column Label Modification
+			 */
+			function columnLabelColor(elem) {
+				chart.columns.labelColor = elem.value;
+			}
+
+			function columnLabelPosition(elem) {
+				chart.columns.labelPosition = elem.value;
+			}
+
+		</script>
+
+	</body>
+
+</html>

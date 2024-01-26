@@ -1,0 +1,77 @@
+:root {
+    --bg: #FFFFFF;
+    --on-bg: #081b33;
+}
+body {
+    background-color: var(--bg);
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-auto-flow: row dense;
+    grid-auto-columns: 1fr 1fr;
+    grid-template-columns: 1fr 300px;
+    grid-template-rows: 1fr;
+    gap: 0 0;
+    grid-template-areas: "chart menu";
+    width: 100%;
+    height: 100%;
+}
+.chart {
+    grid-area: chart;
+    height: 100%;
+    overflow: hidden;
+}
+.menu {
+    grid-area: menu;
+    color: #444;
+    height: 100%;
+    width: 300px;
+    box-sizing: border-box;
+    font-family: monospace, sans-serif;
+    user-select: none;
+    overflow-y: scroll;
+    padding: 16px;
+    border-left: 2px solid #888;
+}
+.menu hr {
+    height: 1px;
+    border: none;
+    background: #BBB;
+    margin: 24px 0;
+}
+.menu label {
+    display: block;
+    margin-top: 16px;
+    font-size: 12px;
+}
+.menu input {
+    display: block;
+}
+.menu select,
+.menu input[type="text"],
+.menu input[type="range"] {
+    width: calc(100% - 16px);
+}
+.menu h1 {
+    margin: 0;
+}
+.menu select,
+.menu input[type="text"] {
+    padding: 4px 8px;
+}
+#shuffle {
+    right: 304px;
+    position: fixed;
+    top: 4px;
+    height: 10px;
+    padding: 4px;
+    filter: invert(1);
+    background-color: black;
+    z-index: 98;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: transform 0.4s;
+}
+#shuffle:hover {
+    transform: scale(1.5);
+}

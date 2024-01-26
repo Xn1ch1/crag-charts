@@ -1,0 +1,92 @@
+<html lang="en">
+
+    <head>
+
+        <link rel="apple-touch-icon" sizes="180x180" href="../src/icons/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="../src/icons/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="../src/icons/favicon-16x16.png">
+        <link rel="manifest" href="../src/icons/site.webmanifest">
+        <meta name="msapplication-TileColor" content="#da532c">
+        <meta name="theme-color" content="#ffffff">
+
+        <link href="../src/chart-creator.1.0.0.css" rel="stylesheet">
+
+        <script src="../src/demo.js"></script>
+
+        <title>Crag Charts Creator: Pie</title>
+
+    </head>
+
+    <body>
+
+        <img src="../src/icons/dice.svg" id="shuffle" onclick="newData()" alt="New Data">
+
+        <div id="chart" class="chart"></div>
+
+        <div class="menu">
+
+            <h1>Chart</h1>
+
+            <label>Title</label>
+            <input type="text" onkeyup="chartTitle(this)" id="title" />
+
+            <h1>Slices</h1>
+            <label>Label Position</label>
+            <select onchange="labelPosition(this)">
+                <option value="inside" selected>Inside</option>
+                <option value="outside">Outside</option>
+                <option value="none">None</option>
+            </select>
+
+            <hr>
+
+            <h1>Other</h1>
+            <label>Background Color</label>
+            <select onchange="chartColor(this)">
+                <option value="#FFFFFF" selected>White</option>
+                <option value="#dedede">Light Grey</option>
+                <option value="#232323">Dark Grey</option>
+                <option value="#081B33">Dark Blue</option>
+                <option value="#000000">Black</option>
+            </select>
+
+        </div>
+
+        <script src="../../bin/crag.charts.loader.js"></script>
+        <script>
+
+            let chart;
+
+            new CragLoader(['pie'], createChart, '../../bin/');
+
+            function createChart() {
+
+                chart = new CragPie(newDataGen({canBeNegative: false})).create('chart');
+
+            }
+
+        </script>
+
+        <script>
+
+            function newData() {
+                chart.update(newDataGen({canBeNegative: false}));
+            }
+
+            function chartTitle(elem) {
+                chart.title.text = elem.value;
+            }
+
+            function chartColor(elem) {
+                chart.color = elem.value;
+            }
+
+            function labelPosition(elem) {
+                chart.labelPosition = elem.value;
+            }
+
+        </script>
+
+    </body>
+
+</html>
