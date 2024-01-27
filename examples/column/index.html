@@ -31,18 +31,29 @@
 			<input type="text" onkeyup="chartTitle(this)" id="title" />
 
 			<label for="primaryMajorLines">Major Lines</label>
-			<input type="checkbox" onchange="primaryMajorLines(this)" id="primaryMajorLines" checked>
+			<input class="checkbox" type="checkbox" id="primaryMajorLines" onchange="primaryMajorLines(this)" checked/><label class="checkbox__label" for="primaryMajorLines"></label>
+
 			<label for="primaryMinorLines">Minor Lines</label>
-			<input type="checkbox" onchange="primaryMinorLines(this)" id="primaryMinorLines" checked>
-			<label for="primaryShadowZeroLine">Shadow on 'Zero Line'</label>
-			<input type="checkbox" onchange="shadowOnZeroLine(this)" id="primaryShadowZeroLine">
+			<input class="checkbox" type="checkbox" id="primaryMinorLines" onchange="primaryMinorLines(this)" checked/><label class="checkbox__label" for="primaryMinorLines"></label>
+
+			<label for="primaryShadowZeroLine">Shadow on Horizontal Axis</label>
+			<input class="checkbox" type="checkbox" id="primaryShadowZeroLine" onchange="shadowOnZeroLine(this)"/><label class="checkbox__label" for="primaryShadowZeroLine"></label>
+
+			<label>Background Color</label>
+			<select class="select" onchange="chartColor(this)">
+				<option value="#FFFFFF" selected>White</option>
+				<option value="#dedede">Light Grey</option>
+				<option value="#232323">Dark Grey</option>
+				<option value="#081B33">Dark Blue</option>
+				<option value="#000000">Black</option>
+			</select>
 
 			<hr>
 
 			<h1>Columns</h1>
 
 			<label>Colors</label>
-			<select onchange="newColumnColor(this)">
+			<select class="select" onchange="newColumnColor(this)">
 				<optgroup label="Modes">
 					<option value="3">Spectrum (default)</option>
 					<option value="4">Red/Green</option>
@@ -116,19 +127,25 @@
 			</select>
 
 			<label>Width</label>
-			<input type="range" value="95" min="1" max="100" oninput="columnWidth(this)">
+			<div class="slide-wrapper">
+				<input class="slide" type="range" min="1" max="100" value="95" oninput="columnWidth(this)" />
+			</div>
 
 			<label>Rounding</label>
-			<input type="range" value="0" min="0" max="64" oninput="columnRounding(this)">
+			<div class="slide-wrapper">
+				<input class="slide" type="range" min="0" max="64" value="0" oninput="columnRounding(this)" />
+			</div>
 
 			<label>Shadow</label>
-			<input type="range" value="0" step="1" max="15" min="-15" oninput="columnShadow(this)" id="shadow-outset">
+			<div class="slide-wrapper">
+				<input class="slide" type="range" min="-15" max="15" value="0" oninput="columnShadow(this)" />
+			</div>
 
 			<label for="striped">Stripes</label>
-			<input type="checkbox" onchange="columnStripes(this)" id="striped">
+			<input class="checkbox" type="checkbox" id="striped" onchange="columnStripes(this)"/><label class="checkbox__label" for="striped"></label>
 
 			<label for="animated">Animated Stripes</label>
-			<input type="checkbox" onchange="columnAnimatedStripes(this)" id="animated" disabled>
+			<input class="checkbox" type="checkbox" id="animated" onchange="columnAnimatedStripes(this)" disabled/><label class="checkbox__label" for="animated"></label>
 
 			<hr>
 
@@ -200,18 +217,6 @@
 			<select onchange="primaryAxisMinimum(this)">
 				<option value="auto">Auto (Default)</option>
 				<option value="0">0</option>
-			</select>
-
-			<hr>
-
-			<h1>Other</h1>
-			<label>Background Color</label>
-			<select onchange="chartColor(this)">
-				<option value="#FFFFFF" selected>White</option>
-				<option value="#dedede">Light Grey</option>
-				<option value="#232323">Dark Grey</option>
-				<option value="#081B33">Dark Blue</option>
-				<option value="#000000">Black</option>
 			</select>
 
 		</div>
