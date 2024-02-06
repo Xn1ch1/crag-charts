@@ -1,118 +1,118 @@
 .cragPieChartContainer {
-	display: grid;
-	grid-template-columns: 30px 1fr minmax(30px, auto);
-	grid-template-rows: minmax(30px, auto) minmax(0, 1fr) 30px;
-	gap: 0 0;
-	height: 100%;
-	width: 100%;
-	grid-template-areas:
-		". cragTitle ."
-		"cragVAxisPrimary cragPieChartArea cragVAxisSecondary"
-		". cragHAxis .";
-	overflow: visible;
+    display: grid;
+    grid-template-columns: 30px 1fr minmax(30px, auto);
+    grid-template-rows: minmax(30px, auto) minmax(0, 1fr) 30px;
+    gap: 0 0;
+    height: 100%;
+    width: 100%;
+    grid-template-areas:
+        ". cragTitle ."
+        "cragVAxisPrimary cragPieChartArea cragVAxisSecondary"
+        ". cragHAxis .";
+    overflow: visible;
 }
 .cragPieChartArea {
-	grid-area: cragPieChartArea;
-	position: relative;
-	transition: width 0.5s ease-out;
+    grid-area: cragPieChartArea;
+    position: relative;
+    transition: width 0.5s ease-out;
 }
 .cragPieRightKey {
-	grid-area: cragVAxisSecondary;
-	position: relative;
-	transition: width 0.5s ease-out;
+    grid-area: cragVAxisSecondary;
+    position: relative;
+    transition: width 0.5s ease-out;
 }
 .cragPieChart {
-	grid-area: cragPieChartArea;
-	overflow: visible;
-	transition: width 0.5s ease-out;
-	width: 100%;
-	height: 100%;
+    grid-area: cragPieChartArea;
+    overflow: visible;
+    transition: width 0.5s ease-out;
+    width: 100%;
+    height: 100%;
 }
 .cragPieLabels {
-	grid-area: cragPieChartArea;
-	position: relative;
-	pointer-events: none;
+    grid-area: cragPieChartArea;
+    position: relative;
+    pointer-events: none;
 }
 .cragPieSlice {
-	transition: opacity 0.4s, transform 0.4s, fill 0.4s, stroke 0.4s;
-	-webkit-transition: opacity 0.4s, transform 0.4s, fill 0.4s, stroke 0.4s;
-	cursor: pointer;
+    transition: opacity 0.4s, transform 0.4s, fill 0.4s, stroke 0.4s;
+    -webkit-transition: opacity 0.4s, transform 0.4s, fill 0.4s, stroke 0.4s;
+    cursor: pointer;
 }
 .cragPieSliceHover {
-	stroke-width: 0 !important;
-	opacity: 0.95;
+    stroke-width: 0 !important;
+    opacity: 0.95;
 }
 .cragPieKey {
-	-webkit-transition: all 0.7s, opacity 0.5s, transform 0.3s;
-	transition: all 0.7s, opacity 0.5s, transform 0.3s;
-	text-align: right;
-	position: absolute;
-	top: 100%;
-	right: 8px;
-	display: flex;
-	opacity: 0;
+    -webkit-transition: all 0.7s, opacity 0.5s, transform 0.3s;
+    transition: all 0.7s, opacity 0.5s, transform 0.3s;
+    text-align: right;
+    position: absolute;
+    top: 100%;
+    right: 8px;
+    display: flex;
+    opacity: 0;
 }
 .cragPieKeyMarker {
-	-webkit-transition: all 0.7s, opacity 0.5s, transform 0.3s;
-	transition: all 0.7s, opacity 0.5s, transform 0.3s;
-	height: 20px;
-	width: 20px;
-	border-radius: 10px;
+    -webkit-transition: all 0.7s, opacity 0.5s, transform 0.3s;
+    transition: all 0.7s, opacity 0.5s, transform 0.3s;
+    height: 20px;
+    width: 20px;
+    border-radius: 10px;
 }
 .cragPieKeyLabel {
-	transition: opacity 0.5s;
-	-webkit-transition: opacity 0.5s;
-	padding-right: 8px;
-	font-family: Roboto, sans-serif;
-	white-space: nowrap;
-	font-size: 16px;
-	font-weight: 300;
+    transition: opacity 0.5s;
+    -webkit-transition: opacity 0.5s;
+    padding-right: 8px;
+    font-family: Roboto, sans-serif;
+    white-space: nowrap;
+    font-size: 16px;
+    font-weight: 300;
 }
 .cragPieLabel {
-	position: absolute;
-	color: #fff;
-	font-family: Roboto, sans-serif;
-	font-size: 0.75rem;
-	font-weight: 400;
-	transition: all 0.4s;
-	line-height: 26px;
-	height: 26px;
-	width: 26px;
-	text-align: center;
+    position: absolute;
+    color: #fff;
+    font-family: Roboto, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 400;
+    transition: all 0.4s;
+    line-height: 26px;
+    height: 26px;
+    width: 26px;
+    text-align: center;
 }
 .cragPieSliceDetail {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	pointer-events: none;
-	opacity: 0;
-	transition: all 0.5s ease;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    opacity: 0;
+    transition: all 0.5s ease;
 }
 .cragPieSliceDetail h6 {
-	color: inherit;
-	font-family: Roboto, sans-serif;
-	line-height: 1;
+    color: inherit;
+    font-family: Roboto, sans-serif;
+    line-height: 1;
 }
 .cragPieSliceDetailTitle {
-	margin: 0 0 32px 0;
-	text-align: center;
-	width: 100%;
-	font-weight: 400;
+    margin: 0 0 32px 0;
+    text-align: center;
+    width: 100%;
+    font-weight: 400;
 }
 .cragPieSliceDetailLabel {
-	display: inline;
-	margin: 8px 16px 8px 0;
-	text-align: right;
-	font-weight: 300;
-	float: left;
-	clear: left;
+    display: inline;
+    margin: 8px 16px 8px 0;
+    text-align: right;
+    font-weight: 300;
+    float: left;
+    clear: left;
 }
 .cragPieSliceDetailValue {
-	display: inline;
-	margin: 8px 0 8px 16px;
-	text-align: right;
-	float: right;
-	font-weight: 300;
-	clear: right;
+    display: inline;
+    margin: 8px 0 8px 16px;
+    text-align: right;
+    float: right;
+    font-weight: 300;
+    clear: right;
 }

@@ -1,31 +1,31 @@
 .cragLineChartContainer {
-	width: 100%;
-	height: 100%;
-	display: grid;
-	grid-template-columns: min-content 1fr;
-	grid-template-rows: min-content 1fr min-content;
-	gap: 0 0;
-	grid-template-areas:
-		". cragTitle ."
-		"cragVAxisPrimary cragLineChartArea cragVAxisSecondary"
-		". cragHAxis .";
-	overflow: hidden;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: min-content 1fr;
+    grid-template-rows: min-content 1fr min-content;
+    gap: 0 0;
+    grid-template-areas:
+        ". cragTitle ."
+        "cragVAxisPrimary cragLineChartArea cragVAxisSecondary"
+        ". cragHAxis .";
+    overflow: hidden;
 }
 .cragLineChartArea {
-	grid-area: cragLineChartArea;
-	position: relative;
+    grid-area: cragLineChartArea;
+    position: relative;
 }
 .cragLineLabel {
-	position: absolute;
-	text-anchor: middle;
-	text-align: center;
-	font-size: 12px;
-	transition: all 0.7s, opacity 0s;
-	padding: 1px 4px;
-	left: 100%;
-	box-sizing: border-box;
-	font-family: Roboto, sans-serif;
-	background: #FFFFFFCC;
-	border-radius: 4px;
-	color: rgb(51, 51, 51);
+    position: absolute;
+    text-anchor: middle;
+    text-align: center;
+    font-size: 12px;
+    transition: all 0.7s, opacity 0s;
+    padding: 1px 4px;
+    left: 100%;
+    box-sizing: border-box;
+    font-family: Roboto, sans-serif;
+    background: #FFFFFFCC;
+    border-radius: 4px;
+    color: rgb(51, 51, 51);
 }
