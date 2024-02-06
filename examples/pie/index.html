@@ -30,7 +30,7 @@
             <span class="title-bar__title-text">Pie Chart</span>
 
             <img src="../src/icons/random.svg" id="shuffle" onclick="newData()" alt="New Data" title="New Data">
-            <img src="../src/icons/menu.svg" id="config-menu" onclick="newData()" alt="Config Menu" title="Config Menu">
+            <img src="../src/icons/menu.svg" id="config-menu" alt="Config Menu" title="Config Menu">
 
         </div>
 
@@ -64,6 +64,11 @@
                 <option value="none">None</option>
             </select>
 
+            <label>Detail Delay</label>
+            <div class="slide-wrapper">
+                <input class="slide" type="range" min="100" max="1500" value="100" step="10" oninput="detailDelay(this)" />
+            </div>
+
         </div>
 
         <script src="../../bin/crag.charts.loader.js"></script>
@@ -76,6 +81,11 @@
             function createChart() {
 
                 chart = new CragPie(newDataGen({canBeNegative: false})).create('chart');
+
+                document.getElementById('config-menu').onclick = () => {
+                    document.body.classList.toggle('--menu-visible', !document.body.classList.contains('--menu-visible'));
+                    chart._draw();
+                }
 
             }
 
@@ -97,6 +107,10 @@
 
             function labelPosition(elem) {
                 chart.labelPosition = elem.value;
+            }
+
+            function detailDelay(elem) {
+                chart.detailDelay = elem.value;
             }
 
         </script>
