@@ -9,6 +9,10 @@
         <meta name="msapplication-TileColor" content="#da532c">
         <meta name="theme-color" content="#ffffff">
 
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;200;300;500&display=swap" rel="stylesheet">
+
         <link href="../src/chart-creator.1.0.0.css" rel="stylesheet">
 
         <script src="../src/demo.js"></script>
@@ -17,13 +21,23 @@
 
     </head>
 
-    <body>
+    <body class="--menu-visible">
 
-        <img src="../src/icons/dice.svg" id="shuffle" onclick="newData()" alt="New Data">
+        <div id="title-bar" class="title-bar">
 
+            <img src="../src/icons/android-chrome-192x192.png" class="title-bar__logo" alt="Crag Charts"/>
+            <div class="title-bar__separator"></div>
+            <span class="title-bar__title-text">Column Chart</span>
+
+            <img src="../src/icons/random.svg" id="shuffle" onclick="newData()" alt="New Data" title="New Data">
+            <img src="../src/icons/menu.svg" id="config-menu" onclick="newData()" alt="Config Menu" title="Config Menu">
+
+        </div>
         <div id="column-chart" class="chart"></div>
 
         <div class="menu">
+
+            <h1 class="menu__title">Configuration</h1>
 
             <h1>Chart</h1>
 
@@ -50,7 +64,7 @@
 
             <hr>
 
-            <h1>Columns</h1>
+            <h1>Column</h1>
 
             <label>Colors</label>
             <select class="select" onchange="newColumnColor(this)">
@@ -149,7 +163,7 @@
 
             <hr>
 
-            <h1>Column Labels</h1>
+            <h1>Column Label</h1>
 
             <label>Position</label>
             <select onchange="columnLabelPosition(this)">
@@ -231,6 +245,11 @@
             function createChart() {
 
                 chart = new CragColumn(newDataGen()).create('column-chart');
+
+                document.getElementById('config-menu').onclick = () => {
+                    document.body.classList.toggle('--menu-visible', !document.body.classList.contains('--menu-visible'));
+                    chart._draw();
+                }
 
             }
 

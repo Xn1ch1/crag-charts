@@ -1,42 +1,94 @@
 :root {
-    --bg: #081b33;
+    --bg: #EEEEEE;
     --on-bg: #FFFFFF;
-    --material-blue: #1e88e5;
+    --material-blue: #006585;
     --arrow-bg: rgba(255, 255, 255, 0.3);
     --arrow-icon: url(https://upload.wikimedia.org/wikipedia/commons/9/9d/Caret_down_font_awesome_whitevariation.svg);
     --option-bg: white;
     --select-bg: rgba(255, 255, 255, 0.2);
+    --config-width: 250px;
 }
 body {
-    background-color: var(--bg);
+    background-color: white;
     padding: 0;
     margin: 0;
     display: grid;
     grid-auto-flow: row dense;
     grid-auto-columns: 1fr 1fr;
-    grid-template-columns: 1fr 300px;
-    grid-template-rows: 1fr;
-    gap: 0 0;
-    grid-template-areas: "chart menu";
+    grid-template-columns: 1fr 0;
+    grid-template-rows: 50px 1fr;
+    grid-column-gap: 0;
+    grid-row-gap: 0;
     width: 100%;
     height: 100%;
 }
+body.--menu-visible {
+    grid-template-columns: 1fr var(--config-width);
+    grid-template-rows: 50px 1fr;
+}
+.title-bar {
+    grid-area: 1 / 1 / 2 / 2;
+    background: white;
+    box-shadow: 4px -2px 8px 2px rgba(0,0,0,0.4);
+    position: relative;
+    display: flex;
+}
+.title-bar__logo {
+    height: 28px;
+    margin: auto 0 auto 16px;
+}
+.title-bar__title-text {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 26px;
+    line-height: 50px;
+    font-weight: 500;
+    color: #00847A;
+}
+.title-bar__separator {
+    border-left: 2px solid #BBB;
+    margin: auto 16px;
+    height: 34px;
+}
+#shuffle {
+    height: 24px;
+    cursor: pointer;
+    margin-left: auto;
+    padding: 12px;
+}
+#config-menu {
+    padding: 12px;
+    height: 24px;
+    cursor: pointer;
+}
 .chart {
-    grid-area: chart;
-    height: 100%;
+    grid-area: 2 / 1 / 3 / 2;
     overflow: hidden;
+    height: 100%;
+    width: 100%;
 }
 .menu {
-    grid-area: menu;
+    grid-area: 1 / 2 / 3 / 3;
     color: var(--on-bg);
-    height: 100%;
-    width: 300px;
     box-sizing: border-box;
-    font-family: monospace, sans-serif;
+    font-family: 'Roboto Mono', monospace;
     user-select: none;
     overflow-y: scroll;
+    background: #00847A;
+    background: linear-gradient(-12deg, rgba(0,132,122,1) 0%, rgba(0,150,130,1) 100%);
+    position: relative;
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    text-align: end;
+    box-shadow: -1px 0 4px 1px rgba(0,0,0,0.3);
+}
+body.--menu-visible .menu {
     padding: 16px;
-    background: linear-gradient(109.6deg, rgb(36, 45, 57) 11.2%, rgb(16, 37, 60) 51.2%, rgb(0, 0, 0) 98.6%);
+}
+.menu__title {
+    font-size: 22px !important;
+    margin-bottom: 16px !important;
+    font-weight: 500 !important;
 }
 .menu hr {
     height: 1px;
@@ -44,31 +96,22 @@ body {
     background: #BBB;
     margin: 24px 0;
 }
-.menu label {
-    display: block;
+.menu > label {
+    opacity: 0.7;
+    font-weight: 200;
+    display: inline-block;
     margin-top: 16px;
     font-size: 12px;
 }
 .menu h1 {
     margin: 0;
+    font-size: 18px;
+    font-weight: 300;
+}
+.checkbox__label {
+    opacity: 1 !important;
 }
 
-#shuffle {
-    right: 304px;
-    position: fixed;
-    top: 4px;
-    height: 10px;
-    padding: 4px;
-    filter: invert(1);
-    background-color: black;
-    z-index: 98;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: transform 0.4s;
-}
-#shuffle:hover {
-    transform: scale(1.5);
-}
 
 .slide-wrapper {
     position: relative;
@@ -124,7 +167,7 @@ body {
 input[type="checkbox"] {
     height: 0;
     width: 0;
-    visibility: hidden;
+    display: none;
 }
 
 input[type="checkbox"] + label {
@@ -138,6 +181,7 @@ input[type="checkbox"] + label {
     position: relative;
     color: var(--on-bg);
     margin-top: 0 !important;
+    margin-left: auto;
 }
 
 input[type="checkbox"] + label:after {
@@ -166,8 +210,8 @@ input[type="checkbox"]:active + label:after {
 }
 
 input[type="checkbox"]:disabled + label {
-    opacity: 0.4;
-    filter: grayscale();
+    opacity: 0.4 !important;
+    filter: grayscale(1);
 }
 
 select {
@@ -178,11 +222,14 @@ select {
     outline: 0;
     font: inherit;
     width: 100%;
-    background: var(--arrow-icon) no-repeat right 8px center/22px, rgba(0, 0, 0, 0.3);
+    background: var(--arrow-icon) no-repeat right 4px center/22px, rgba(0, 0, 0, 0.3);
     color: var(--on-bg);
     border-radius: 3px;
     cursor: pointer;
-    padding: 4px;
+    padding: 4px 28px 4px 4px;
+    font-size: 14px;
+    font-weight: 200;
+    text-align: end;
 }
 select::-ms-expand {
     display: none;
@@ -193,4 +240,15 @@ select:focus {
 select option {
     color: inherit;
     background-color: rgba(0, 0, 0, 0.3);
+}
+input[type="text"] {
+    width: 100%;
+    padding: 4px;
+    font: inherit;
+    background: rgba(0,0,0,0.3);
+    border: none;
+    color: var(--on-bg);
+    font-size: 14px;
+    font-weight: 200;
+    text-align: end;
 }
