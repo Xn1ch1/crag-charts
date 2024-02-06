@@ -64,9 +64,9 @@ class CragPie extends CragCore {
         /* SLICES */
         this.options.slices.format = this.validateOption(options?.slices?.format, this.labelFormats, this.options.slices.format);
         this.options.slices.decimalPlaces = this.validateOption(options?.slices?.decimalPlaces, 'number', this.options.slices.decimalPlaces);
+        this.options.slices.detailDelay = this.validateOption(options?.slices?.detailDelay, 'number', this.options.slices.detailDelay);
         this.options.slices.showValues = this.validateOption(options?.slices?.showValues, 'boolean', this.options.slices.showValues);
         this.options.slices.labelPosition = this.validateOption(options?.slices?.labelPosition, this.labelPositions, this.options.slices.labelPosition);
-
 
         if (this._isValidColor(options?.slices?.colors)) this.options.slices.colors = options.slices.colors;
 
