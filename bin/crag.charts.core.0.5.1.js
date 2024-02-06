@@ -1368,18 +1368,21 @@ class ToolTip extends CragCore {
     show(event, label, value, showValue = true) {
 
         if (showValue) {
+
             this.value.style.display = '';
+
+            this.value.textContent = this.formatLabel(
+                value,
+                this.chart.options.vAxes.primary.format,
+                this.chart.options.vAxes.primary.currencySymbol,
+                this.chart.options.vAxes.primary.decimalPlaces
+            );
+
         } else {
             this.value.style.display = 'none';
         }
 
         this.label.textContent = label;
-        this.value.textContent = this.formatLabel(
-            value,
-            this.chart.options.vAxes.primary.format,
-            this.chart.options.vAxes.primary.currencySymbol,
-            this.chart.options.vAxes.primary.decimalPlaces
-        );
 
         this.container.style.opacity = '1';
 
