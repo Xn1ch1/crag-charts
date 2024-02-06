@@ -19,6 +19,7 @@ class CragPie extends CragCore {
                 decimalPlaces: 0,
                 currencySymbol: 'GBP',
                 labelPosition: 'inside',
+                detailDelay: 100,
             },
             pie: {
                 gap: 8,
@@ -102,6 +103,7 @@ class CragPie extends CragCore {
 
         this.title = new Title(this);
         this.slices = new Slices(this);
+        this.tooltip = new ToolTip(this);
 
         this._createSliceDetail();
         this._applyListeners();
@@ -217,6 +219,10 @@ class CragPie extends CragCore {
 
     }
 
+    set detailDelay(value) {
+        this.options.slices.detailDelay = value;
+    }
+
 }
 class Slice extends CragCore {
 
@@ -236,6 +242,9 @@ class Slice extends CragCore {
     index = 0;
 
     labelPosition = 'inside';
+
+    detailTimer = null;
+    detailVisible = false;
 
     degrees = {
         total: 0,
@@ -368,8 +377,32 @@ class Slice extends CragCore {
 
     _addEventListeners() {
 
-        this.slice.onmouseover = () => this._showDetail();
-        this.slice.onmouseout = () => this._hideDetail();
+        this.slice.onclick = (event) => {
+            if (this.detailVisible) {
+                this.chart.tooltip.show(event, this.name, null, false);
+                this._resetDetailTimer();
+                return;
+            }
+            clearTimeout(this.detailTimer);
+            this._showDetail();
+        }
+        this.slice.onmousemove = (event) => {
+            this.chart.tooltip.show(event, this.name, null, false);
+            this._resetDetailTimer();
+        }
+        this.slice.onmouseout = () => {
+            this.chart.tooltip.hide();
+            clearTimeout(this.detailTimer);
+        }
+
+    }
+
+    _resetDetailTimer() {
+
+        if (this.detailVisible) this._hideDetail();
+
+        clearTimeout(this.detailTimer);
+        this.detailTimer = setTimeout(() => this._showDetail(), this.chart.options.slices.detailDelay);
 
     }
 
@@ -440,6 +473,9 @@ class Slice extends CragCore {
 
     _showDetail() {
 
+        this.detailVisible = true;
+
+        this.chart.tooltip.hide();
         this.chart.slices.hideLabels();
 
         this.chart.sliceDetail.title.style.fontSize = Math.max(18, this.chart.chart.labelArea.offsetHeight / 16) + 'px';
@@ -478,11 +514,16 @@ class Slice extends CragCore {
 
     _hideDetail() {
 
+        this.detailVisible = false;
+
         this.chart.slices.showLabels();
 
         this.chart.sliceDetail.container.style.opacity = '0';
 
+        this.slice.style.pointerEvents = 'none';
         this._animate(this.degrees.start, this.degrees.end, 0.001, 360, this.chart.animationSpeed / 2, this.chart.options.pie.hole, 1);
+
+        setTimeout(() => this.slice.style.pointerEvents = '', this.chart.animationSpeed);
 
         this.slice.style.transform = 'scale(1)';
         this.slice.classList.remove('cragPieSliceHover');
