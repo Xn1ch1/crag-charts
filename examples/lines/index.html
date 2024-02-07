@@ -49,28 +49,14 @@
 
         <div class="menu">
 
-            <h1 class="config-menu__title">Configuration</h1>
+            <h1 class="config-menu__title">options</h1>
 
-            <hr class="config-menu__separator">
+            <h1 class="config-menu__sub-title">.chart</h1>
 
-            <h1 class="config-menu__sub-title">Chart</h1>
-
-            <label class="config-menu__option-label" for="title">Title</label>
+            <label class="config-menu__option-label" for="title">.title</label>
             <input class="config-menu__text-input" type="text" onkeyup="chartTitle(this)" id="title" />
 
-            <label class="config-menu__option-label" for="primaryMajorLines">Major Lines</label>
-            <input class="config-menu__checkbox" type="checkbox" id="primaryMajorLines" onchange="primaryMajorLines(this)" checked/>
-            <label class="config-menu__checkbox-label" for="primaryMajorLines"></label>
-
-            <label class="config-menu__option-label" for="primaryMinorLines">Minor Lines</label>
-            <input class="config-menu__checkbox" type="checkbox" id="primaryMinorLines" onchange="primaryMinorLines(this)" checked/>
-            <label class="config-menu__checkbox-label" for="primaryMinorLines"></label>
-
-            <label class="config-menu__option-label" for="primaryShadowZeroLine">Shadow on Horizontal Axis</label>
-            <input class="config-menu__checkbox" type="checkbox" id="primaryShadowZeroLine" onchange="shadowOnZeroLine(this)"/>
-            <label class="config-menu__checkbox-label" for="primaryShadowZeroLine"></label>
-
-            <label class="config-menu__option-label" for="chartColor">Background Color</label>
+            <label class="config-menu__option-label" for="chartColor">.color</label>
             <select class="config-menu__select" onchange="chartColor(this)" id="chartColor">
                 <option value="#FFFFFF" selected>White</option>
                 <option value="#dedede">Light Grey</option>
@@ -79,8 +65,54 @@
                 <option value="#000000">Black</option>
             </select>
 
-            <label class="config-menu__option-label" for="lineColor">Major / Minor Line Color</label>
-            <select class="select" onchange="lineColor(this)" id="lineColor">
+            <h1 class="config-menu__sub-title">.vAxes.primary</h1>
+
+            <label for="primaryAxisFormat" class="config-menu__option-label">.format</label>
+            <select class="config-menu__select" onchange="primaryAxisFormat(this)" id="primaryAxisFormat">
+                <option value="decimal">Decimal (Default)</option>
+                <option value="currency">Currency</option>
+                <option value="time">Time</option>
+            </select>
+
+            <label for="primaryAxisDecimals" class="config-menu__option-label">.decimalPlaces</label>
+            <select class="config-menu__select" onchange="primaryAxisDecimals(this)" id="primaryAxisDecimals">
+                <option value="0">0 (Default)</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+
+            <label for="primaryAxisCurrencySymbol" class="config-menu__option-label">.currencySymbol</label>
+            <select class="config-menu__select" onchange="primaryAxisCurrencySymbol(this)" id="primaryAxisCurrencySymbol" disabled>
+                <option value="GBP">GBP (Default)</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="JPY">JPY</option>
+                <option value="CAD">CAD</option>
+            </select>
+
+            <label for="primaryAxisMinimum">.min</label>
+            <select class="config-menu__select" onchange="primaryAxisMinimum(this)" id="primaryAxisMinimum">
+                <option value="auto">Auto (Default)</option>
+                <option value="0">0</option>
+            </select>
+
+            <label class="config-menu__option-label" for="primaryMajorLines">.majorLines</label>
+            <input class="config-menu__checkbox" type="checkbox" id="primaryMajorLines" onchange="primaryMajorLines(this)" checked/>
+            <label class="config-menu__checkbox-label" for="primaryMajorLines"></label>
+
+            <label class="config-menu__option-label" for="primaryMinorLines">.minorLines</label>
+            <input class="config-menu__checkbox" type="checkbox" id="primaryMinorLines" onchange="primaryMinorLines(this)" checked/>
+            <label class="config-menu__checkbox-label" for="primaryMinorLines"></label>
+
+            <label class="config-menu__option-label" for="primaryShadowZeroLine">.shadowOnZeroLines</label>
+            <input class="config-menu__checkbox" type="checkbox" id="primaryShadowZeroLine" onchange="shadowOnZeroLine(this)"/>
+            <label class="config-menu__checkbox-label" for="primaryShadowZeroLine"></label>
+
+            <label for="lineColor" class="config-menu__option-label">.color</label>
+            <select class="config-menu__select" onchange="lineColor(this)" id="lineColor">
                 <option value="auto">Auto</option>
                 <option value="red">Red</option>
                 <option value="pink">Pink</option>
@@ -100,54 +132,14 @@
                 <option value="deepOrange">Deep Orange</option>
             </select>
 
-            <hr class="config-menu__separator">
+            <h1 class="config-menu__sub-title">.lines[0]</h1>
 
-            <h1 class="config-menu__sub-title">Primary vAxis</h1>
-
-            <label for="primaryAxisFormat" class="config-menu__option-label">Format</label>
-            <select class="config-menu__select" onchange="primaryAxisFormat(this)" id="primaryAxisFormat">
-                <option value="decimal">Decimal (Default)</option>
-                <option value="currency">Currency</option>
-                <option value="time">Time</option>
-            </select>
-
-            <label for="primaryAxisDecimals" class="config-menu__option-label">Decimal Places</label>
-            <select class="config-menu__select" onchange="primaryAxisDecimals(this)" id="primaryAxisDecimals">
-                <option value="0">0 (Default)</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-            </select>
-
-            <label for="primaryAxisCurrencySymbol" class="config-menu__option-label">Currency Symbol</label>
-            <select class="config-menu__select" onchange="primaryAxisCurrencySymbol(this)" id="primaryAxisCurrencySymbol" disabled>
-                <option value="GBP">GBP (Default)</option>
-                <option value="USD">USD</option>
-                <option value="EUR">EUR</option>
-                <option value="JPY">JPY</option>
-                <option value="CAD">CAD</option>
-            </select>
-
-            <label for="primaryAxisMinimum">Minimum Value</label>
-            <select class="config-menu__select" onchange="primaryAxisMinimum(this)" id="primaryAxisMinimum">
-                <option value="auto">Auto (Default)</option>
-                <option value="0">0</option>
-            </select>
-
-            <hr class="config-menu__separator">
-
-            <h1 class="config-menu__sub-title">Line 1</h1>
-
-            <label for="line1Name" class="config-menu__option-label">Name</label>
+            <label for="line1Name" class="config-menu__option-label">.name</label>
             <input class="config-menu__text-input" type="text" onkeyup="line1Name(this)" id="line1Name"/>
 
-            <hr class="config-menu__separator">
+            <h1 class="config-menu__sub-title">.lines[1]</h1>
 
-            <h1 class="config-menu__sub-title">Line 2</h1>
-
-            <label for="line2Name" class="config-menu__option-label">Name</label>
+            <label for="line2Name" class="config-menu__option-label">.name</label>
             <input class="config-menu__text-input" type="text" onkeyup="line2Name(this)" id="line2Name" />
 
         </div>

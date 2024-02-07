@@ -50,16 +50,14 @@
 
         <div class="menu">
 
-            <h1 class="config-menu__title">Configuration</h1>
+            <h1 class="config-menu__title">options</h1>
 
-            <hr class="config-menu__separator">
+            <h1 class="config-menu__sub-title">.chart</h1>
 
-            <h1 class="config-menu__sub-title">Chart</h1>
-
-            <label for="title" class="config-menu__option-label">Title</label>
+            <label for="title" class="config-menu__option-label">.title</label>
             <input class="config-menu__text-input" type="text" onkeyup="chartTitle(this)" id="title" />
 
-            <label for="chartColor" class="config-menu__option-label">Background Color</label>
+            <label for="chartColor" class="config-menu__option-label">.color</label>
             <select class="config-menu__select" onchange="chartColor(this)" id="chartColor">
                 <option value="#FFFFFF" selected>White</option>
                 <option value="#dedede">Light Grey</option>
@@ -68,36 +66,32 @@
                 <option value="#000000">Black</option>
             </select>
 
-            <hr class="config-menu__separator">
+            <h1 class="config-menu__sub-title">.pie</h1>
 
-            <h1 class="config-menu__sub-title">Pie</h1>
-
-            <label class="config-menu__option-label">Hole</label>
+            <label class="config-menu__option-label">.hole</label>
             <div class="config-menu__range-container">
                 <label>
                     <input class="config-menu__range-input" type="range" min="0" max="0.85" value="0" step="0.01" oninput="pieHole(this)" />
                 </label>
             </div>
 
-            <hr class="config-menu__separator">
+            <h1 class="config-menu__sub-title">.slices</h1>
 
-            <h1 class="config-menu__sub-title">Slices</h1>
-
-            <label for="labelPosition" class="config-menu__option-label">Label Position</label>
+            <label for="labelPosition" class="config-menu__option-label">.labelPosition</label>
             <select class="config-menu__select" onchange="labelPosition(this)" id="labelPosition">
                 <option value="inside" selected>Inside</option>
                 <option value="outside">Outside</option>
                 <option value="none">None</option>
             </select>
 
-            <label class="config-menu__option-label">Detail Hover Delay</label>
+            <label class="config-menu__option-label">.detailDelay</label>
             <div class="config-menu__range-container">
                 <label>
                     <input class="config-menu__range-input" type="range" min="400" max="1500" value="400" step="10" oninput="detailDelay(this)" id="detail-delay" />
                 </label>
             </div>
 
-            <label class="config-menu__option-label" for="detail-click-only">Detail Click Only</label>
+            <label class="config-menu__option-label" for="detail-click-only">.detailClickOnly</label>
             <input class="config-menu__checkbox" type="checkbox" id="detail-click-only" onchange="detailClickOnly(this)"/>
             <label class="config-menu__checkbox-label" for="detail-click-only"></label>
 
