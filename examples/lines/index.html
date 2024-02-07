@@ -1,0 +1,173 @@
+<html lang="en">
+
+    <head>
+
+        <link rel="apple-touch-icon" sizes="180x180" href="../src/icons/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="../src/icons/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="../src/icons/favicon-16x16.png">
+        <link rel="manifest" href="../src/icons/site.webmanifest">
+        <meta name="msapplication-TileColor" content="#da532c">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;200;300;500&display=swap" rel="stylesheet">
+
+        <link href="../src/chart-creator.1.0.0.css" rel="stylesheet">
+
+        <script src="../src/demo.js"></script>
+
+        <title>Crag Charts Creator: Lines</title>
+
+    </head>
+
+    <body class="--menu-visible">
+
+        <div id="title-bar" class="title-bar">
+
+            <img src="../src/icons/android-chrome-192x192.png" class="title-bar__logo" alt="Crag Charts"/>
+            <div class="title-bar__separator"></div>
+            <span class="title-bar__title-text">Lines Chart</span>
+
+            <img src="../src/icons/random.svg" id="shuffle" onclick="newData()" alt="New Data" title="New Data">
+            <img src="../src/icons/menu.svg" id="config-menu" onclick="newData()" alt="Config Menu" title="Config Menu">
+
+        </div>
+        <div id="column-chart" class="chart"></div>
+
+        <div class="menu">
+
+            <h1 class="menu__title">Configuration</h1>
+
+            <hr>
+
+            <h1>Chart</h1>
+
+            <label>Title</label>
+            <input type="text" onkeyup="chartTitle(this)" id="title" />
+
+            <label for="primaryMajorLines">Major Lines</label>
+            <input class="checkbox" type="checkbox" id="primaryMajorLines" onchange="primaryMajorLines(this)" checked/><label class="checkbox__label" for="primaryMajorLines"></label>
+
+            <label for="primaryMinorLines">Minor Lines</label>
+            <input class="checkbox" type="checkbox" id="primaryMinorLines" onchange="primaryMinorLines(this)" checked/><label class="checkbox__label" for="primaryMinorLines"></label>
+
+            <label for="primaryShadowZeroLine">Shadow on Horizontal Axis</label>
+            <input class="checkbox" type="checkbox" id="primaryShadowZeroLine" onchange="shadowOnZeroLine(this)"/><label class="checkbox__label" for="primaryShadowZeroLine"></label>
+
+            <label>Background Color</label>
+            <select class="select" onchange="chartColor(this)">
+                <option value="#FFFFFF" selected>White</option>
+                <option value="#dedede">Light Grey</option>
+                <option value="#232323">Dark Grey</option>
+                <option value="#081B33">Dark Blue</option>
+                <option value="#000000">Black</option>
+            </select>
+
+            <hr>
+
+            <h1>Primary vAxis</h1>
+
+            <label>Format</label>
+            <select onchange="primaryAxisFormat(this)">
+                <option value="decimal">Decimal (Default)</option>
+                <option value="currency">Currency</option>
+                <option value="time">Time</option>
+            </select>
+            <label>Decimal Places</label>
+            <select onchange="primaryAxisDecimals(this)" id="primaryAxisDecimals">
+                <option value="0">0 (Default)</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+            <label>Currency Symbol</label>
+            <select onchange="primaryAxisCurrencySymbol(this)" id="primaryAxisCurrencySymbol" disabled>
+                <option value="GBP">GBP (Default)</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="JPY">JPY</option>
+                <option value="CAD">CAD</option>
+            </select>
+            <label>Minimum Value</label>
+            <select onchange="primaryAxisMinimum(this)">
+                <option value="auto">Auto (Default)</option>
+                <option value="0">0</option>
+            </select>
+
+        </div>
+
+        <script src="../../bin/crag.charts.loader.js"></script>
+        <script>
+
+            let chart;
+
+            new CragLoader(['lines'], createChart, '../../bin/');
+
+            function createChart() {
+
+                chart = new CragLine(newDataGen({size: 2})).create('column-chart');
+
+                document.getElementById('config-menu').onclick = () => {
+                    document.body.classList.toggle('--menu-visible', !document.body.classList.contains('--menu-visible'));
+                    chart._draw();
+                }
+
+            }
+
+        </script>
+
+        <script>
+
+
+            function newData() {
+                chart.update(newDataGen({size: 2}));
+            }
+
+            function chartTitle(elem) {
+                chart.title.text = elem.value;
+            }
+
+            function chartColor(elem) {
+                chart.color = elem.value;
+            }
+            /**
+             * Primary vAxis
+             */
+            function shadowOnZeroLine(elem) {
+                chart.primaryVAxis.shadowOnZeroLine = elem.checked;
+            }
+
+            function primaryAxisFormat(elem) {
+                document.getElementById('primaryAxisDecimals').disabled = elem.value === 'time';
+                document.getElementById('primaryAxisCurrencySymbol').disabled = elem.value !== 'currency';
+                chart.primaryVAxis.format = elem.value;
+            }
+
+            function primaryAxisDecimals(elem) {
+                chart.primaryVAxis.decimals = elem.value;
+            }
+
+            function primaryAxisCurrencySymbol(elem) {
+                chart.primaryVAxis.currencySymbol = elem.value;
+            }
+
+            function primaryMajorLines(elem) {
+                chart.primaryVAxis.majorLines = elem.checked;
+            }
+
+            function primaryMinorLines(elem) {
+                chart.primaryVAxis.minorLines = elem.checked;
+            }
+
+            function primaryAxisMinimum(elem) {
+                chart.primaryVAxis.minimum = elem.value === '0' ? 0 : elem.value;
+            }
+
+        </script>
+
+    </body>
+
+</html>
