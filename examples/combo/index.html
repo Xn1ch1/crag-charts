@@ -17,7 +17,7 @@
 
         <script src="../src/demo.js"></script>
 
-        <title>Crag Charts Creator: Column</title>
+        <title>Crag Charts Creator: Combo</title>
 
     </head>
 
@@ -27,10 +27,10 @@
 
             <img src="../src/icons/android-chrome-192x192.png" class="title-bar__logo" alt="Crag Charts"/>
             <div class="title-bar__separator"></div>
-            <span class="title-bar__title-text">Column Chart</span>
+            <span class="title-bar__title-text">Combo Chart</span>
 
             <img src="../src/icons/random.svg" id="shuffle" onclick="newData()" alt="New Data" title="New Data">
-            <img src="../src/icons/menu.svg" id="config-menu" alt="Config Menu" title="Config Menu">
+            <img src="../src/icons/menu.svg" id="config-menu" onclick="newData()" alt="Config Menu" title="Config Menu">
 
         </div>
         <div id="column-chart" class="chart"></div>
@@ -40,7 +40,7 @@
             <h1 class="menu__title">Configuration</h1>
 
             <hr>
-            
+
             <h1>Chart</h1>
 
             <label>Title</label>
@@ -242,11 +242,11 @@
 
             let chart;
 
-            new CragLoader(['column'], createChart, '../../bin/');
+            new CragLoader(['combo'], createChart, '../../bin/');
 
             function createChart() {
 
-                chart = new CragColumn(newDataGen()).create('column-chart');
+                chart = new CragCombo(newDataGen({size: 2})).create('column-chart');
 
                 document.getElementById('config-menu').onclick = () => {
                     document.body.classList.toggle('--menu-visible', !document.body.classList.contains('--menu-visible'));
@@ -261,7 +261,7 @@
 
 
             function newData() {
-                chart.update(newDataGen());
+                chart.update(newDataGen({size: 2}));
             }
 
             function chartTitle(elem) {
