@@ -64,6 +64,27 @@
                 <option value="#000000">Black</option>
             </select>
 
+            <label>Major / Minor Line Color</label>
+            <select class="select" onchange="lineColor(this)">
+                <option value="auto">Auto</option>
+                <option value="red">Red</option>
+                <option value="pink">Pink</option>
+                <option value="purple">Purple</option>
+                <option value="deepPurple">Deep Purple</option>
+                <option value="indigo">Indigo</option>
+                <option value="blue">Blue</option>
+                <option value="lightBlue">Light Blue</option>
+                <option value="cyan">Cyan</option>
+                <option value="teal">Teal</option>
+                <option value="green">Green</option>
+                <option value="lightGreen">Light Green</option>
+                <option value="lime">Lime</option>
+                <option value="yellow">Yellow</option>
+                <option value="amber">Amber</option>
+                <option value="orange">Orange</option>
+                <option value="deepOrange">Deep Orange</option>
+            </select>
+
             <hr>
 
             <h1>Column</h1>
@@ -301,6 +322,10 @@
 
             function primaryMinorLines(elem) {
                 chart.primaryVAxis.minorLines = elem.checked;
+            }
+
+            function lineColor(elem) {
+                chart.primaryVAxis.lineColor = elem.value;
             }
 
             function primaryAxisMinimum(elem) {

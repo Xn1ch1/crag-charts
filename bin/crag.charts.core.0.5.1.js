@@ -93,6 +93,7 @@ class CragPallet {
  * @property {string} [name] The name of the data series for the vAxis, will be applied to the tool tip.
  * @property {boolean} [majorLines] Enables the horizontal major lines.
  * @property {boolean} [minorLines] Enables the horizontal minor lines.
+ * @property {string} [lineColor] Sets the colour for major and minor lines.
  * @property {boolean} [shadowOnZeroLine] Enables a drop shadow on the primary major zero line.
  * @property {string} [format] Formatting type, must be one of the valid options.
  * @property {string} [currencySymbol] Optional currency format.
@@ -937,8 +938,8 @@ class VAxis extends CragCore {
 
         for (const line of Object.values(this.lines)) {
 
-            line.majorLine.style.backgroundColor = color;
-            line.minorLine.style.backgroundColor = color;
+            line.majorLine.style.backgroundColor = this.chart.options.vAxes[this.axisName].lineColor === 'auto' ? color : this.chart.options.vAxes[this.axisName].lineColor;
+            line.minorLine.style.backgroundColor = this.chart.options.vAxes[this.axisName].lineColor === 'auto' ? color : this.chart.options.vAxes[this.axisName].lineColor;
             line.label.style.color = color;
 
             if (line.isZeroPoint) {
@@ -1004,6 +1005,13 @@ class VAxis extends CragCore {
 
         this.chart.options.vAxes[this.axisName].minorLines = value;
         this.showHide();
+
+    }
+
+    set lineColor(value) {
+
+        this.chart.options.vAxes[this.axisName].lineColor = value;
+        this._colorize();
 
     }
 

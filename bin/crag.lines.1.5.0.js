@@ -47,6 +47,7 @@ class CragLine extends CragCore {
                     majorLines: true,
                     minorLines: true,
                     shadowOnZeroLine: false,
+                    lineColor: 'auto',
                     format: 'number',
                     currencySymbol: 'GBP',
                     decimalPlaces: 0,
