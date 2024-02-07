@@ -758,7 +758,14 @@ class Slices extends CragCore {
             slice.keyLabel.textContent = this.chart.data.labels[i];
             slice.keyLabel.style.opacity = '1';
 
-            slice.keyContainer.style.top = (28 * i) + (this.chart.chart.rightKey.offsetHeight / 2 - ((28 * ObjectLength(this.slices)) / 2)) + 'px';
+            /**
+             * 28 here is the padded height of each key (dot and text)
+             */
+            if (this.chart.chart.rightKey.offsetHeight < 28 * ObjectLength(this.slices)) {
+                slice.keyContainer.style.top = (28 * i) + 'px';
+            } else {
+                slice.keyContainer.style.top = (28 * i) + (this.chart.chart.rightKey.offsetHeight / 2 - ((28 * ObjectLength(this.slices)) / 2)) + 'px';
+            }
             slice.keyContainer.style.opacity = '1';
 
             if (slice.keyContainer.offsetWidth + 16 > maxKeyLength) {
