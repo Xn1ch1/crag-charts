@@ -76,6 +76,11 @@
                 <option value="none">None</option>
             </select>
 
+            <label>Detail Hover Delay</label>
+            <div class="slide-wrapper">
+                <input class="slide" type="range" min="400" max="1500" value="400" step="10" oninput="detailDelay(this)" id="detail-delay" />
+            </div>
+
             <label for="detail-click-only">Detail Click Only</label>
             <input class="checkbox" type="checkbox" id="detail-click-only" onchange="detailClickOnly(this)"/><label class="checkbox__label" for="detail-click-only"></label>
 
