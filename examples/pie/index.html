@@ -132,6 +132,19 @@
                 chart.labelPosition = elem.value;
             }
 
+            function pieHole(elem) {
+                chart.pieHole = elem.value;
+            }
+
+            function detailDelay(elem) {
+                chart.detailDelay = elem.value;
+            }
+
+            function detailClickOnly(elem) {
+                document.getElementById('detail-delay').disabled = elem.checked;
+                chart.detailClickOnly = elem.checked;
+            }
+
         </script>
 
     </body>

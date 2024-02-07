@@ -1,7 +1,7 @@
 .cragPieChartContainer {
     display: grid;
-    grid-template-columns: 30px 1fr minmax(30px, auto);
-    grid-template-rows: minmax(30px, auto) minmax(0, 1fr) 30px;
+    grid-template-columns: 8px 1fr minmax(30px, auto);
+    grid-template-rows: minmax(30px, auto) minmax(0, 1fr) 8px;
     gap: 0 0;
     height: 100%;
     width: 100%;
@@ -20,6 +20,14 @@
     grid-area: cragVAxisSecondary;
     position: relative;
     transition: width 0.5s ease-out;
+    overflow-y: scroll;
+}
+.cragPieRightKey::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+}
+.cragPieRightKey  {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
 }
 .cragPieChart {
     grid-area: cragPieChartArea;
