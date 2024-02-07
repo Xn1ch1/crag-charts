@@ -9,4 +9,21 @@ window.addEventListener("load", () => {
 
     }
 
+    const navigationMenu = document.getElementById('navigation-menu');
+    const navigationMenuOverlay = document.getElementById('navigation-menu__overlay');
+
+    document.getElementById('navigation-menu__button').onclick = () => {
+        navigationMenu.classList.add('--visible');
+        navigationMenuOverlay.classList.add('--visible');
+    };
+
+    navigationMenuOverlay.onclick = () => {
+        navigationMenu.classList.remove('--visible');
+        navigationMenuOverlay.classList.remove('--visible');
+    };
+    navigationMenu.onclick = () => {
+        navigationMenu.classList.remove('--visible');
+        navigationMenuOverlay.classList.remove('--visible');
+    };
+
 });
