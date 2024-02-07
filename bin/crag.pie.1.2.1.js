@@ -406,7 +406,7 @@ class Slice extends CragCore {
 
             this.chart.tooltip.show(event, this.name, null, false);
 
-            /** Resetting timer or hiding should no happen on movement when click only */
+            /** Resetting timer or hiding should not happen on movement when click only */
             if (this.chart.options.slices.detailClickOnly) return;
             if (this.detailVisible) this._hideDetail();
 
@@ -418,6 +418,39 @@ class Slice extends CragCore {
             if (this.chart.options.slices.detailClickOnly) return;
 
             this.chart.tooltip.hide();
+            clearTimeout(this.detailTimer);
+
+        }
+
+        this.slice.ontouchstart = (event) => {
+
+            event.preventDefault();
+
+            if (this.detailAnimating) return;
+
+            if (this.detailVisible) {
+                this.chart.tooltip.show(event, this.name, null, false);
+                this._hideDetail();
+                clearTimeout(this.detailTimer);
+                return;
+            }
+
+            clearTimeout(this.detailTimer);
+            this._showDetail();
+
+        }
+
+        this.slice.ontouchend = (event) => {
+
+            event.preventDefault();
+
+            /**  Chart is animating (user tapped to show) or click only enabled */
+            if (this.detailAnimating || this.chart.options.slices.detailClickOnly) return;
+
+            this.chart.tooltip.hide();
+
+            if (this.detailVisible) this._hideDetail();
+
             clearTimeout(this.detailTimer);
 
         }
