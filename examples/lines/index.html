@@ -97,6 +97,20 @@
                 <option value="0">0</option>
             </select>
 
+            <hr>
+
+            <h1>Line 1</h1>
+
+            <label>Name</label>
+            <input type="text" onkeyup="line1Name(this)" />
+
+            <hr>
+
+            <h1>Line 2</h1>
+
+            <label>Name</label>
+            <input type="text" onkeyup="line2Name(this)" />
+
         </div>
 
         <script src="../../bin/crag.charts.loader.js"></script>
@@ -164,6 +178,13 @@
 
             function primaryAxisMinimum(elem) {
                 chart.primaryVAxis.minimum = elem.value === '0' ? 0 : elem.value;
+            }
+
+            function line1Name(elem) {
+                chart.lineName(0, elem.value);
+            }
+            function line2Name(value) {
+                chart.lineName(1, value.value);
             }
 
         </script>
