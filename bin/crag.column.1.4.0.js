@@ -46,7 +46,7 @@ class CragColumn extends CragCore {
             },
             vAxes: {
                 primary: {
-                    name: 'Series',
+                    name: null,
                     majorLines: true,
                     minorLines: true,
                     shadowOnZeroLine: false,
@@ -227,6 +227,13 @@ class CragColumn extends CragCore {
 
     }
 
+    set seriesName(value) {
+
+        this.options.vAxes.primary.name = value;
+        this.columns.seriesName = value;
+
+    }
+
 }
 
 
@@ -243,18 +250,21 @@ class Column extends CragCore {
     #color = null;
     #labelPosition = 'none';
 
+    #seriesName = null;
+
     /** @type {HTMLDivElement} */
     element = null;
 
     /** @type {HTMLSpanElement} */
     label = null;
 
-    constructor (index, value, name) {
+    constructor (index, value, name, seriesName) {
         super();
 
         this.#index = index;
         this.#value = value;
         this.#name = name;
+        this.#seriesName = seriesName;
 
         this._createColumn();
         this._createLabel();
@@ -425,9 +435,15 @@ class Column extends CragCore {
     }
 
     set labelText(value) {
-
         this.label.textContent = value;
+    }
 
+    get seriesName() {
+        return this.#seriesName;
+    }
+
+    set seriesName(value) {
+        this.#seriesName = value;
     }
 
     _calculateLabelPosition(preferredPosition, maxHeight) {
@@ -538,6 +554,8 @@ class Columns extends CragCore {
 
     data = [];
 
+    #seriesName = null;
+
     constructor(chart, data) {
         super();
 
@@ -592,13 +610,14 @@ class Columns extends CragCore {
                 this.columns[i].name = this.chart.data.labels[i];
                 this.columns[i].value = this.data[i];
                 this.columns[i].columnOptions = this.chart.options.columns;
+                this.columns[i].seriesName = this.chart.options.vAxes.primary.name;
 
             } else {
 
                 /**
                  * Create new DataPoint
                  */
-                this.columns[i] = new Column(i, this.data[i], this.chart.data.labels[i]);
+                this.columns[i] = new Column(i, this.data[i], this.chart.data.labels[i], this.chart.options.vAxes.primary.name);
 
                 this.labelArea.append(this.columns[i].label);
                 this.columnArea.append(this.columns[i].element);
@@ -850,6 +869,16 @@ class Columns extends CragCore {
         this.chart.options.columns.labels.position = value;
         this._positionLabels();
         this._colorLabels();
+
+    }
+
+    set seriesName(value) {
+
+        this.#seriesName = value;
+
+        for (const column of Object.values(this.columns)) {
+            column.seriesName = value;
+        }
 
     }
 

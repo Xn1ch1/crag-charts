@@ -206,6 +206,9 @@
 
             <h1>Primary vAxis</h1>
 
+            <label>Name</label>
+            <input type="text" onkeyup="seriesName(this)"/>
+
             <label>Format</label>
             <select onchange="primaryAxisFormat(this)">
                 <option value="decimal">Decimal (Default)</option>
@@ -341,6 +344,10 @@
 
             function columnLabelPosition(elem) {
                 chart.columns.labelPosition = elem.value;
+            }
+
+            function seriesName(elem) {
+                chart.seriesName = elem.value;
             }
 
         </script>
