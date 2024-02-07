@@ -715,6 +715,8 @@ class Slices extends CragCore {
 
         for (const [i, slice] of Object.entries(this.slices)) {
 
+            slice._hideDetail();
+
             slice.keyLabel.textContent = this.chart.data.labels[i];
             slice.keyLabel.style.opacity = '1';
 
@@ -752,7 +754,6 @@ class Slices extends CragCore {
         }
 
         this._colorize();
-
 
     }
 
