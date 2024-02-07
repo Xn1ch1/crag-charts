@@ -104,11 +104,6 @@
 
                 chart = new CragPie(newDataGen({canBeNegative: false})).create('chart');
 
-                document.getElementById('config-menu').onclick = () => {
-                    document.body.classList.toggle('--menu-visible', !document.body.classList.contains('--menu-visible'));
-                    chart._draw();
-                }
-
             }
 
             function newData() {
