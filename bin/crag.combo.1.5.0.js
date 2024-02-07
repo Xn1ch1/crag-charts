@@ -66,7 +66,7 @@ class CragCombo extends CragCore {
             lines: {},
             vAxes: {
                 primary: {
-                    name: 'Series 1',
+                    name: null,
                     majorLines: true,
                     minorLines: true,
                     shadowOnZeroLine: false,
@@ -76,7 +76,7 @@ class CragCombo extends CragCore {
                     min: 'auto'
                 },
                 secondary: {
-                    name: 'Series 2',
+                    name: null,
                     majorLines: false,
                     minorLines: false,
                     showOnPrimary: false,

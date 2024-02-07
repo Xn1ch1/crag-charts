@@ -43,7 +43,7 @@ class CragLine extends CragCore {
             lines: {},
             vAxes: {
                 primary: {
-                    name: 'Series 1',
+                    name: null,
                     majorLines: true,
                     minorLines: true,
                     shadowOnZeroLine: false,
