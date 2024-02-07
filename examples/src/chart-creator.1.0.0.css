@@ -153,6 +153,9 @@ body.--menu-visible .menu {
     overflow: hidden;
     cursor: col-resize;
 }
+.slide-wrapper > input[type="range"]:disabled {
+    opacity: 0.2;
+}
 .slide-wrapper > input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     width: 0;

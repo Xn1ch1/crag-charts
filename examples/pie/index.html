@@ -64,10 +64,13 @@
                 <option value="none">None</option>
             </select>
 
-            <label>Detail Delay</label>
+            <label>Detail Hover Delay</label>
             <div class="slide-wrapper">
-                <input class="slide" type="range" min="100" max="1500" value="100" step="10" oninput="detailDelay(this)" />
+                <input class="slide" type="range" min="400" max="1500" value="400" step="10" oninput="detailDelay(this)" id="detail-delay" />
             </div>
+
+            <label for="detail-click-only">Detail Click Only</label>
+            <input class="checkbox" type="checkbox" id="detail-click-only" onchange="detailClickOnly(this)"/><label class="checkbox__label" for="detail-click-only"></label>
 
         </div>
 
@@ -111,6 +114,11 @@
 
             function detailDelay(elem) {
                 chart.detailDelay = elem.value;
+            }
+
+            function detailClickOnly(elem) {
+                document.getElementById('detail-delay').disabled = elem.checked;
+                chart.detailClickOnly = elem.checked;
             }
 
         </script>

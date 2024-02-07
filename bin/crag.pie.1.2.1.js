@@ -19,7 +19,8 @@ class CragPie extends CragCore {
                 decimalPlaces: 0,
                 currencySymbol: 'GBP',
                 labelPosition: 'inside',
-                detailDelay: 100,
+                detailDelay: 400,
+                detailClickOnly: false,
             },
             pie: {
                 gap: 8,
@@ -65,6 +66,7 @@ class CragPie extends CragCore {
         this.options.slices.format = this.validateOption(options?.slices?.format, this.labelFormats, this.options.slices.format);
         this.options.slices.decimalPlaces = this.validateOption(options?.slices?.decimalPlaces, 'number', this.options.slices.decimalPlaces);
         this.options.slices.detailDelay = this.validateOption(options?.slices?.detailDelay, 'number', this.options.slices.detailDelay);
+        this.options.slices.detailClickOnly = this.validateOption(options?.slices?.detailClickOnly, 'boolean', this.options.slices.detailClickOnly);
         this.options.slices.showValues = this.validateOption(options?.slices?.showValues, 'boolean', this.options.slices.showValues);
         this.options.slices.labelPosition = this.validateOption(options?.slices?.labelPosition, this.labelPositions, this.options.slices.labelPosition);
 
@@ -223,6 +225,10 @@ class CragPie extends CragCore {
         this.options.slices.detailDelay = value;
     }
 
+    set detailClickOnly(value) {
+        this.options.slices.detailClickOnly = value;
+    }
+
 }
 class Slice extends CragCore {
 
@@ -244,6 +250,7 @@ class Slice extends CragCore {
     labelPosition = 'inside';
 
     detailTimer = null;
+    detailAnimating = false;
     detailVisible = false;
 
     degrees = {
@@ -378,28 +385,46 @@ class Slice extends CragCore {
     _addEventListeners() {
 
         this.slice.onclick = (event) => {
+
+            if (this.detailAnimating) return;
+
             if (this.detailVisible) {
                 this.chart.tooltip.show(event, this.name, null, false);
-                this._resetDetailTimer();
+                this._hideDetail();
+                clearTimeout(this.detailTimer);
                 return;
             }
+
             clearTimeout(this.detailTimer);
             this._showDetail();
+
         }
         this.slice.onmousemove = (event) => {
+
+            /**  Detail is visible and click on is enabled, no tooltip */
+            if (this.chart.options.slices.detailClickOnly && this.detailVisible) return;
+
             this.chart.tooltip.show(event, this.name, null, false);
+
+            /** Resetting timer or hiding should no happen on movement when click only */
+            if (this.chart.options.slices.detailClickOnly) return;
+            if (this.detailVisible) this._hideDetail();
+
             this._resetDetailTimer();
+
         }
         this.slice.onmouseout = () => {
+
+            if (this.chart.options.slices.detailClickOnly) return;
+
             this.chart.tooltip.hide();
             clearTimeout(this.detailTimer);
+
         }
 
     }
 
     _resetDetailTimer() {
-
-        if (this.detailVisible) this._hideDetail();
 
         clearTimeout(this.detailTimer);
         this.detailTimer = setTimeout(() => this._showDetail(), this.chart.options.slices.detailDelay);
@@ -468,6 +493,9 @@ class Slice extends CragCore {
         }
 
         requestAnimationFrame(doAnimationStep);
+
+        this.detailAnimating = true;
+        setTimeout(() => this.detailAnimating = false, duration);
 
     }
 
