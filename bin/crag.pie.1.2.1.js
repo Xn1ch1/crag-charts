@@ -333,8 +333,8 @@ class Slice extends CragCore {
 
     _positionLabel(keyWidth) {
 
-        const chartAreaWidth = this.chart.chart.parent.offsetWidth - Math.max(keyWidth, 30) - 30;
-        const chartAreaHeight = this.chart.chart.parent.offsetHeight - this.chart.title.area.offsetHeight - 30;
+        const chartAreaWidth = this.chart.chart.parent.offsetWidth - Math.max(keyWidth, 30) - 8;
+        const chartAreaHeight = this.chart.chart.parent.offsetHeight - this.chart.title.area.offsetHeight - 8;
         const radius = Math.min(chartAreaWidth, chartAreaHeight);
 
         const labelOffset = this.chart.options.slices.labelPosition === 'inside' ? -this.label.offsetWidth : +this.label.offsetWidth;
