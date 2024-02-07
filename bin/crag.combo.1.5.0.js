@@ -66,7 +66,7 @@ class CragCombo extends CragCore {
             lines: {},
             vAxes: {
                 primary: {
-                    name: 'Series 1',
+                    name: null,
                     majorLines: true,
                     minorLines: true,
                     shadowOnZeroLine: false,
@@ -76,7 +76,7 @@ class CragCombo extends CragCore {
                     min: 'auto'
                 },
                 secondary: {
-                    name: 'Series 2',
+                    name: null,
                     majorLines: false,
                     minorLines: false,
                     showOnPrimary: false,
@@ -179,6 +179,9 @@ class CragCombo extends CragCore {
         this.columns = new Columns(this, this.data.series[0]);
         this.line = new Line(this, this.data.series[1]);
         this.title = new Title(this);
+
+        this.columns.name = this.options.vAxes.primary.name;
+        this.line.name = this.options.vAxes.secondary.name;
 
         setTimeout(this._draw.bind(this), 500);
 
@@ -288,6 +291,18 @@ class CragCombo extends CragCore {
         if (this._isValidColor(color)) this.options.chart.color = color;
 
         this._colorize();
+
+    }
+
+    set primaryVAxisSeriesName(value) {
+
+        this.options.vAxes.primary.name = value;
+
+    }
+
+    set secondaryVAxisSeriesName(value) {
+
+        this.options.vAxes.secondary.name = value;
 
     }
 

@@ -1306,6 +1306,7 @@ class ToolTip extends CragCore {
 
     label = null;
     value = null;
+    seriesName = null;
 
     constructor(chart) {
         super();
@@ -1322,17 +1323,20 @@ class ToolTip extends CragCore {
 
         this.label = document.createElement('h6');
         this.value = document.createElement('h6');
+        this.seriesName = document.createElement('span');
 
         this.container.className = 'cragToolTip';
 
         this.label.className = 'cragToolTipLabel';
         this.value.className = 'cragToolTipValue';
+        this.seriesName.className = 'cragToolTipSeriesName';
 
         document.body.appendChild(this.container);
 
         this.container.append(
             this.label,
             this.value,
+            this.seriesName,
         );
 
     }
@@ -1356,7 +1360,7 @@ class ToolTip extends CragCore {
     attach(object) {
 
         object.element.onmouseover = (e) => {
-            this.chart.toolTip.show(e, object.name, object.value, !object?.labelVisible);
+            this.chart.toolTip.show(e, object.name, object.value, !object?.labelVisible, object?.seriesName);
         }
         object.element.onmousemove = (e) => this.chart.toolTip._position(e);
         object.element.onmouseout = () => {
@@ -1374,12 +1378,19 @@ class ToolTip extends CragCore {
         }
     }
 
-    show(event, label, value, showValue = true) {
+    show(event, label, value, showValue = true, seriesName) {
 
         if (showValue) {
             this.value.style.display = '';
         } else {
             this.value.style.display = 'none';
+        }
+
+        if (seriesName !== null) {
+            this.seriesName.textContent = seriesName;
+            this.seriesName.style.display = '';
+        } else {
+            this.seriesName.style.display = 'none';
         }
 
         this.label.textContent = label;
@@ -1538,5 +1549,5 @@ const defaultLineOptions = {
     color: CragPallet.auto,
     smooth: true,
     labelVisible: true,
-    name: 'Series',
+    name: null,
 };

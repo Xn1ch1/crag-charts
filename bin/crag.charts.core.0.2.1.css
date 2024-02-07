@@ -158,6 +158,16 @@
     clear: right;
     color: inherit;
 }
+.cragToolTipSeriesName {
+    display: block;
+    padding: 0 4px;
+    font-family: Roboto, sans-serif;
+    font-size: inherit;
+    margin: 0;
+    font-weight: 400;
+    clear: right;
+    color: inherit;
+}
 @keyframes barber-pole {
     100% {
         background-position: 100px 0;
