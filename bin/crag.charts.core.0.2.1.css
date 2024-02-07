@@ -160,7 +160,7 @@
 }
 .cragToolTipSeriesName {
     display: block;
-    padding-left: 4px;
+    padding: 0 4px;
     font-family: Roboto, sans-serif;
     font-size: inherit;
     margin: 0;
