@@ -87,7 +87,7 @@
     background: #000000;
     bottom: 0;
     transition: all 1s ease;
-    opacity: 0.1;
+    opacity: 0.15;
 }
 .cragAxisLineMinor {
     position: absolute;
@@ -96,7 +96,7 @@
     background: #222222;
     bottom: 0;
     transition: all 1s ease;
-    opacity: 0.05;
+    opacity: 0.1;
 }
 .cragColumn {
     height: 0;

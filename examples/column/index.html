@@ -53,7 +53,7 @@
             <h1 class="config-menu__title">Configuration</h1>
 
             <hr class="config-menu__separator">
-            
+
             <h1 class="config-menu__sub-title">Chart</h1>
 
             <label for="title" class="config-menu__option-label">Title</label>
@@ -78,6 +78,27 @@
                 <option value="#232323">Dark Grey</option>
                 <option value="#081B33">Dark Blue</option>
                 <option value="#000000">Black</option>
+            </select>
+
+            <label for="lineColor" class="config-menu__option-label">Major / Minor Line Color</label>
+            <select class="select" onchange="lineColor(this)" id="lineColor">
+                <option value="auto">Auto</option>
+                <option value="red">Red</option>
+                <option value="pink">Pink</option>
+                <option value="purple">Purple</option>
+                <option value="deepPurple">Deep Purple</option>
+                <option value="indigo">Indigo</option>
+                <option value="blue">Blue</option>
+                <option value="lightBlue">Light Blue</option>
+                <option value="cyan">Cyan</option>
+                <option value="teal">Teal</option>
+                <option value="green">Green</option>
+                <option value="lightGreen">Light Green</option>
+                <option value="lime">Lime</option>
+                <option value="yellow">Yellow</option>
+                <option value="amber">Amber</option>
+                <option value="orange">Orange</option>
+                <option value="deepOrange">Deep Orange</option>
             </select>
 
             <hr class="config-menu__separator">
@@ -316,6 +337,10 @@
 
             function primaryMinorLines(elem) {
                 chart.primaryVAxis.minorLines = elem.checked;
+            }
+
+            function lineColor(elem) {
+                chart.primaryVAxis.lineColor = elem.value;
             }
 
             function primaryAxisMinimum(elem) {
