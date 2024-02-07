@@ -176,9 +176,12 @@ class CragCombo extends CragCore {
         this.secondaryVAxis = new VAxis(this, VAxis.secondary);
         this.hAxis = new HAxis(this);
         this.toolTip = new ToolTip(this);
-        this.columns = new Columns(this, this.data.series[0], this.options.vAxes.primary.name);
+        this.columns = new Columns(this, this.data.series[0]);
         this.line = new Line(this, this.data.series[1]);
         this.title = new Title(this);
+
+        this.columns.name = this.options.vAxes.primary.name;
+        this.line.name = this.options.vAxes.secondary.name;
 
         setTimeout(this._draw.bind(this), 500);
 
@@ -299,7 +302,7 @@ class CragCombo extends CragCore {
 
     set secondaryVAxisSeriesName(value) {
 
-        this.options.vAxes.primary.name = value;
+        this.options.vAxes.secondary.name = value;
 
     }
 

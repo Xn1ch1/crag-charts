@@ -1360,7 +1360,7 @@ class ToolTip extends CragCore {
     attach(object) {
 
         object.element.onmouseover = (e) => {
-            this.chart.toolTip.show(e, object.name, object.value, !object?.labelVisible, object.seriesName);
+            this.chart.toolTip.show(e, object.name, object.value, !object?.labelVisible, object?.seriesName);
         }
         object.element.onmousemove = (e) => this.chart.toolTip._position(e);
         object.element.onmouseout = () => {
@@ -1540,5 +1540,5 @@ const defaultLineOptions = {
     color: CragPallet.auto,
     smooth: true,
     labelVisible: true,
-    name: 'Series',
+    name: null,
 };

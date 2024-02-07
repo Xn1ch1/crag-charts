@@ -77,6 +77,7 @@ class CragLine extends CragCore {
             this.options.lines[i].labelVisible = this.validateOption(options?.lines?.[i]?.labelVisible, 'boolean', this.options.lines[i].labelVisible);
             if (options?.lines?.[i]?.thickness > 0 && options?.lines?.[i]?.thickness < 11) this.options.lines[i].thickness = options.lines?.[i].thickness;
             if (options?.lines?.[i]?.pointSize > 0 && options?.lines?.[i]?.pointSize < 51) this.options.lines[i].pointSize = options.lines?.[i].pointSize;
+            if (options?.lines?.[i]?.name > 0 && options?.lines?.[i]?.name < 51) this.options.lines[i].name = options.lines?.[i].name;
 
         }
 
@@ -91,7 +92,6 @@ class CragLine extends CragCore {
          * 0 = left axis, primary columns
          * 1 = right axis, secondary points
          */
-        this.options.vAxes.primary.name = this.validateOption(options?.vAxes?.primary?.name, 'string', this.options.vAxes.primary.name);
         this.options.vAxes.primary.decimalPlaces = this.validateOption(options?.vAxes?.primary?.decimalPlaces, 'number', this.options.vAxes.primary.decimalPlaces);
         this.options.vAxes.primary.majorLines = this.validateOption(options?.vAxes?.primary?.majorLines, 'boolean', this.options.vAxes.primary.majorLines);
         this.options.vAxes.primary.minorLines = this.validateOption(options?.vAxes?.primary?.minorLines, 'boolean', this.options.vAxes.primary.minorLines);
@@ -224,6 +224,11 @@ class CragLine extends CragCore {
 
     }
 
+    lineName(index, name) {
+        this.options.lines[index].name = name;
+        this.lines.updateLineNames();
+    }
+
 }
 
 class Line extends CragCore {
@@ -246,7 +251,7 @@ class Line extends CragCore {
     /** @type {HTMLDivElement} */
     labelArea = null;
 
-    name = '';
+    #name = null;
 
     options = {};
     data = []
@@ -327,11 +332,13 @@ class Line extends CragCore {
                 this.dots[i].index = i;
                 this.dots[i].value = this.data[i];
                 this.dots[i].name = this.chart.data.labels[i];
+                this.dots[i].seriesName = this.name;
 
             } else {
 
                 this.dots[i] = new Dot(i, this.data[i]);
                 this.dots[i].name = this.chart.data.labels[i];
+                this.dots[i].seriesName = this.name;
 
                 this.dots[i].r = this.options.pointSize;
                 this.dots[i].fill = this._getContrastColor(this.chart.options.chart.color);
@@ -631,6 +638,27 @@ class Line extends CragCore {
 
     }
 
+    get name() {
+        return this.#name;
+    }
+
+    set name(value) {
+
+        this.#name = value;
+
+        for (let i = 0; i < this.data.length; i++) {
+
+            if (this.dots[i]) {
+
+                this.dots[i].name = this.chart.data.labels[i];
+                this.dots[i].seriesName = this.name;
+
+            }
+
+        }
+
+    }
+
 }
 
 class TrendLine extends CragCore {
@@ -783,6 +811,7 @@ class Lines extends CragCore {
             this.lines[i] = new Line(chart, this.chart.data.series[i], i);
 
             this.lines[i].name = chart.options.lines[i].name;
+            this.lines[i].seriesName = chart.options.lines[i].name;
 
             this.setThickness(i, chart.options.lines[i].thickness);
             this.setPointSize(i, chart.options.lines[i].pointSize);
@@ -815,6 +844,17 @@ class Lines extends CragCore {
         for (let i = 0; i < this.count; i++) {
 
             this.lines[i].update(this.chart.data.series[i], this.chart.primaryVAxis.scale);
+            this.lines[i].name = chart.options.lines[i].name;
+
+        }
+
+    }
+
+    updateLineNames() {
+
+        for (let i = 0; i < this.count; i++) {
+
+            this.lines[i].name = chart.options.lines[i].name;
 
         }
 
@@ -878,6 +918,7 @@ class Dot {
     #value = 0;
     #index = 0;
     #name = '';
+    #seriesName = null;
 
     constructor(index, value) {
 
@@ -994,6 +1035,13 @@ class Dot {
     }
     get labelVisible() {
         return this.label.style.opacity === '1';
+    }
+
+    set seriesName(value) {
+        this.#seriesName = value;
+    }
+    get seriesName() {
+        return this.#seriesName;
     }
 
 }
