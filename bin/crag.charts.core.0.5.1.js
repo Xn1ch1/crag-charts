@@ -934,12 +934,18 @@ class VAxis extends CragCore {
 
     _colorize() {
 
-        const color = this._getContrastColor(this.chart.options.chart.color);
+        let color;
+
+        if (this.chart.options.vAxes[this.axisName].lineColor === 'auto') {
+            color = this._getContrastColor(this.chart.options.chart.color);
+        } else {
+            color = this.chart.options.vAxes[this.axisName].lineColor;
+        }
 
         for (const line of Object.values(this.lines)) {
 
-            line.majorLine.style.backgroundColor = this.chart.options.vAxes[this.axisName].lineColor === 'auto' ? color : this.chart.options.vAxes[this.axisName].lineColor;
-            line.minorLine.style.backgroundColor = this.chart.options.vAxes[this.axisName].lineColor === 'auto' ? color : this.chart.options.vAxes[this.axisName].lineColor;
+            line.majorLine.style.backgroundColor = color;
+            line.minorLine.style.backgroundColor = color;
             line.label.style.color = color;
 
             if (line.isZeroPoint) {
