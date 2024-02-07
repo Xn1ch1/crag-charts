@@ -176,7 +176,7 @@ class CragCombo extends CragCore {
         this.secondaryVAxis = new VAxis(this, VAxis.secondary);
         this.hAxis = new HAxis(this);
         this.toolTip = new ToolTip(this);
-        this.columns = new Columns(this, this.data.series[0]);
+        this.columns = new Columns(this, this.data.series[0], this.options.vAxes.primary.name);
         this.line = new Line(this, this.data.series[1]);
         this.title = new Title(this);
 
@@ -288,6 +288,18 @@ class CragCombo extends CragCore {
         if (this._isValidColor(color)) this.options.chart.color = color;
 
         this._colorize();
+
+    }
+
+    set primaryVAxisSeriesName(value) {
+
+        this.options.vAxes.primary.name = value;
+
+    }
+
+    set secondaryVAxisSeriesName(value) {
+
+        this.options.vAxes.primary.name = value;
 
     }
 
