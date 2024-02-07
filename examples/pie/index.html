@@ -56,6 +56,16 @@
 
             <hr>
 
+            <h1>Pie</h1>
+
+            <label>Hole</label>
+            <div class="slide-wrapper">
+                <input class="slide" type="range" min="0" max="0.9" value="0" step="0.01" oninput="pieHole(this)" />
+            </div>
+
+
+            <hr>
+
             <h1>Slices</h1>
             <label>Label Position</label>
             <select onchange="labelPosition(this)">
@@ -63,11 +73,6 @@
                 <option value="outside">Outside</option>
                 <option value="none">None</option>
             </select>
-
-            <label>Detail Hover Delay</label>
-            <div class="slide-wrapper">
-                <input class="slide" type="range" min="400" max="1500" value="400" step="10" oninput="detailDelay(this)" id="detail-delay" />
-            </div>
 
             <label for="detail-click-only">Detail Click Only</label>
             <input class="checkbox" type="checkbox" id="detail-click-only" onchange="detailClickOnly(this)"/><label class="checkbox__label" for="detail-click-only"></label>
@@ -110,6 +115,10 @@
 
             function labelPosition(elem) {
                 chart.labelPosition = elem.value;
+            }
+
+            function pieHole(elem) {
+                chart.pieHole = elem.value;
             }
 
             function detailDelay(elem) {

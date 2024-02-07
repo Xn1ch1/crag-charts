@@ -229,6 +229,11 @@ class CragPie extends CragCore {
         this.options.slices.detailClickOnly = value;
     }
 
+    set pieHole(value) {
+        this.options.pie.hole = value;
+        this._draw();
+    }
+
 }
 class Slice extends CragCore {
 
