@@ -1,0 +1,88 @@
+:root {
+    --bg: #EEEEEE;
+    --on-bg: #FFFFFF;
+    --material-blue: #006585;
+    --arrow-bg: rgba(255, 255, 255, 0.3);
+    --arrow-icon: url(https://upload.wikimedia.org/wikipedia/commons/9/9d/Caret_down_font_awesome_whitevariation.svg);
+    --option-bg: white;
+    --select-bg: rgba(255, 255, 255, 0.2);
+    --config-width: 250px;
+}
+body {
+    background-color: white;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-auto-flow: row dense;
+    grid-auto-columns: 1fr 1fr;
+    grid-template-columns: 1fr 0;
+    grid-template-rows: 50px 1fr;
+    grid-column-gap: 0;
+    grid-row-gap: 0;
+    width: 100%;
+    height: 100%;
+}
+body.--menu-visible {
+    grid-template-columns: 1fr var(--config-width);
+    grid-template-rows: 50px 1fr;
+}
+body.--menu-visible .menu {
+    padding: 16px;
+}
+.title-bar {
+    grid-area: 1 / 1 / 2 / 2;
+    background: white;
+    box-shadow: 4px -2px 8px 2px rgba(0,0,0,0.4);
+    position: relative;
+    display: flex;
+}
+.title-bar__logo {
+    height: 28px;
+    margin: auto 0 auto 16px;
+}
+.title-bar__title-text {
+    font-family: "Roboto Mono", monospace;
+    font-size: 26px;
+    line-height: 50px;
+    font-weight: 500;
+    color: #00847A;
+}
+.title-bar__separator {
+    border-left: 2px solid #BBB;
+    margin: auto 16px;
+    height: 34px;
+}
+.chart {
+    grid-area: 2 / 1 / 3 / 2;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+}
+.menu {
+    grid-area: 1 / 2 / 3 / 3;
+    color: var(--on-bg);
+    box-sizing: border-box;
+    font-family: "Roboto Mono", monospace;
+    user-select: none;
+    overflow-y: scroll;
+    background: #00847A;
+    background: linear-gradient(-12deg, rgba(0,132,122,1) 0%, rgba(0,150,130,1) 100%);
+    position: relative;
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    text-align: end;
+    box-shadow: -1px 0 4px 1px rgba(0,0,0,0.3);
+}
+
+#new-data-button {
+    height: 24px;
+    cursor: pointer;
+    margin-left: auto;
+    padding: 12px;
+}
+#config-menu__toggle-button {
+    padding: 12px;
+    height: 24px;
+    cursor: pointer;
+}

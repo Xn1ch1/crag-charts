@@ -13,9 +13,12 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;200;300;500&display=swap" rel="stylesheet">
 
-        <link href="../src/chart-creator.1.0.0.css" rel="stylesheet">
+        <link href="../src/config.menu.css" rel="stylesheet">
+        <link href="../src/navigation.menu.css" rel="stylesheet">
+        <link href="../src/style.css" rel="stylesheet">
 
-        <script src="../src/demo.js"></script>
+        <script src="../src/script.js"></script>
+        <script src="../src/data.js"></script>
 
         <title>Crag Charts Creator: Column</title>
 
@@ -23,40 +26,53 @@
 
     <body class="--menu-visible">
 
+        <div id="navigation-menu__overlay"></div>
+        <div id="navigation-menu">
+            <span class="navigation-menu__sub-title">Charts</span>
+            <a href="../column/" class="navigation-menu__link">Column</a>
+            <a href="../combo/" class="navigation-menu__link">Combo</a>
+            <a href="../lines/" class="navigation-menu__link">Line</a>
+            <a href="../pie/" class="navigation-menu__link">Pie</a>
+        </div>
+
         <div id="title-bar" class="title-bar">
 
-            <img src="../src/icons/android-chrome-192x192.png" class="title-bar__logo" alt="Crag Charts"/>
+            <img src="../src/icons/android-chrome-192x192.png" class="title-bar__logo" alt="Crag Charts" id="navigation-menu__button"/>
             <div class="title-bar__separator"></div>
             <span class="title-bar__title-text">Column Chart</span>
 
-            <img src="../src/icons/random.svg" id="shuffle" onclick="newData()" alt="New Data" title="New Data">
-            <img src="../src/icons/menu.svg" id="config-menu" onclick="newData()" alt="Config Menu" title="Config Menu">
+            <img src="../src/icons/random.svg" id="new-data-button" onclick="newData()" alt="New Data" title="New Data">
+            <img src="../src/icons/menu.svg" id="config-menu__toggle-button" alt="Config Menu" title="Config Menu">
 
         </div>
+
         <div id="column-chart" class="chart"></div>
 
         <div class="menu">
 
-            <h1 class="menu__title">Configuration</h1>
+            <h1 class="config-menu__title">Configuration</h1>
 
-            <hr>
-            
-            <h1>Chart</h1>
+            <hr class="config-menu__separator">
 
-            <label>Title</label>
-            <input type="text" onkeyup="chartTitle(this)" id="title" />
+            <h1 class="config-menu__sub-title">Chart</h1>
 
-            <label for="primaryMajorLines">Major Lines</label>
-            <input class="checkbox" type="checkbox" id="primaryMajorLines" onchange="primaryMajorLines(this)" checked/><label class="checkbox__label" for="primaryMajorLines"></label>
+            <label for="title" class="config-menu__option-label">Title</label>
+            <input class="config-menu__text-input" type="text" onkeyup="chartTitle(this)" id="title" />
 
-            <label for="primaryMinorLines">Minor Lines</label>
-            <input class="checkbox" type="checkbox" id="primaryMinorLines" onchange="primaryMinorLines(this)" checked/><label class="checkbox__label" for="primaryMinorLines"></label>
+            <label class="config-menu__option-label">Major Lines</label>
+            <input class="config-menu__checkbox" type="checkbox" id="primaryMajorLines" onchange="primaryMajorLines(this)" checked/>
+            <label class="config-menu__checkbox-label" for="primaryMajorLines"></label>
 
-            <label for="primaryShadowZeroLine">Shadow on Horizontal Axis</label>
-            <input class="checkbox" type="checkbox" id="primaryShadowZeroLine" onchange="shadowOnZeroLine(this)"/><label class="checkbox__label" for="primaryShadowZeroLine"></label>
+            <label class="config-menu__option-label">Minor Lines</label>
+            <input class="config-menu__checkbox" type="checkbox" id="primaryMinorLines" onchange="primaryMinorLines(this)" checked/>
+            <label class="config-menu__checkbox-label" for="primaryMinorLines"></label>
 
-            <label>Background Color</label>
-            <select class="select" onchange="chartColor(this)">
+            <label class="config-menu__option-label">Shadow on Horizontal Axis</label>
+            <input class="config-menu__checkbox" type="checkbox" id="primaryShadowZeroLine" onchange="shadowOnZeroLine(this)"/>
+            <label class="config-menu__checkbox-label" for="primaryShadowZeroLine"></label>
+
+            <label for="chartColor" class="config-menu__option-label">Background Color</label>
+            <select class="config-menu__select" onchange="chartColor(this)" id="chartColor">
                 <option value="#FFFFFF" selected>White</option>
                 <option value="#dedede">Light Grey</option>
                 <option value="#232323">Dark Grey</option>
@@ -64,8 +80,8 @@
                 <option value="#000000">Black</option>
             </select>
 
-            <label>Major / Minor Line Color</label>
-            <select class="select" onchange="lineColor(this)">
+            <label for="lineColor" class="config-menu__option-label">Major / Minor Line Color</label>
+            <select class="select" onchange="lineColor(this)" id="lineColor">
                 <option value="auto">Auto</option>
                 <option value="red">Red</option>
                 <option value="pink">Pink</option>
@@ -85,12 +101,12 @@
                 <option value="deepOrange">Deep Orange</option>
             </select>
 
-            <hr>
+            <hr class="config-menu__separator">
 
-            <h1>Column</h1>
+            <h1 class="config-menu__sub-title">Column</h1>
 
-            <label>Colors</label>
-            <select class="select" onchange="newColumnColor(this)">
+            <label for="newColumnColor" class="config-menu__option-label">Colors</label>
+            <select class="config-menu__select" onchange="newColumnColor(this)" id="newColumnColor">
                 <optgroup label="Modes">
                     <option value="3">Spectrum (default)</option>
                     <option value="4">Red/Green</option>
@@ -163,40 +179,46 @@
                 </optgroup>
             </select>
 
-            <label>Width</label>
-            <div class="slide-wrapper">
-                <input class="slide" type="range" min="1" max="100" value="95" oninput="columnWidth(this)" />
+            <label class="config-menu__option-label">Width</label>
+            <div class="config-menu__range-container">
+                <label>
+                    <input class="config-menu__range-input" type="range" min="1" max="100" value="95" oninput="columnWidth(this)" />
+                </label>
             </div>
 
-            <label>Rounding</label>
-            <div class="slide-wrapper">
-                <input class="slide" type="range" min="0" max="64" value="0" oninput="columnRounding(this)" />
+            <label class="config-menu__option-label">Rounding</label>
+            <div class="config-menu__range-container">
+                <label>
+                    <input class="config-menu__range-input" type="range" min="0" max="64" value="0" oninput="columnRounding(this)" />
+                </label>
             </div>
 
-            <label>Shadow</label>
-            <div class="slide-wrapper">
-                <input class="slide" type="range" min="-15" max="15" value="0" oninput="columnShadow(this)" />
+            <label class="config-menu__option-label">Shadow</label>
+            <div class="config-menu__range-container">
+                <label>
+                    <input class="config-menu__range-input" type="range" min="-15" max="15" value="0" oninput="columnShadow(this)" />
+                </label>
             </div>
 
-            <label for="striped">Stripes</label>
-            <input class="checkbox" type="checkbox" id="striped" onchange="columnStripes(this)"/><label class="checkbox__label" for="striped"></label>
+            <label class="config-menu__option-label" for="striped">Stripes</label>
+            <input class="config-menu__checkbox" type="checkbox" id="striped" onchange="columnStripes(this)"/><label class="config-menu__checkbox-label" for="striped"></label>
 
-            <label for="animated">Animated Stripes</label>
-            <input class="checkbox" type="checkbox" id="animated" onchange="columnAnimatedStripes(this)" disabled/><label class="checkbox__label" for="animated"></label>
+            <label class="config-menu__option-label" for="animated">Animated Stripes</label>
+            <input class="config-menu__checkbox" type="checkbox" id="animated" onchange="columnAnimatedStripes(this)" disabled/><label class="config-menu__checkbox-label" for="animated"></label>
 
-            <hr>
+            <hr class="config-menu__separator">
 
-            <h1>Column Label</h1>
+            <h1 class="config-menu__sub-title">Column Label</h1>
 
-            <label>Position</label>
-            <select onchange="columnLabelPosition(this)">
+            <label for="columnLabelPosition" class="config-menu__option-label">Position</label>
+            <select class="config-menu__select" onchange="columnLabelPosition(this)" id="columnLabelPosition">
                 <option value="none">None (Default)</option>
                 <option value="inside">Inside</option>
                 <option value="outside">Outside</option>
             </select>
 
-            <label>Color</label>
-            <select onchange="columnLabelColor(this)">
+            <label for="columnLabelColor" class="config-menu__option-label">Color</label>
+            <select class="config-menu__select" onchange="columnLabelColor(this)" id="columnLabelColor">
                 <optgroup label="Modes">
                     <option value="1">Auto (Default)</option>
                     <option value="2">Match Column</option>
@@ -223,21 +245,22 @@
                 </optgroup>
             </select>
 
-            <hr>
+            <hr class="config-menu__separator">
 
-            <h1>Primary vAxis</h1>
+            <h1 class="config-menu__sub-title">Primary vAxis</h1>
 
-            <label>Name</label>
-            <input type="text" onkeyup="seriesName(this)"/>
+            <label for="seriesName" class="config-menu__option-label">Name</label>
+            <input class="config-menu__text-input" type="text" onkeyup="seriesName(this)" id="seriesName"/>
 
-            <label>Format</label>
-            <select onchange="primaryAxisFormat(this)">
+            <label for="primaryAxisFormat" class="config-menu__option-label">Format</label>
+            <select class="config-menu__select" onchange="primaryAxisFormat(this)" id="primaryAxisFormat">
                 <option value="decimal">Decimal (Default)</option>
                 <option value="currency">Currency</option>
                 <option value="time">Time</option>
             </select>
-            <label>Decimal Places</label>
-            <select onchange="primaryAxisDecimals(this)" id="primaryAxisDecimals">
+
+            <label for="primaryAxisDecimals" class="config-menu__option-label">Decimal Places</label>
+            <select class="config-menu__select" onchange="primaryAxisDecimals(this)" id="primaryAxisDecimals">
                 <option value="0">0 (Default)</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
@@ -245,16 +268,18 @@
                 <option value="4">4</option>
                 <option value="5">5</option>
             </select>
-            <label>Currency Symbol</label>
-            <select onchange="primaryAxisCurrencySymbol(this)" id="primaryAxisCurrencySymbol" disabled>
+
+            <label for="primaryAxisCurrencySymbol" class="config-menu__option-label">Currency Symbol</label>
+            <select class="config-menu__select" onchange="primaryAxisCurrencySymbol(this)" id="primaryAxisCurrencySymbol" disabled>
                 <option value="GBP">GBP (Default)</option>
                 <option value="USD">USD</option>
                 <option value="EUR">EUR</option>
                 <option value="JPY">JPY</option>
                 <option value="CAD">CAD</option>
             </select>
-            <label>Minimum Value</label>
-            <select onchange="primaryAxisMinimum(this)">
+
+            <label for="primaryAxisMinimum" class="config-menu__option-label">Minimum Value</label>
+            <select class="config-menu__select" onchange="primaryAxisMinimum(this)" id="primaryAxisMinimum">
                 <option value="auto">Auto (Default)</option>
                 <option value="0">0</option>
             </select>
@@ -272,17 +297,7 @@
 
                 chart = new CragColumn(newDataGen()).create('column-chart');
 
-                document.getElementById('config-menu').onclick = () => {
-                    document.body.classList.toggle('--menu-visible', !document.body.classList.contains('--menu-visible'));
-                    chart._draw();
-                }
-
             }
-
-        </script>
-
-        <script>
-
 
             function newData() {
                 chart.update(newDataGen());
