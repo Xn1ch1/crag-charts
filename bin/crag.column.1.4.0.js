@@ -269,8 +269,6 @@ class Column extends CragCore {
         this._createColumn();
         this._createLabel();
 
-        console.log(this);
-
     }
 
     _createColumn() {
