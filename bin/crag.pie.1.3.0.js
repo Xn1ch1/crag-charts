@@ -389,22 +389,7 @@ class Slice extends CragCore {
 
     _addEventListeners() {
 
-        this.slice.onclick = (event) => {
-
-            if (this.detailAnimating) return;
-
-            if (this.detailVisible) {
-                this.chart.tooltip.show(event, this.name, null, false);
-                this._hideDetail();
-                clearTimeout(this.detailTimer);
-                return;
-            }
-
-            clearTimeout(this.detailTimer);
-            this._showDetail();
-
-        }
-        this.slice.onmousemove = (event) => {
+        this.slice.onpointermove = (event) => {
 
             /**  Detail is visible and click on is enabled, no tooltip */
             if (this.chart.options.slices.detailClickOnly && this.detailVisible) return;
@@ -417,17 +402,18 @@ class Slice extends CragCore {
 
             this._resetDetailTimer();
 
-        }
-        this.slice.onmouseout = () => {
+        };
+
+        this.slice.onpointerout = () => {
 
             if (this.chart.options.slices.detailClickOnly) return;
 
             this.chart.tooltip.hide();
             clearTimeout(this.detailTimer);
 
-        }
+        };
 
-        this.slice.ontouchstart = (event) => {
+        this.slice.onpointerdown = (event) => {
 
             event.preventDefault();
 
@@ -443,9 +429,9 @@ class Slice extends CragCore {
             clearTimeout(this.detailTimer);
             this._showDetail();
 
-        }
+        };
 
-        this.slice.ontouchend = (event) => {
+        this.slice.onpointerup = (event) => {
 
             event.preventDefault();
 
@@ -458,7 +444,7 @@ class Slice extends CragCore {
 
             clearTimeout(this.detailTimer);
 
-        }
+        };
 
     }
 
