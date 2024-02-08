@@ -1373,23 +1373,24 @@ class ToolTip extends CragCore {
 
     attach(object) {
 
-        object.element.onmouseover = (e) => {
-            this.chart.toolTip.show(e, object.name, object.value, !object?.labelVisible, object?.seriesName);
-        }
-        object.element.onmousemove = (e) => this.chart.toolTip._position(e);
-        object.element.onmouseout = () => {
-            this.chart.toolTip.hide();
-        }
-        object.element.ontouchstart = (e) => {
+        object.element.onpointerover = (e) => {
             this.quickRemove = true;
             this.chart.toolTip.show(e, object.name, object.value, !object?.labelVisible);
-            setTimeout(this.quickRemove = false, 250);
-        }
-        object.element.ontouchend = () => {
+        };
+        object.element.onpointermove = (e) => this.chart.toolTip._position(e);
+        object.element.onpointerout = () => {
             setTimeout(() => {
                 this.chart.toolTip.hide();
-            }, 0 ? this.quickRemove : 250);
-        }
+            }, this.quickRemove ? 0 : 1000);
+        };
+        object.element.onpointerdown = (e) => {
+            this.quickRemove = false;
+            this.chart.toolTip.show(e, object.name, object.value, !object?.labelVisible);
+            setTimeout(() => {
+                this.quickRemove = true;
+            }, 250);
+        };
+
     }
 
     show(event, label, value, showValue = true, seriesName) {
