@@ -298,6 +298,34 @@
                 <option value="deepOrange">Deep Orange</option>
             </select>
 
+            <h1 class="config-menu__sub-title">.vAxes.secondary</h1>
+
+            <label class="config-menu__option-label" for="showOnPrimary">.showOnPrimary</label>
+            <input class="config-menu__checkbox" type="checkbox" id="showOnPrimary" onchange="showOnPrimary(this)"/>
+            <label class="config-menu__checkbox-label" for="showOnPrimary"></label>
+
+            <label for="secondaryAxisColor" class="config-menu__option-label">.lineColor</label>
+            <select class="config-menu__select" onchange="secondaryAxisColor(this)" id="secondaryAxisColor">
+                <option value="auto">Auto</option>
+                <option value="red">Red</option>
+                <option value="pink">Pink</option>
+                <option value="purple">Purple</option>
+                <option value="deepPurple">Deep Purple</option>
+                <option value="indigo">Indigo</option>
+                <option value="blue">Blue</option>
+                <option value="lightBlue">Light Blue</option>
+                <option value="cyan">Cyan</option>
+                <option value="teal">Teal</option>
+                <option value="green">Green</option>
+                <option value="lightGreen">Light Green</option>
+                <option value="lime">Lime</option>
+                <option value="yellow">Yellow</option>
+                <option value="amber">Amber</option>
+                <option value="orange">Orange</option>
+                <option value="deepOrange">Deep Orange</option>
+            </select>
+
+
             <h1 class="config-menu__sub-title">.lines</h1>
 
             <label class="config-menu__option-label">.thickness</label>
@@ -477,6 +505,13 @@
 
             function pointSize(elem) {
                 chart.lines.pointSize = elem.value;
+            }
+
+            function showOnPrimary(elem) {
+                chart.secondaryVAxis.showOnPrimary = elem.checked;
+            }
+            function secondaryAxisColor(elem) {
+                chart.secondaryVAxis.lineColor = elem.value;
             }
 
         </script>
