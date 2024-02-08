@@ -1374,24 +1374,33 @@ class ToolTip extends CragCore {
     attach(object) {
 
         object.element.onpointerover = (e) => {
+            /**
+             * this is not relevant for touch based events
+             */
+            if (e.pointerType === 'touch') return;
             this.quickRemove = true;
-            /**  1ms timeout stops pointerout overriding the show when moving from bar to dot on combo chart */
-            setTimeout(() => {
-                this.chart.toolTip.show(e, object.name, object.value, !object?.labelVisible);
-            }, 1);
+            this.chart.toolTip.show(e, object.name, object.value, !object?.labelVisible);
         };
-        object.element.onpointermove = (e) => this.chart.toolTip._position(e);
         object.element.onpointerout = () => {
+            /**
+             * This covers both touch up and mouse out
+             */
             setTimeout(() => {
                 this.chart.toolTip.hide();
             }, this.quickRemove ? 0 : 1000);
         };
+        object.element.onpointermove = (e) => this.chart.toolTip._position(e);
         object.element.onpointerdown = (e) => {
-            this.quickRemove = false;
+            /**
+             * this is not relevant for mouse events
+             */
+            if (e.pointerType !== 'touch') return;
             this.chart.toolTip.show(e, object.name, object.value, !object?.labelVisible);
+            this.quickRemove = false;
             setTimeout(() => {
                 this.quickRemove = true;
             }, 250);
+
         };
 
     }
