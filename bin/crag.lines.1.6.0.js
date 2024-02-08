@@ -40,10 +40,14 @@ class CragLine extends CragCore {
                 text: null,
                 color: CragPallet.auto
             },
-            lines: {},
+            lines: {
+                thickness: 3,
+                pointSize: 3,
+                smooth: true,
+                labelVisible: false,
+            },
             vAxes: {
                 primary: {
-                    name: null,
                     majorLines: true,
                     minorLines: true,
                     shadowOnZeroLine: false,
@@ -62,23 +66,25 @@ class CragLine extends CragCore {
         };
 
         /**
+         * Lines Options
+         */
+        this.options.lines.smooth = this.validateOption(options?.lines?.smooth, 'boolean', this.options.lines.smooth);
+        this.options.lines.labelVisible = this.validateOption(options?.lines?.labelVisible, 'boolean', this.options.lines.labelVisible);
+        if (options?.lines?.thickness > 0 && options?.lines?.thickness < 11) this.options.lines.thickness = options.lines.thickness;
+        if (options?.lines?.pointSize > 0 && options?.lines?.pointSize < 51) this.options.lines.pointSize = options.lines.pointSize;
+
+        /**
          * Line Options
          */
         for (let i = 0; i < this.data.series.length; i++) {
 
             this.options.lines[i] = {... defaultLineOptions};
 
-            this.options.lines[i].color = CragPallet.multi;
-
             /**
              * Line Options
              */
             if (this._isValidColor(options?.lines?.[i]?.color)) this.options.lines[i].color = options.lines?.[i]?.color;
-            this.options.lines[i].smooth = this.validateOption(options?.lines?.[i]?.smooth, 'boolean', this.options.lines[i].smooth);
-            this.options.lines[i].labelVisible = this.validateOption(options?.lines?.[i]?.labelVisible, 'boolean', this.options.lines[i].labelVisible);
-            if (options?.lines?.[i]?.thickness > 0 && options?.lines?.[i]?.thickness < 11) this.options.lines[i].thickness = options.lines?.[i].thickness;
-            if (options?.lines?.[i]?.pointSize > 0 && options?.lines?.[i]?.pointSize < 51) this.options.lines[i].pointSize = options.lines?.[i].pointSize;
-            if (options?.lines?.[i]?.name > 0 && options?.lines?.[i]?.name < 51) this.options.lines[i].name = options.lines?.[i].name;
+            if (options?.lines?.[i]?.seriesName > 0 && options?.lines?.[i]?.seriesName < 51) this.options.lines[i].seriesName = options.lines?.[i].seriesName;
 
         }
 
@@ -230,16 +236,144 @@ class CragLine extends CragCore {
 
     }
 
-    lineName(index, name) {
-        this.options.lines[index].name = name;
-        this.lines.updateLineNames();
+}
+
+class TrendLine extends CragCore {
+
+    chart = null;
+
+    /** @type {null|SVGPathElement} */
+    line = null;
+
+    /** @type {null|SVGSVGElement} */
+    area = null;
+
+    label = null;
+
+    value= 0;
+    name = '';
+
+    constructor(chart) {
+        super();
+
+        this.chart = chart;
+
+        this.area = createSVGChartArea();
+        this._createLabel();
+        this._createLine();
+
+        this.thickness = this.chart.options.trendLine.thickness;
+        this.color = this.chart.options.trendLine.color;
+
+        this.chart.chart.area.append(this.area);
+
+    }
+
+    _createLabel() {
+
+        this.label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+
+        this.label.style.color = this._getContrastColor(this.chart.options.color);
+        this.label.classList.add('cragVAxisLabel');
+        this.label.textContent = this.chart.options.trendLine.name;
+
+        this.area.append(this.label);
+
+    }
+
+    _calcStartEndPoints() {
+
+        const seriesItemWidth = this.area.width.baseVal.value / this.chart.data.labels.length;
+
+        let zeroLine = 0;
+
+        /** Scale is all negative, zero line will be at bottom of container */
+        if (this.chart.primaryVAxis.scale.min >= 0) zeroLine = this.area.height.baseVal.value;
+        /** Scale is positive to negative, zero line will be a part way through */
+        if (this.chart.primaryVAxis.scale.min < 0 && this.chart.primaryVAxis.scale.max > 0) zeroLine = this.area.height.baseVal.value / (this.chart.primaryVAxis.scale.max - this.chart.primaryVAxis.scale.min) * this.chart.primaryVAxis.scale.max;
+
+        let cy;
+
+        if (this.value < 0) {
+
+            cy = (this.area.height.baseVal.value - zeroLine) / (this.chart.primaryVAxis.scale.min - Math.min(0, this.chart.primaryVAxis.scale.max)) * (this.value - Math.min(0, this.chart.primaryVAxis.scale.max));
+
+        } else {
+
+            if (zeroLine === this.area.height.baseVal.value) {
+
+                cy = -this.area.height.baseVal.value / (this.chart.primaryVAxis.scale.max - this.chart.primaryVAxis.scale.min) * (this.value - this.chart.primaryVAxis.scale.min);
+
+            } else {
+
+                cy = -(zeroLine - this.area.height.baseVal.value) / (this.chart.primaryVAxis.scale.min - Math.min(0, this.chart.primaryVAxis.scale.max)) * (this.value - Math.min(0, this.chart.primaryVAxis.scale.max));
+
+            }
+
+        }
+
+        return {
+            cy: zeroLine + cy,
+            cx: (seriesItemWidth / 2),
+            cx2: (seriesItemWidth * (this.chart.data.labels.length - 1)) + (seriesItemWidth / 2)
+        }
+
+    }
+
+    _createLine() {
+
+        this.line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        this.line.setAttribute('fill', 'none');
+        this.line.setAttribute('class', 'cragLine');
+        this.line.setAttribute('d', 'M 0,0 0,0');
+
+        this.area.append(this.line);
+
+    }
+
+    update(data) {
+
+        if (data === null) {
+            this.line.style.opacty = 0;
+            return;
+        }
+
+        this.line.style.opacty = 1;
+
+        this.value = data;
+        this.updateLine();
+
+    }
+
+    updateLine() {
+
+        const position = this._calcStartEndPoints();
+
+        this.line.setAttribute('d', `M ${position.cx},${position.cy} ${position.cx2},${position.cy}`);
+
+        this.label.setAttribute('y', position.cy - 4);
+        this.label.setAttribute('x', position.cx + 2);
+
+
+    }
+
+    set thickness(value) {
+
+        this.line.setAttribute('stroke-width', value.toString());
+
+    }
+
+    set color(color) {
+
+        this.line.setAttribute('stroke', this._resolveColor(color));
+
     }
 
 }
 
 class Line extends CragCore {
 
-    chart = null;
+    #parent = null;
 
     /** @type {null|SVGPathElement} */
     line = null;
@@ -251,55 +385,18 @@ class Line extends CragCore {
 
     index = 0;
 
-    /** @type {null|SVGSVGElement} */
-    area = null;
-
-    /** @type {HTMLDivElement} */
-    labelArea = null;
-
-    #name = null;
-
     options = {};
-    data = []
+    data = [];
 
-    constructor(chart, data, index = 0) {
+    constructor(parent, data, index = 0) {
         super();
 
-        this.chart = chart;
+        this.#parent = parent;
         this.index = index;
         this.data = data;
 
-        this.options = chart.options.lines[index];
-
-        this._createArea();
-        this._createLabelArea();
         this._createLine();
-        this._colorize();
-
-    }
-
-    _createArea() {
-
-        this.area = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        this.area.setAttribute('width', '100%');
-        this.area.setAttribute('height', '100%');
-        this.area.style.position = 'absolute';
-        this.area.style.pointerEvents = 'none';
-        this.area.style.left = '0';
-        this.area.style.top = '0';
-
-        this.chart.chart.area.append(this.area);
-
-    }
-
-    _createLabelArea() {
-
-        this.labelArea = document.createElement('div');
-        this.labelArea.className = 'cragChartSubArea';
-        this.labelArea.style.pointerEvents = 'none';
-        this.labelArea.style.zIndex = '1';
-
-        this.chart.chart.area.append(this.labelArea);
+        this._createDots();
 
     }
 
@@ -309,10 +406,6 @@ class Line extends CragCore {
         this.line.setAttribute('fill', 'none');
         this.line.setAttribute('class', 'cragLine');
         this.line.setAttribute('d', 'M0,0');
-
-        this.thickness = this.options.thickness.toString();
-
-        this.area.append(this.line);
 
     }
 
@@ -326,6 +419,12 @@ class Line extends CragCore {
 
     }
 
+    _createDots() {
+        for (let i = 0; i < this.data.length; i++) {
+            this.dots[i] = new Dot(this, i, this.data[i]);
+        }
+    }
+
     _refactorDots() {
 
         for (let i = 0; i < this.data.length; i++) {
@@ -337,22 +436,16 @@ class Line extends CragCore {
                  */
                 this.dots[i].index = i;
                 this.dots[i].value = this.data[i];
-                this.dots[i].name = this.chart.data.labels[i];
-                this.dots[i].seriesName = this.name;
 
             } else {
 
-                this.dots[i] = new Dot(i, this.data[i]);
-                this.dots[i].name = this.chart.data.labels[i];
-                this.dots[i].seriesName = this.name;
+                this.dots[i] = new Dot(this, i, this.data[i]);
 
-                this.dots[i].r = this.options.pointSize;
-                this.dots[i].fill = this._getContrastColor(this.chart.options.chart.color);
+                this.dots[i].r = this.pointSize;
+                this.dots[i].fill = this.color;
 
-                this.area.append(this.dots[i].element);
-                this.labelArea.append(this.dots[i].label);
-
-                this.chart.toolTip.attach(this.dots[i]);
+                this.#parent.lineArea.append(this.dots[i].element);
+                this.#parent.labelArea.append(this.dots[i].label);
 
             }
 
@@ -377,14 +470,14 @@ class Line extends CragCore {
 
     _positionDots(scale) {
 
-        const seriesItemWidth = this.area.width.baseVal.value / this.chart.data.labels.length;
+        const seriesItemWidth = this.#parent.lineArea.width.baseVal.value / this.data.length;
 
         let zeroLine = 0;
 
         /** Scale is all negative, zero line will be at bottom of container */
-        if (scale.min >= 0) zeroLine = this.area.height.baseVal.value;
+        if (scale.min >= 0) zeroLine = this.#parent.lineArea.height.baseVal.value;
         /** Scale is positive to negative, zero line will be a part way through */
-        if (scale.min < 0 && scale.max > 0) zeroLine = this.area.height.baseVal.value / (scale.max - scale.min) * scale.max;
+        if (scale.min < 0 && scale.max > 0) zeroLine = this.#parent.lineArea.height.baseVal.value / (scale.max - scale.min) * scale.max;
 
         for (const dot of Object.values(this.dots)) {
 
@@ -392,17 +485,17 @@ class Line extends CragCore {
 
             if (dot.value < 0) {
 
-                cy = (this.area.height.baseVal.value - zeroLine) / (scale.min - Math.min(0, scale.max)) * (dot.value - Math.min(0, scale.max));
+                cy = (this.#parent.lineArea.height.baseVal.value - zeroLine) / (scale.min - Math.min(0, scale.max)) * (dot.value - Math.min(0, scale.max));
 
             } else {
 
-                if (zeroLine === this.area.height.baseVal.value) {
+                if (zeroLine === this.#parent.lineArea.height.baseVal.value) {
 
-                    cy = -this.area.height.baseVal.value / (scale.max - scale.min) * (dot.value - scale.min);
+                    cy = -this.#parent.lineArea.height.baseVal.value / (scale.max - scale.min) * (dot.value - scale.min);
 
                 } else {
 
-                    cy = -(zeroLine - this.area.height.baseVal.value) / (scale.min - Math.min(0, scale.max)) * (dot.value - Math.min(0, scale.max));
+                    cy = -(zeroLine - this.#parent.lineArea.height.baseVal.value) / (scale.min - Math.min(0, scale.max)) * (dot.value - Math.min(0, scale.max));
 
                 }
 
@@ -412,7 +505,7 @@ class Line extends CragCore {
             dot.cy = zeroLine + cy;
             dot.cx = (seriesItemWidth * dot.index) + (seriesItemWidth / 2);
 
-            if (this.options.labelVisible) {
+            if (this.#parent.labelVisible) {
 
                 dot.labelVisible = dot.label.offsetWidth <= seriesItemWidth - 16;
 
@@ -434,7 +527,7 @@ class Line extends CragCore {
 
         let smoothing = 0;
 
-        smoothing = this.options.smooth ? 0.125 : 0;
+        smoothing = this.smooth ? 0.125 : 0;
 
         const line = (pointA, pointB) => {
 
@@ -577,225 +670,65 @@ class Line extends CragCore {
 
     }
 
-    _colorize() {
-
-        if (this.options.color === CragPallet.auto || this.options.color === null) {
-
-            this.color = this._getContrastColor(this.chart.options.chart.color);
-
-        } else if (this.options.color === CragPallet.multi) {
-
-
-            this.color = this._getColorByMode(CragPallet.multi, this.index);
-
-        } else {
-
-            this.color = this._resolveColor(this.options.color);
-
-        }
-
-    }
-
     set thickness(value) {
-
         this.line.setAttribute('stroke-width', value.toString());
-
+    }
+    get thickness() {
+        return this.#parent.thickness;
     }
 
     set smooth(value) {
-
         this.updateLine();
-
+    }
+    get smooth() {
+        return this.#parent.smooth;
     }
 
     set pointSize(value) {
-
         for (const dot of Object.values(this.dots)) {
-
             dot.r = value;
+        }
+    }
+    get pointSize() {
+        return this.#parent.pointSize;
+    }
+
+
+    set color(value) {
+
+        this.#parent.setIndexColor(this.index, value);
+
+        const color = value === CragPallet.multi ? this._getColorByMode(CragPallet.multi, this.index) : this._resolveColor(value);
+
+        this.line.setAttribute('stroke', color);
+
+        for (const dot of Object.values(this.dots)) {
+
+            dot.fill = color;
 
         }
 
     }
 
-    set color(color) {
-
-        this.options.color = color;
-
-        this.line.setAttribute('stroke', this._resolveColor(color));
-
-        for (const dot of Object.values(this.dots)) {
-
-            dot.fill = this._resolveColor(color);
-
-        }
-
+    get labelVisible() {
+        return this.#parent.labelVisible;
     }
-
-    set labelsVisible(value) {
-
-        this.options.labelVisible = value;
-
+    set labelVisible(value) {
         for (const dot of Object.values(this.dots)) {
-
             dot.labelVisible = value;
-
         }
-
     }
 
-    get name() {
-        return this.#name;
+    set seriesName(value) {
+        this.#parent.setIndexSeriesName(this.index, value);
     }
 
-    set name(value) {
-
-        this.#name = value;
-
-        for (let i = 0; i < this.data.length; i++) {
-
-            if (this.dots[i]) {
-
-                this.dots[i].name = this.chart.data.labels[i];
-                this.dots[i].seriesName = this.name;
-
-            }
-
-        }
-
+    get seriesName() {
+        return this.#parent.getIndexSeriesName(this.index);
     }
 
-}
-
-class TrendLine extends CragCore {
-
-    chart = null;
-
-    /** @type {null|SVGPathElement} */
-    line = null;
-
-    /** @type {null|SVGSVGElement} */
-    area = null;
-
-    label = null;
-
-    value= 0;
-    name = '';
-
-    constructor(chart) {
-        super();
-
-        this.chart = chart;
-
-        this.area = createSVGChartArea();
-        this._createLabel();
-        this._createLine();
-
-        this.thickness = this.chart.options.trendLine.thickness;
-        this.color = this.chart.options.trendLine.color;
-
-        this.chart.chart.area.append(this.area);
-
-    }
-
-    _createLabel() {
-
-        this.label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-
-        this.label.style.color = this._getContrastColor(this.chart.options.color);
-        this.label.classList.add('cragVAxisLabel');
-        this.label.textContent = this.chart.options.trendLine.name;
-
-        this.area.append(this.label);
-
-    }
-
-    _calcStartEndPoints() {
-
-        const seriesItemWidth = this.area.width.baseVal.value / this.chart.data.labels.length;
-
-        let zeroLine = 0;
-
-        /** Scale is all negative, zero line will be at bottom of container */
-        if (this.chart.primaryVAxis.scale.min >= 0) zeroLine = this.area.height.baseVal.value;
-        /** Scale is positive to negative, zero line will be a part way through */
-        if (this.chart.primaryVAxis.scale.min < 0 && this.chart.primaryVAxis.scale.max > 0) zeroLine = this.area.height.baseVal.value / (this.chart.primaryVAxis.scale.max - this.chart.primaryVAxis.scale.min) * this.chart.primaryVAxis.scale.max;
-
-        let cy;
-
-        if (this.value < 0) {
-
-            cy = (this.area.height.baseVal.value - zeroLine) / (this.chart.primaryVAxis.scale.min - Math.min(0, this.chart.primaryVAxis.scale.max)) * (this.value - Math.min(0, this.chart.primaryVAxis.scale.max));
-
-        } else {
-
-            if (zeroLine === this.area.height.baseVal.value) {
-
-                cy = -this.area.height.baseVal.value / (this.chart.primaryVAxis.scale.max - this.chart.primaryVAxis.scale.min) * (this.value - this.chart.primaryVAxis.scale.min);
-
-            } else {
-
-                cy = -(zeroLine - this.area.height.baseVal.value) / (this.chart.primaryVAxis.scale.min - Math.min(0, this.chart.primaryVAxis.scale.max)) * (this.value - Math.min(0, this.chart.primaryVAxis.scale.max));
-
-            }
-
-        }
-
-        return {
-            cy: zeroLine + cy,
-            cx: (seriesItemWidth / 2),
-            cx2: (seriesItemWidth * (this.chart.data.labels.length - 1)) + (seriesItemWidth / 2)
-        }
-
-    }
-
-    _createLine() {
-
-        this.line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        this.line.setAttribute('fill', 'none');
-        this.line.setAttribute('class', 'cragLine');
-        this.line.setAttribute('d', 'M 0,0 0,0');
-
-        this.area.append(this.line);
-
-    }
-
-    update(data) {
-
-        if (data === null) {
-            this.line.style.opacty = 0;
-            return;
-        }
-
-        this.line.style.opacty = 1;
-
-        this.value = data;
-        this.updateLine();
-
-    }
-
-    updateLine() {
-
-        const position = this._calcStartEndPoints();
-
-        this.line.setAttribute('d', `M ${position.cx},${position.cy} ${position.cx2},${position.cy}`);
-
-        this.label.setAttribute('y', position.cy - 4);
-        this.label.setAttribute('x', position.cx + 2);
-
-
-    }
-
-    set thickness(value) {
-
-        this.line.setAttribute('stroke-width', value.toString());
-
-    }
-
-    set color(color) {
-
-        this.line.setAttribute('stroke', this._resolveColor(color));
-
+    getIndexDataLabel(index) {
+        return this.#parent.getIndexDataLabel(index);
     }
 
 }
@@ -804,7 +737,13 @@ class Lines extends CragCore {
 
     lines = {};
     count = 0;
+
+    /**
+     * @type {null|CragLine|CragCombo} */
     chart = null;
+
+    lineArea = null;
+    labelArea = null;
 
     constructor(chart, count) {
         super();
@@ -812,18 +751,59 @@ class Lines extends CragCore {
         this.count = count;
         this.chart = chart;
 
-        for (let i = 0; i < count; i++) {
+        this._createArea();
+        this._createLabelArea();
+        this._createLines();
 
-            this.lines[i] = new Line(chart, this.chart.data.series[i], i);
+    }
 
-            this.lines[i].name = chart.options.lines[i].name;
-            this.lines[i].seriesName = chart.options.lines[i].name;
+    _createLines() {
 
-            this.setThickness(i, chart.options.lines[i].thickness);
-            this.setPointSize(i, chart.options.lines[i].pointSize);
-            this.setSmooth(i, chart.options.lines[i].smooth);
+        for (let i = 0; i < this.count; i++) {
+
+            this.lines[i] = new Line(this, this.chart.data.series[i], i);
+
+            this.lines[i].pointSize = this.pointSize;
+            this.lines[i].thickness = this.thickness;
+            this.lines[i].smooth = this.smooth;
+
+            this.lineArea.append(this.lines[i].line);
+
+            for (const dot of Object.values(this.lines[i].dots)) {
+
+                this.lineArea.append(dot.element);
+                this.labelArea.append(dot.label);
+
+                this.chart.toolTip.attach(dot);
+
+            }
 
         }
+
+    }
+
+    _createArea() {
+
+        this.lineArea = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        this.lineArea.setAttribute('width', '100%');
+        this.lineArea.setAttribute('height', '100%');
+        this.lineArea.style.position = 'absolute';
+        this.lineArea.style.pointerEvents = 'none';
+        this.lineArea.style.left = '0';
+        this.lineArea.style.top = '0';
+
+        this.chart.chart.area.append(this.lineArea);
+
+    }
+
+    _createLabelArea() {
+
+        this.labelArea = document.createElement('div');
+        this.labelArea.className = 'cragChartSubArea';
+        this.labelArea.style.pointerEvents = 'none';
+        this.labelArea.style.zIndex = '1';
+
+        this.chart.chart.area.append(this.labelArea);
 
     }
 
@@ -831,14 +811,10 @@ class Lines extends CragCore {
 
         for (let i = 0; i < this.count; i++) {
 
-            if (this.chart.options.lines[i].color === CragPallet.auto) {
-
-                this.lines[i].color = this._colorByIndex(i);
-
+            if (this.chart.options.lines[i].color === CragPallet.multi) {
+                this.lines[i].color = this._getColorByMode(CragPallet.multi, i);
             } else {
-
-                this.lines[i].color = this.chart.options.lines[i].color;
-
+                this.lines[i].color = this._resolveColor(this.chart.options.lines[i].color);
             }
 
         }
@@ -850,65 +826,76 @@ class Lines extends CragCore {
         for (let i = 0; i < this.count; i++) {
 
             this.lines[i].update(this.chart.data.series[i], this.chart.primaryVAxis.scale);
-            this.lines[i].name = chart.options.lines[i].name;
 
         }
 
     }
 
-    updateLineNames() {
+    setIndexColor(index, value) {
+        this.chart.options.lines[index].color = value;
+    }
+
+    set pointSize(value) {
+
+        this.chart.options.lines.pointSize = value;
 
         for (let i = 0; i < this.count; i++) {
-
-            this.lines[i].name = chart.options.lines[i].name;
-
+            this.lines[i].pointSize = value;
         }
 
     }
+    get pointSize() {
+       return this.chart.options.lines.pointSize;
+    }
 
-    setColor(index, value) {
+    set smooth(value) {
 
-        this.chart.options.lines[index].color = value;
+        this.chart.options.lines.smooth = value;
 
-        if (value === CragPallet.auto) {
-
-            this.lines[index].color = this._colorByIndex(index);
-
-        } else {
-
-            this.lines[index].color = value;
-
+        for (let i = 0; i < this.count; i++) {
+            this.lines[i].smooth = value;
         }
 
     }
-
-    setThickness(index, value) {
-
-        this.chart.options.lines[index].thickness = value;
-        this.lines[index].thickness = value;
-
+    get smooth() {
+        return this.chart.options.lines.smooth;
     }
 
-    setPointSize(index, value) {
+    set thickness(value) {
 
-        this.chart.options.lines[index].pointSize = value;
-        this.lines[index].pointSize = value;
+        this.chart.options.lines.thickness = value;
 
-    }
-
-    setSmooth(index, value) {
-
-        this.chart.options.lines[index].smooth = value;
-        this.lines[index].smooth = value;
+        for (let i = 0; i < this.count; i++) {
+            this.lines[i].thickness = value;
+        }
 
     }
+    get thickness() {
+        return this.chart.options.lines.thickness;
+    }
 
-    setLabelVisible(index, value) {
+    set labelVisible(value) {
 
-        this.chart.options.lines[index].labelVisible = value;
+        this.chart.options.lines.labelVisible = value;
 
-        this.lines[index].labelsVisible = value;
+        for (let i = 0; i < this.count; i++) {
+            this.lines[i].labelVisible = value;
+        }
 
+    }
+    get labelVisible() {
+        return this.chart.options.lines.labelVisible;
+    }
+
+    setIndexSeriesName(index, value) {
+        this.chart.options.lines[index].seriesName = value;
+    }
+    getIndexSeriesName(index) {
+        return this.chart.options.lines[index].seriesName;
+    }
+
+    getIndexDataLabel(index) {
+        return this.chart.data.labels[index];
     }
 
 }
@@ -923,16 +910,21 @@ class Dot {
 
     #value = 0;
     #index = 0;
-    #name = '';
-    #seriesName = null;
 
-    constructor(index, value) {
+    /** @type {Line} */
+    #parent = null;
+
+    constructor(parent, index, value) {
 
         this.#index = index;
         this.#value = value;
+        this.#parent = parent;
 
         this._createDot();
         this._createLabel();
+
+        this.cy = 0;
+        this.cx = 0;
 
     }
 
@@ -1016,14 +1008,8 @@ class Dot {
         return this.#value;
     }
 
-    /**
-     * @param {string} value
-     */
-    set name(value) {
-        this.#name = value;
-    }
     get name() {
-        return this.#name;
+        return this.#parent.getIndexDataLabel(this.index);
     }
 
     /**
@@ -1043,11 +1029,8 @@ class Dot {
         return this.label.style.opacity === '1';
     }
 
-    set seriesName(value) {
-        this.#seriesName = value;
-    }
     get seriesName() {
-        return this.#seriesName;
+        return this.#parent.seriesName;
     }
 
 }

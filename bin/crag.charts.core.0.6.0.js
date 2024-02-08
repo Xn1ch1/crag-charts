@@ -1073,7 +1073,6 @@ class VAxis extends CragCore {
 
     }
 
-
 }
 
 class VAxisLine {
@@ -1570,10 +1569,6 @@ function findMinValue(data) {
  * @type optionsLine
  */
 const defaultLineOptions = {
-    thickness: 3,
-    pointSize: 3,
-    color: CragPallet.auto,
-    smooth: true,
-    labelVisible: true,
-    name: null,
+    color: CragPallet.multi,
+    seriesName: null,
 };

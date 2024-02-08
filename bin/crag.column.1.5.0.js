@@ -46,7 +46,6 @@ class CragColumn extends CragCore {
             },
             vAxes: {
                 primary: {
-                    name: null,
                     majorLines: true,
                     minorLines: true,
                     shadowOnZeroLine: false,
@@ -65,6 +64,7 @@ class CragColumn extends CragCore {
                 stripes: false,
                 animatedStripes: false,
                 onClick: null,
+                seriesName: null,
                 labels: {
                     position: 'none',
                     color: CragPallet.auto,
@@ -93,6 +93,7 @@ class CragColumn extends CragCore {
         this.options.columns.onClick = this.validateOption(options?.columns?.onClick, 'function', this.options.columns.onClick);
 
         this.options.columns.labels.position = this.validateOption(options?.columns?.labels?.position, this.labelPositions, this.options.columns.labels.position);
+        this.options.columns.seriesName = this.validateOption(options?.columns?.seriesName, 'string', this.options.columns.seriesName);
 
         /**
          * Title
@@ -108,7 +109,6 @@ class CragColumn extends CragCore {
         /**
          * Primary vAxes options
          */
-        this.options.vAxes.primary.name = this.validateOption(options?.vAxes?.primary?.name, 'string', this.options.vAxes.primary.name);
         this.options.vAxes.primary.majorLines = this.validateOption(options?.vAxes?.primary?.majorLines, 'boolean', this.options.vAxes.primary.majorLines);
         this.options.vAxes.primary.minorLines = this.validateOption(options?.vAxes?.primary?.minorLines, 'boolean', this.options.vAxes.primary.minorLines);
         this.options.vAxes.primary.format = this.validateOption(options?.vAxes?.primary?.format, this.labelFormats, this.options.vAxes.primary.format);
@@ -233,13 +233,6 @@ class CragColumn extends CragCore {
 
     }
 
-    set seriesName(value) {
-
-        this.options.vAxes.primary.name = value;
-        this.columns.seriesName = value;
-
-    }
-
 }
 
 
@@ -256,21 +249,22 @@ class Column extends CragCore {
     #color = null;
     #labelPosition = 'none';
 
-    #seriesName = null;
-
     /** @type {HTMLDivElement} */
     element = null;
 
     /** @type {HTMLSpanElement} */
     label = null;
 
-    constructor (index, value, name, seriesName) {
+    /** @type {Columns} */
+    #parent = null;
+
+    constructor (parent, index, value, name) {
         super();
 
+        this.#parent = parent;
         this.#index = index;
         this.#value = value;
         this.#name = name;
-        this.#seriesName = seriesName;
 
         this._createColumn();
         this._createLabel();
@@ -307,6 +301,100 @@ class Column extends CragCore {
         }, 700);
 
     }
+
+    _calculateLabelPosition(preferredPosition, maxHeight) {
+
+        if (preferredPosition === 'none') return this.labelPosition = 'none';
+
+        if (this.label.offsetWidth > this.#width - 16)  return this.labelPosition = 'none';
+
+        if (
+            (preferredPosition === 'inside' && this.height > this.label.offsetHeight) ||
+            (this.value < 0 && this.bottom < this.label.offsetHeight) ||
+            (this.value > 0 && maxHeight - this.height - this.bottom < this.label.offsetHeight)
+        ) return this.labelPosition = 'inside';
+
+        this.labelPosition = 'outside';
+
+    }
+
+    _moveLabel() {
+
+        if (this.labelPosition === 'none') return this.label.style.opacity = '0';
+
+        this.label.style.opacity = '1';
+
+        if (this.labelPosition === 'inside') {
+
+            if (this.value < 0) {
+
+                this.label.style.bottom = `${this.bottom}px`;
+
+            } else {
+
+                this.label.style.bottom = `${this.bottom + this.height - this.label.offsetHeight}px`;
+
+            }
+
+            return;
+
+        }
+
+        if (this.value < 0) {
+
+            this.label.style.bottom = `${this.bottom - this.label.offsetHeight}px`;
+
+        } else {
+
+            this.label.style.bottom = `${this.bottom + this.height}px`;
+
+        }
+
+    }
+
+    _colorLabel(color, backgroundColor) {
+
+        if (this.labelPosition === 'inside') {
+
+            this.label.style.color = this._getContrastColor(this.color);
+
+        } else {
+
+            if (color === CragPallet.match) {
+
+                this.label.style.color = this.color;
+
+            } else if (color === CragPallet.auto) {
+
+                this.label.style.color = this._getContrastColor(backgroundColor);
+
+            } else {
+
+                this.label.style.color = this._resolveColor(color);
+
+            }
+
+        }
+
+    }
+
+    setLabelPosition(preferredPosition, maxHeight) {
+
+        this.label.style.left = `${this.#left + (this.#width / 2) - (this.label.offsetWidth / 2) - (this.value < 0 ? 1 : 0)}px`;
+
+        this._calculateLabelPosition(preferredPosition, maxHeight);
+        this._moveLabel();
+
+    }
+
+    setLabelColor(color, backgroundColor) {
+        this._colorLabel(color, backgroundColor);
+    }
+
+    get labelVisible() {
+        return this.label.style.opacity !== '0';
+    }
+
 
     /**
      * @param {number} value
@@ -445,104 +533,7 @@ class Column extends CragCore {
     }
 
     get seriesName() {
-        return this.#seriesName;
-    }
-
-    set seriesName(value) {
-        this.#seriesName = value;
-    }
-
-    _calculateLabelPosition(preferredPosition, maxHeight) {
-
-        if (preferredPosition === 'none') return this.labelPosition = 'none';
-
-        if (this.label.offsetWidth > this.#width - 16)  return this.labelPosition = 'none';
-
-        if (
-            (preferredPosition === 'inside' && this.height > this.label.offsetHeight) ||
-            (this.value < 0 && this.bottom < this.label.offsetHeight) ||
-            (this.value > 0 && maxHeight - this.height - this.bottom < this.label.offsetHeight)
-        ) return this.labelPosition = 'inside';
-
-        this.labelPosition = 'outside';
-
-    }
-
-    _moveLabel() {
-
-        if (this.labelPosition === 'none') return this.label.style.opacity = '0';
-
-        this.label.style.opacity = '1';
-
-        if (this.labelPosition === 'inside') {
-
-            if (this.value < 0) {
-
-                this.label.style.bottom = `${this.bottom}px`;
-
-            } else {
-
-                this.label.style.bottom = `${this.bottom + this.height - this.label.offsetHeight}px`;
-
-            }
-
-            return;
-
-        }
-
-        if (this.value < 0) {
-
-            this.label.style.bottom = `${this.bottom - this.label.offsetHeight}px`;
-
-        } else {
-
-            this.label.style.bottom = `${this.bottom + this.height}px`;
-
-        }
-
-    }
-
-    _colorLabel(color, backgroundColor) {
-
-        if (this.labelPosition === 'inside') {
-
-            this.label.style.color = this._getContrastColor(this.color);
-
-        } else {
-
-            if (color === CragPallet.match) {
-
-                this.label.style.color = this.color;
-
-            } else if (color === CragPallet.auto) {
-
-                this.label.style.color = this._getContrastColor(backgroundColor);
-
-            } else {
-
-                this.label.style.color = this._resolveColor(color);
-
-            }
-
-        }
-
-    }
-
-    setLabelPosition(preferredPosition, maxHeight) {
-
-        this.label.style.left = `${this.#left + (this.#width / 2) - (this.label.offsetWidth / 2) - (this.value < 0 ? 1 : 0)}px`;
-
-        this._calculateLabelPosition(preferredPosition, maxHeight);
-        this._moveLabel();
-
-    }
-
-    setLabelColor(color, backgroundColor) {
-        this._colorLabel(color, backgroundColor);
-    }
-
-    get labelVisible() {
-        return this.label.style.opacity !== '0';
+        return this.#parent.seriesName;
     }
 
 }
@@ -559,8 +550,6 @@ class Columns extends CragCore {
     chart = null;
 
     data = [];
-
-    #seriesName = null;
 
     constructor(chart, data) {
         super();
@@ -616,14 +605,13 @@ class Columns extends CragCore {
                 this.columns[i].name = this.chart.data.labels[i];
                 this.columns[i].value = this.data[i];
                 this.columns[i].columnOptions = this.chart.options.columns;
-                this.columns[i].seriesName = this.chart.options.vAxes.primary.name;
 
             } else {
 
                 /**
                  * Create new DataPoint
                  */
-                this.columns[i] = new Column(i, this.data[i], this.chart.data.labels[i], this.chart.options.vAxes.primary.name);
+                this.columns[i] = new Column(this, i, this.data[i], this.chart.data.labels[i]);
 
                 this.labelArea.append(this.columns[i].label);
                 this.columnArea.append(this.columns[i].element);
@@ -878,14 +866,12 @@ class Columns extends CragCore {
 
     }
 
+    get seriesName() {
+        return this.chart.options.columns.seriesName;
+    }
+
     set seriesName(value) {
-
-        this.#seriesName = value;
-
-        for (const column of Object.values(this.columns)) {
-            column.seriesName = value;
-        }
-
+        this.chart.options.columns.seriesName = value;
     }
 
 }
