@@ -944,8 +944,6 @@ class VAxis extends CragCore {
             color = this._resolveColor(this.chart.options.vAxes[this.axisName].lineColor);
         }
 
-        console.log(color);
-
         for (const line of Object.values(this.lines)) {
 
             line.majorLine.style.backgroundColor = color;
