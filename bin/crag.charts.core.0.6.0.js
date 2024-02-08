@@ -1373,34 +1373,46 @@ class ToolTip extends CragCore {
 
     attach(object) {
 
-        object.element.onpointerover = (e) => {
+        const name = object.name;
+        const value = object.value;
+        const element = object.element;
+
+        element.onpointerover = (e) => {
             /**
              * this is not relevant for touch based events
              */
             if (e.pointerType === 'touch') return;
             this.quickRemove = true;
-            this.chart.toolTip.show(e, object.name, object.value, !object?.labelVisible);
+            this.show(e, name, value, !object?.labelVisible);
+            element.classList.add('--active');
         };
-        object.element.onpointerout = () => {
-            /**
-             * This covers both touch up and mouse out
-             */
-            setTimeout(() => {
-                this.chart.toolTip.hide();
-            }, this.quickRemove ? 0 : 1000);
-        };
-        object.element.onpointermove = (e) => this.chart.toolTip._position(e);
-        object.element.onpointerdown = (e) => {
+        element.onpointermove = (e) => this._position(e);
+        element.onpointerdown = (e) => {
             /**
              * this is not relevant for mouse events
              */
             if (e.pointerType !== 'touch') return;
-            this.chart.toolTip.show(e, object.name, object.value, !object?.labelVisible);
+            this.show(e, name, value, !object?.labelVisible);
+            element.classList.add('--active');
             this.quickRemove = false;
             setTimeout(() => {
                 this.quickRemove = true;
             }, 250);
 
+        };
+        element.onpointerout = (e) => {
+            /**
+             * This covers both touch up and mouse out
+             */
+            if (e.pointerType === 'touch') {
+                setTimeout(() => {
+                    element.classList.remove('--active');
+                    this.hide();
+                }, this.quickRemove ? 0 : 1000);
+            } else {
+                element.classList.remove('--active');
+                this.hide();
+            }
         };
 
     }

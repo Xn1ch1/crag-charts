@@ -29,3 +29,21 @@
     border-radius: 4px;
     color: rgb(51, 51, 51);
 }
+.cragPoint {
+    transition: all 0.4s ease;
+    left: 100%;
+    pointer-events: all;
+    cursor: pointer;
+    stroke-width: 24px;
+    stroke: transparent;
+    paint-order: stroke;
+    transform-origin: 50% 50%;
+    transform-box: fill-box;
+}
+.cragPoint.--active {
+    transform: scale(2, 2);
+}
+.cragLine {
+    transition: all 0.5s ease;
+    -webkit-transition: all 0.5s ease;
+}
