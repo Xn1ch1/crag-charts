@@ -57,7 +57,12 @@ class CragCombo extends CragCore {
                 },
                 specificBarColor: null,
             },
-            lines: {},
+            lines: {
+                thickness: 3,
+                pointSize: 3,
+                smooth: true,
+                labelVisible: false,
+            },
             vAxes: {
                 primary: {
                     name: null,
@@ -177,11 +182,8 @@ class CragCombo extends CragCore {
         this.hAxis = new HAxis(this);
         this.toolTip = new ToolTip(this);
         this.columns = new Columns(this, this.data.series[0]);
-        this.line = new Line(this, this.data.series[1]);
+        this.lines = new Lines(this, 1);
         this.title = new Title(this);
-
-        this.columns.name = this.options.vAxes.primary.name;
-        this.line.name = this.options.vAxes.secondary.name;
 
         setTimeout(this._draw.bind(this), 500);
 
@@ -215,7 +217,7 @@ class CragCombo extends CragCore {
         this.primaryVAxis.update(this.data.min.primary, this.data.max.primary);
         this.secondaryVAxis.update(this.data.min.secondary, this.data.max.secondary);
         this.columns.update(this.data.series[0], this.primaryVAxis.scale);
-        this.line.update(this.data.series[1], this.secondaryVAxis.scale);
+        this.lines.update([this.data.series[1]], this.secondaryVAxis.scale);
         this.hAxis.update();
 
         this._colorize();
@@ -236,7 +238,7 @@ class CragCombo extends CragCore {
         this.title._colorize();
         this.hAxis._colorize();
         this.columns._colorLabels();
-        this.line._colorize();
+        this.lines._colorize();
         this.primaryVAxis._colorize();
         this.secondaryVAxis._colorize();
 
@@ -291,18 +293,6 @@ class CragCombo extends CragCore {
         if (this._isValidColor(color)) this.options.chart.color = color;
 
         this._colorize();
-
-    }
-
-    set primaryVAxisSeriesName(value) {
-
-        this.options.vAxes.primary.name = value;
-
-    }
-
-    set secondaryVAxisSeriesName(value) {
-
-        this.options.vAxes.secondary.name = value;
 
     }
 

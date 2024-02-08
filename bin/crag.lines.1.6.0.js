@@ -175,9 +175,8 @@ class CragLine extends CragCore {
         this._getDataMinMax();
 
         this.primaryVAxis.update(this.data.min.primary, this.data.max.primary);
-
         this.hAxis.update();
-        this.lines.update();
+        this.lines.update(this.data.series, this.primaryVAxis.scale);
         this._colorize();
 
     }
@@ -409,7 +408,7 @@ class Line extends CragCore {
 
     }
 
-    update(data, scale) {
+    update(data, scale) {console.log(data, scale);
 
         this.data = data;
 
@@ -446,6 +445,8 @@ class Line extends CragCore {
 
                 this.#parent.lineArea.append(this.dots[i].element);
                 this.#parent.labelArea.append(this.dots[i].label);
+
+                this.#parent.chart.toolTip.attach(this.dots[i]);
 
             }
 
@@ -821,11 +822,11 @@ class Lines extends CragCore {
 
     }
 
-    update() {
+    update(data, scale) {console.log(data, scale);
 
-        for (let i = 0; i < this.count; i++) {
+        for (let i = 0; i < data.length; i++) {
 
-            this.lines[i].update(this.chart.data.series[i], this.chart.primaryVAxis.scale);
+            this.lines[i].update(data[i], scale);
 
         }
 
