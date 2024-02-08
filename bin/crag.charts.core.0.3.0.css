@@ -184,6 +184,9 @@
     transform-origin: 50% 50%;
     transform-box: fill-box;
 }
+.cragPoint:hover {
+    transform: scale(2, 2);
+}
 .cragLine {
     transition: all 0.5s ease;
     -webkit-transition: all 0.5s ease;
