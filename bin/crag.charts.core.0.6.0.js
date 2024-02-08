@@ -186,16 +186,6 @@ class CragCore {
         CragPallet.dynamicCoolGradient,
     ];
 
-    _colorByIndex(index) {
-
-        const colorKeys = Object.keys(this.pallet);
-        const numColors = colorKeys.length;
-        const colorIndex = (index % numColors + numColors) % numColors;
-
-        return colorKeys[colorIndex];
-
-    }
-
     /**
      * Resolves a color value, from either a hex code, pallet name or mode.
      * @param {string|int} value Pallet id, hex code or color mode.
@@ -242,6 +232,18 @@ class CragCore {
          * Default to white
          */
         return CragPallet.white;
+
+    }
+
+    _getColor(colorValue, index = null) {
+
+        /**
+         * Check to see if value is one of the acceptable modes
+         */
+        if (this.modes.includes(colorValue)) {
+            return this._getColorByMode(colorValue, index);
+        }
+        return this._resolveColor(colorValue);
 
     }
 

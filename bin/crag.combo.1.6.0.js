@@ -62,6 +62,10 @@ class CragCombo extends CragCore {
                 pointSize: 3,
                 smooth: true,
                 labelVisible: false,
+                0: {
+                    color: CragPallet.auto,
+                    seriesName: null,
+                }
             },
             vAxes: {
                 primary: {
@@ -80,6 +84,7 @@ class CragCombo extends CragCore {
                     majorLines: false,
                     minorLines: false,
                     showOnPrimary: false,
+                    lineColor: 'auto',
                     format: 'number',
                     currencySymbol: 'GBP',
                     decimalPlaces: 0,
@@ -106,23 +111,15 @@ class CragCombo extends CragCore {
 
         this.options.columns.specificBarColor = options?.columns?.specificBarColor ?? null;
 
-        /**
-         * Line Options
-         */
-        for (let i = 0; i < this.data.series.length - 1; i++) {
-
-            this.options.lines[i] = {... defaultLineOptions};
-
             /**
              * Line Options
              */
-            if (this._isValidColor(options?.lines[i]?.color)) this.options.lines[i].color = options.lines[i].color;
-            this.options.lines[i].smooth = this.validateOption(options?.lines[i]?.smooth, 'boolean', this.options.lines[i].smooth);
-            this.options.lines[i].labelVisible = this.validateOption(options?.lines[i]?.labelVisible, 'boolean', this.options.lines[i].labelVisible);
-            if (options?.lines[i]?.thickness > 0 && options?.lines[i]?.thickness < 11) this.options.lines[i].thickness = options.lines[i].thickness;
-            if (options?.lines[i]?.pointSize > 0 && options?.lines[i]?.pointSize < 51) this.options.lines[i].pointSize = options.lines[i].pointSize;
+        if (this._isValidColor(options?.lines[0]?.color)) this.options.lines[0].color = options.lines[0].color;
+        this.options.lines[0].labelVisible = this.validateOption(options?.lines[0]?.labelVisible, 'boolean', this.options.lines[0].labelVisible);
 
-        }
+        this.options.lines.smooth = this.validateOption(options?.lines.smooth, 'boolean', this.options.lines.smooth);
+        if (options?.lines.thickness > 0 && options?.lines.thickness < 11) this.options.lines.thickness = options.lines.thickness;
+        if (options?.lines.pointSize > 0 && options?.lines.pointSize < 51) this.options.lines.pointSize = options.lines.pointSize;
 
         /**
          * Chart Options

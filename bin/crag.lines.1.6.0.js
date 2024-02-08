@@ -408,7 +408,7 @@ class Line extends CragCore {
 
     }
 
-    update(data, scale) {console.log(data, scale);
+    update(data, scale) {
 
         this.data = data;
 
@@ -699,7 +699,13 @@ class Line extends CragCore {
 
         this.#parent.setIndexColor(this.index, value);
 
-        const color = value === CragPallet.multi ? this._getColorByMode(CragPallet.multi, this.index) : this._resolveColor(value);
+
+        if (value === CragPallet.auto) {
+           this.#parent._colorize();
+           return;
+        }
+
+        const color = this._getColor(value, this.index);
 
         this.line.setAttribute('stroke', color);
 
@@ -812,17 +818,28 @@ class Lines extends CragCore {
 
         for (let i = 0; i < this.count; i++) {
 
-            if (this.chart.options.lines[i].color === CragPallet.multi) {
-                this.lines[i].color = this._getColorByMode(CragPallet.multi, i);
-            } else {
-                this.lines[i].color = this._resolveColor(this.chart.options.lines[i].color);
+            if (this.chart.options.lines[i].color === CragPallet.auto) {
+
+                const color = this._getContrastColor(this.chart.options.chart.color);
+
+                this.lines[i].line.setAttribute('stroke', color);
+
+                for (const dot of Object.values(this.lines[i].dots)) {
+
+                    dot.fill = color;
+
+                }
+
+                continue;
             }
+
+            this.lines[i].color = this.chart.options.lines[i].color;
 
         }
 
     }
 
-    update(data, scale) {console.log(data, scale);
+    update(data, scale) {
 
         for (let i = 0; i < data.length; i++) {
 
