@@ -1464,7 +1464,11 @@ class Title extends CragCore {
 
     _colorize() {
 
-        this.title.style.color = this._getContrastColor(this.chart.options.chart.color);
+        if (this.chart.options.title.color === 'auto') {
+            this.title.style.color = this._getContrastColor(this.chart.options.chart.color);
+        } else {
+            this.title.style.color = this._resolveColor(this.chart.options.title.color);
+        }
 
     }
 
@@ -1480,7 +1484,7 @@ class Title extends CragCore {
          * Only call redraw when the new or old title text was null
          * This prevents triggering redraw on each keystroke
          */
-        if (value === '' ^ this.chart.options.chart.title === null) {
+        if (value === '' ^ this.chart.options.title.text === null) {
 
             this.chart._draw();
 
@@ -1489,11 +1493,16 @@ class Title extends CragCore {
         /**
          * Set new value to null where new title is blank
          */
-        this.chart.options.chart.title = value === '' ? null : value;
+        this.chart.options.title.text = value === '' ? null : value;
 
     }
     get title() {
         return this.title?.textContent ?? '';
+    }
+
+    set color(value) {
+        this.chart.options.title.color = value;
+        this._colorize();
     }
 
 }

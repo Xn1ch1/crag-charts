@@ -36,16 +36,13 @@ class CragCombo extends CragCore {
         };
 
         this.options = {
-            /**
-             * @type optionsChart
-             */
             chart: {
-                title: null,
                 color: CragPallet.white
             },
-            /**
-             * @type optionsColumn
-             */
+            title: {
+                text: null,
+                color: CragPallet.auto
+            },
             columns: {
                 width: 90,
                 color: CragPallet.multi,
@@ -60,9 +57,6 @@ class CragCombo extends CragCore {
                 },
                 specificBarColor: null,
             },
-            /**
-             * @type optionsLine
-             */
             lines: {},
             vAxes: {
                 primary: {
@@ -128,8 +122,13 @@ class CragCombo extends CragCore {
         /**
          * Chart Options
          */
-        this.options.chart.title = this.validateOption(options?.chart?.title, 'string', this.options.chart.title);
         if (this._isValidColor(options?.chart?.color)) this.options.chart.color = options.chart.color;
+
+        /**
+         * Title
+         */
+        this.options.title.text = this.validateOption(options?.title?.text, 'string', this.options.title.text);
+        if (this._isValidColor(options?.title?.color)) this.options.chart.title.color = options.title.color;
 
         /**
          * vAxes options

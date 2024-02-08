@@ -36,13 +36,13 @@ class CragColumn extends CragCore {
             min: 0
         };
 
-        /**
-         * @type {{columns: optionsColumn, vAxes: {primary: optionsVAxis}, chart: optionsChart}}
-         */
         this.options = {
             chart: {
-                title: null,
                 color: CragPallet.white
+            },
+            title: {
+                text: null,
+                color: CragPallet.auto
             },
             vAxes: {
                 primary: {
@@ -95,9 +95,14 @@ class CragColumn extends CragCore {
         this.options.columns.labels.position = this.validateOption(options?.columns?.labels?.position, this.labelPositions, this.options.columns.labels.position);
 
         /**
+         * Title
+         */
+        this.options.title.text = this.validateOption(options?.title?.text, 'string', this.options.title.text);
+        if (this._isValidColor(options?.title?.color)) this.options.chart.title.color = options.title.color;
+
+        /**
          * Chart Options
          */
-        this.options.chart.title = this.validateOption(options?.chart?.title, 'string', this.options.chart.title);
         if (this._isValidColor(options?.chart?.color)) this.options.chart.color = options.chart.color;
 
         /**

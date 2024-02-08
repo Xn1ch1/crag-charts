@@ -54,9 +54,6 @@
 
             <h1 class="config-menu__sub-title">.chart</h1>
 
-            <label for="title" class="config-menu__option-label">.title</label>
-            <input class="config-menu__text-input" type="text" onkeyup="chartTitle(this)" id="title" />
-
             <label for="chartColor" class="config-menu__option-label">.color</label>
             <select class="config-menu__select" onchange="chartColor(this)" id="chartColor">
                 <option value="#FFFFFF" selected>White</option>
@@ -64,6 +61,32 @@
                 <option value="#232323">Dark Grey</option>
                 <option value="#081B33">Dark Blue</option>
                 <option value="#000000">Black</option>
+            </select>
+
+            <h1 class="config-menu__sub-title">.title</h1>
+
+            <label for="title" class="config-menu__option-label">.text</label>
+            <input class="config-menu__text-input" type="text" onkeyup="titleText(this)" id="title" />
+
+            <label for="titleColor" class="config-menu__option-label">.color</label>
+            <select class="config-menu__select" onchange="titleColor(this)" id="titleColor">
+                <option value="auto" selected>Auto (Default)</option>
+                <option value="red">Red</option>
+                <option value="pink">Pink</option>
+                <option value="purple">Purple</option>
+                <option value="deepPurple">Deep Purple</option>
+                <option value="indigo">Indigo</option>
+                <option value="blue">Blue</option>
+                <option value="lightBlue">Light Blue</option>
+                <option value="cyan">Cyan</option>
+                <option value="teal">Teal</option>
+                <option value="green">Green</option>
+                <option value="lightGreen">Light Green</option>
+                <option value="lime">Lime</option>
+                <option value="yellow">Yellow</option>
+                <option value="amber">Amber</option>
+                <option value="orange">Orange</option>
+                <option value="deepOrange">Deep Orange</option>
             </select>
 
             <h1 class="config-menu__sub-title">.pie</h1>
@@ -114,8 +137,12 @@
                 chart.update(newDataGen({canBeNegative: false}));
             }
 
-            function chartTitle(elem) {
+            function titleText(elem) {
                 chart.title.text = elem.value;
+            }
+
+            function titleColor(elem) {
+                chart.title.color = elem.value;
             }
 
             function chartColor(elem) {

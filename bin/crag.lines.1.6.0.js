@@ -33,12 +33,12 @@ class CragLine extends CragCore {
         };
 
         this.options = {
-            /**
-             * @type optionsChart
-             */
             chart: {
-                title: null,
                 color: CragPallet.white
+            },
+            title: {
+                text: null,
+                color: CragPallet.auto
             },
             lines: {},
             vAxes: {
@@ -85,8 +85,13 @@ class CragLine extends CragCore {
         /**
          * Chart Options
          */
-        this.options.chart.title = this.validateOption(options?.chart?.title, 'string', this.options.chart.title);
         if (this._isValidColor(options?.chart?.color)) this.options.chart.color = options.chart.color;
+
+        /**
+         * Title
+         */
+        this.options.title.text = this.validateOption(options?.title?.text, 'string', this.options.title.text);
+        if (this._isValidColor(options?.title?.color)) this.options.chart.title.color = options.title.color;
 
         /**
          * vAxes options
