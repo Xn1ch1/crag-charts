@@ -10,6 +10,9 @@
     font-family: Roboto, sans-serif;
     font-weight: 300;
     text-align: center;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
 }
 .cragChartSubArea {
     position: absolute;
@@ -38,17 +41,9 @@
     font-family: Roboto, sans-serif;
     white-space: nowrap;
     text-overflow: ellipsis;
-}
-.cragColumnLabel {
-    position: absolute;
-    text-anchor: middle;
-    text-align: center;
-    font-size: 12px;
-    transition: all 0.7s, opacity 0s;
-    padding: 8px 2px;
-    left: 100%;
-    box-sizing: border-box;
-    font-family: Roboto, sans-serif;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
 }
 .cragVAxisPrimary {
     grid-area: cragVAxisPrimary;
@@ -69,6 +64,9 @@
     bottom: 100%;
     pointer-events: none;
     white-space: nowrap;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
 }
 .cragVAxisPrimary .cragVAxisLabel {
     text-align: right;

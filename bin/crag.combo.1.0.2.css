@@ -27,4 +27,7 @@
     font-family: Roboto, sans-serif;
     background: #FFFFFFCC;
     border-radius: 4px;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
 }

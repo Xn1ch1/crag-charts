@@ -43,6 +43,7 @@
     paint-order: stroke;
     transform-origin: 50% 50%;
     transform-box: fill-box;
+    -webkit-tap-highlight-color: transparent;
 }
 .cragPoint.--active {
     transform: scale(2, 2);

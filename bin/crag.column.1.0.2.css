@@ -24,6 +24,21 @@
     bottom: 0;
     left: 100%;
     transform-origin: center;
+    -webkit-tap-highlight-color: transparent;
+}
+.cragColumnLabel {
+    position: absolute;
+    text-anchor: middle;
+    text-align: center;
+    font-size: 12px;
+    transition: all 0.7s, opacity 0s;
+    padding: 8px 2px;
+    left: 100%;
+    box-sizing: border-box;
+    font-family: Roboto, sans-serif;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
 }
 .cragColumnStriped {
     background-size: 50px 50px;
