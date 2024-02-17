@@ -186,16 +186,6 @@ class CragCore {
         CragPallet.dynamicCoolGradient,
     ];
 
-    _colorByIndex(index) {
-
-        const colorKeys = Object.keys(this.pallet);
-        const numColors = colorKeys.length;
-        const colorIndex = (index % numColors + numColors) % numColors;
-
-        return colorKeys[colorIndex];
-
-    }
-
     /**
      * Resolves a color value, from either a hex code, pallet name or mode.
      * @param {string|int} value Pallet id, hex code or color mode.
@@ -242,6 +232,18 @@ class CragCore {
          * Default to white
          */
         return CragPallet.white;
+
+    }
+
+    _getColor(colorValue, index = null) {
+
+        /**
+         * Check to see if value is one of the acceptable modes
+         */
+        if (this.modes.includes(colorValue)) {
+            return this._getColorByMode(colorValue, index);
+        }
+        return this._resolveColor(colorValue);
 
     }
 
@@ -939,7 +941,7 @@ class VAxis extends CragCore {
         if (this.chart.options.vAxes[this.axisName].lineColor === 'auto') {
             color = this._getContrastColor(this.chart.options.chart.color);
         } else {
-            color = this.chart.options.vAxes[this.axisName].lineColor;
+            color = this._resolveColor(this.chart.options.vAxes[this.axisName].lineColor);
         }
 
         for (const line of Object.values(this.lines)) {
@@ -1072,7 +1074,6 @@ class VAxis extends CragCore {
         this.chart._draw();
 
     }
-
 
 }
 
@@ -1464,7 +1465,11 @@ class Title extends CragCore {
 
     _colorize() {
 
-        this.title.style.color = this._getContrastColor(this.chart.options.chart.color);
+        if (this.chart.options.title.color === 'auto') {
+            this.title.style.color = this._getContrastColor(this.chart.options.chart.color);
+        } else {
+            this.title.style.color = this._resolveColor(this.chart.options.title.color);
+        }
 
     }
 
@@ -1480,7 +1485,7 @@ class Title extends CragCore {
          * Only call redraw when the new or old title text was null
          * This prevents triggering redraw on each keystroke
          */
-        if (value === '' ^ this.chart.options.chart.title === null) {
+        if (value === '' ^ this.chart.options.title.text === null) {
 
             this.chart._draw();
 
@@ -1489,11 +1494,16 @@ class Title extends CragCore {
         /**
          * Set new value to null where new title is blank
          */
-        this.chart.options.chart.title = value === '' ? null : value;
+        this.chart.options.title.text = value === '' ? null : value;
 
     }
     get title() {
         return this.title?.textContent ?? '';
+    }
+
+    set color(value) {
+        this.chart.options.title.color = value;
+        this._colorize();
     }
 
 }
@@ -1561,10 +1571,6 @@ function findMinValue(data) {
  * @type optionsLine
  */
 const defaultLineOptions = {
-    thickness: 3,
-    pointSize: 3,
-    color: CragPallet.auto,
-    smooth: true,
-    labelVisible: true,
-    name: null,
+    color: CragPallet.multi,
+    seriesName: null,
 };
