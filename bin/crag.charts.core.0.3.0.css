@@ -10,6 +10,9 @@
     font-family: Roboto, sans-serif;
     font-weight: 300;
     text-align: center;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
 }
 .cragChartSubArea {
     position: absolute;
@@ -38,17 +41,9 @@
     font-family: Roboto, sans-serif;
     white-space: nowrap;
     text-overflow: ellipsis;
-}
-.cragColumnLabel {
-    position: absolute;
-    text-anchor: middle;
-    text-align: center;
-    font-size: 12px;
-    transition: all 0.7s, opacity 0s;
-    padding: 8px 2px;
-    left: 100%;
-    box-sizing: border-box;
-    font-family: Roboto, sans-serif;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
 }
 .cragVAxisPrimary {
     grid-area: cragVAxisPrimary;
@@ -69,6 +64,9 @@
     bottom: 100%;
     pointer-events: none;
     white-space: nowrap;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
 }
 .cragVAxisPrimary .cragVAxisLabel {
     text-align: right;
@@ -97,24 +95,6 @@
     bottom: 0;
     transition: all 1s ease;
     opacity: 0.1;
-}
-.cragColumn {
-    height: 0;
-    transition: all 0.7s, height 0.8s, width 0.6s, background-color 0.8s, left 0.7s, opacity 0.7s, box-shadow 0.3s;
-    position: absolute;
-    box-sizing: border-box;
-    cursor: pointer;
-    bottom: 0;
-    left: 100%;
-    transform-origin: center;
-}
-.cragColumnStriped {
-    background-size: 50px 50px;
-    background-image: -moz-linear-gradient(-45deg, #FFFFFF11 25%, transparent 25%, transparent 50%, #FFFFFF11 50%, #FFFFFF11 75%, transparent 75%, transparent);
-    background-image: linear-gradient(-45deg, #FFFFFF11 25%, transparent 25%, transparent 50%, #FFFFFF11 50%, #FFFFFF11 75%, transparent 75%, transparent);
-}
-.cragColumnStripedAnimate {
-    animation: barber-pole 5s linear infinite;
 }
 .cragToolTip {
     position: fixed;
@@ -172,19 +152,4 @@
     100% {
         background-position: 100px 0;
     }
-}
-.cragPoint {
-    transition: all 0.4s ease;
-    left: 100%;
-    pointer-events: all;
-    cursor: pointer;
-    stroke-width: 24px;
-    stroke: transparent;
-    paint-order: stroke;
-    transform-origin: 50% 50%;
-    transform-box: fill-box;
-}
-.cragLine {
-    transition: all 0.5s ease;
-    -webkit-transition: all 0.5s ease;
 }
