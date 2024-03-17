@@ -36,16 +36,13 @@ class CragCombo extends CragCore {
         };
 
         this.options = {
-            /**
-             * @type optionsChart
-             */
             chart: {
-                title: null,
                 color: CragPallet.white
             },
-            /**
-             * @type optionsColumn
-             */
+            title: {
+                text: null,
+                color: CragPallet.auto
+            },
             columns: {
                 width: 90,
                 color: CragPallet.multi,
@@ -60,10 +57,16 @@ class CragCombo extends CragCore {
                 },
                 specificBarColor: null,
             },
-            /**
-             * @type optionsLine
-             */
-            lines: {},
+            lines: {
+                thickness: 3,
+                pointSize: 3,
+                smooth: true,
+                labelVisible: false,
+                0: {
+                    color: CragPallet.auto,
+                    seriesName: null,
+                }
+            },
             vAxes: {
                 primary: {
                     name: null,
@@ -81,6 +84,7 @@ class CragCombo extends CragCore {
                     majorLines: false,
                     minorLines: false,
                     showOnPrimary: false,
+                    lineColor: 'auto',
                     format: 'number',
                     currencySymbol: 'GBP',
                     decimalPlaces: 0,
@@ -107,29 +111,26 @@ class CragCombo extends CragCore {
 
         this.options.columns.specificBarColor = options?.columns?.specificBarColor ?? null;
 
-        /**
-         * Line Options
-         */
-        for (let i = 0; i < this.data.series.length - 1; i++) {
-
-            this.options.lines[i] = {... defaultLineOptions};
-
             /**
              * Line Options
              */
-            if (this._isValidColor(options?.lines[i]?.color)) this.options.lines[i].color = options.lines[i].color;
-            this.options.lines[i].smooth = this.validateOption(options?.lines[i]?.smooth, 'boolean', this.options.lines[i].smooth);
-            this.options.lines[i].labelVisible = this.validateOption(options?.lines[i]?.labelVisible, 'boolean', this.options.lines[i].labelVisible);
-            if (options?.lines[i]?.thickness > 0 && options?.lines[i]?.thickness < 11) this.options.lines[i].thickness = options.lines[i].thickness;
-            if (options?.lines[i]?.pointSize > 0 && options?.lines[i]?.pointSize < 51) this.options.lines[i].pointSize = options.lines[i].pointSize;
+        if (this._isValidColor(options?.lines[0]?.color)) this.options.lines[0].color = options.lines[0].color;
+        this.options.lines[0].labelVisible = this.validateOption(options?.lines[0]?.labelVisible, 'boolean', this.options.lines[0].labelVisible);
 
-        }
+        this.options.lines.smooth = this.validateOption(options?.lines.smooth, 'boolean', this.options.lines.smooth);
+        if (options?.lines.thickness > 0 && options?.lines.thickness < 11) this.options.lines.thickness = options.lines.thickness;
+        if (options?.lines.pointSize > 0 && options?.lines.pointSize < 51) this.options.lines.pointSize = options.lines.pointSize;
 
         /**
          * Chart Options
          */
-        this.options.chart.title = this.validateOption(options?.chart?.title, 'string', this.options.chart.title);
         if (this._isValidColor(options?.chart?.color)) this.options.chart.color = options.chart.color;
+
+        /**
+         * Title
+         */
+        this.options.title.text = this.validateOption(options?.title?.text, 'string', this.options.title.text);
+        if (this._isValidColor(options?.title?.color)) this.options.chart.title.color = options.title.color;
 
         /**
          * vAxes options
@@ -178,11 +179,8 @@ class CragCombo extends CragCore {
         this.hAxis = new HAxis(this);
         this.toolTip = new ToolTip(this);
         this.columns = new Columns(this, this.data.series[0]);
-        this.line = new Line(this, this.data.series[1]);
+        this.lines = new Lines(this, 1);
         this.title = new Title(this);
-
-        this.columns.name = this.options.vAxes.primary.name;
-        this.line.name = this.options.vAxes.secondary.name;
 
         setTimeout(this._draw.bind(this), 500);
 
@@ -216,7 +214,7 @@ class CragCombo extends CragCore {
         this.primaryVAxis.update(this.data.min.primary, this.data.max.primary);
         this.secondaryVAxis.update(this.data.min.secondary, this.data.max.secondary);
         this.columns.update(this.data.series[0], this.primaryVAxis.scale);
-        this.line.update(this.data.series[1], this.secondaryVAxis.scale);
+        this.lines.update([this.data.series[1]], this.secondaryVAxis.scale);
         this.hAxis.update();
 
         this._colorize();
@@ -237,7 +235,7 @@ class CragCombo extends CragCore {
         this.title._colorize();
         this.hAxis._colorize();
         this.columns._colorLabels();
-        this.line._colorize();
+        this.lines._colorize();
         this.primaryVAxis._colorize();
         this.secondaryVAxis._colorize();
 
@@ -292,18 +290,6 @@ class CragCombo extends CragCore {
         if (this._isValidColor(color)) this.options.chart.color = color;
 
         this._colorize();
-
-    }
-
-    set primaryVAxisSeriesName(value) {
-
-        this.options.vAxes.primary.name = value;
-
-    }
-
-    set secondaryVAxisSeriesName(value) {
-
-        this.options.vAxes.secondary.name = value;
 
     }
 

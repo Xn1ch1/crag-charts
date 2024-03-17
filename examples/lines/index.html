@@ -5,7 +5,7 @@
         <link rel="apple-touch-icon" sizes="180x180" href="../src/icons/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="../src/icons/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="../src/icons/favicon-16x16.png">
-        <link rel="manifest" href="../src/icons/site.webmanifest">
+        <link rel="manifest" href="../src/site.webmanifest">
         <meta name="msapplication-TileColor" content="#da532c">
         <meta name="theme-color" content="#ffffff">
 
@@ -53,9 +53,6 @@
 
             <h1 class="config-menu__sub-title">.chart</h1>
 
-            <label class="config-menu__option-label" for="title">.title</label>
-            <input class="config-menu__text-input" type="text" onkeyup="chartTitle(this)" id="title" />
-
             <label class="config-menu__option-label" for="chartColor">.color</label>
             <select class="config-menu__select" onchange="chartColor(this)" id="chartColor">
                 <option value="#FFFFFF" selected>White</option>
@@ -63,6 +60,32 @@
                 <option value="#232323">Dark Grey</option>
                 <option value="#081B33">Dark Blue</option>
                 <option value="#000000">Black</option>
+            </select>
+
+            <h1 class="config-menu__sub-title">.title</h1>
+
+            <label for="title" class="config-menu__option-label">.text</label>
+            <input class="config-menu__text-input" type="text" onkeyup="titleText(this)" id="title" />
+
+            <label for="titleColor" class="config-menu__option-label">.color</label>
+            <select class="config-menu__select" onchange="titleColor(this)" id="titleColor">
+                <option value="auto" selected>Auto (Default)</option>
+                <option value="red">Red</option>
+                <option value="pink">Pink</option>
+                <option value="purple">Purple</option>
+                <option value="deepPurple">Deep Purple</option>
+                <option value="indigo">Indigo</option>
+                <option value="blue">Blue</option>
+                <option value="lightBlue">Light Blue</option>
+                <option value="cyan">Cyan</option>
+                <option value="teal">Teal</option>
+                <option value="green">Green</option>
+                <option value="lightGreen">Light Green</option>
+                <option value="lime">Lime</option>
+                <option value="yellow">Yellow</option>
+                <option value="amber">Amber</option>
+                <option value="orange">Orange</option>
+                <option value="deepOrange">Deep Orange</option>
             </select>
 
             <h1 class="config-menu__sub-title">.vAxes.primary</h1>
@@ -132,15 +155,81 @@
                 <option value="deepOrange">Deep Orange</option>
             </select>
 
+            <h1 class="config-menu__sub-title">.lines</h1>
+
+            <label class="config-menu__option-label">.thickness</label>
+            <div class="config-menu__range-container">
+                <label>
+                    <input class="config-menu__range-input" type="range" min="1" max="10" value="3" oninput="linesThickness(this)" />
+                </label>
+            </div>
+            <label class="config-menu__option-label">.pointSize</label>
+            <div class="config-menu__range-container">
+                <label>
+                    <input class="config-menu__range-input" type="range" min="1" max="10" value="3" oninput="pointSize(this)" />
+                </label>
+            </div>
+
+            <label class="config-menu__option-label" for="linesSmooth">.smooth</label>
+            <input class="config-menu__checkbox" type="checkbox" id="linesSmooth" onchange="linesSmooth(this)" checked/>
+            <label class="config-menu__checkbox-label" for="linesSmooth"></label>
+
+            <label class="config-menu__option-label" for="labelVisible">.labelVisible</label>
+            <input class="config-menu__checkbox" type="checkbox" id="labelVisible" onchange="labelVisible(this)"/>
+            <label class="config-menu__checkbox-label" for="labelVisible"></label>
+
+
             <h1 class="config-menu__sub-title">.lines[0]</h1>
 
-            <label for="line1Name" class="config-menu__option-label">.name</label>
-            <input class="config-menu__text-input" type="text" onkeyup="line1Name(this)" id="line1Name"/>
+            <label for="line0SeriesName" class="config-menu__option-label">.seriesName</label>
+            <input class="config-menu__text-input" type="text" onkeyup="line0SeriesName(this)" id="line0SeriesName" />
+
+            <label for="line0Color" class="config-menu__option-label">.color</label>
+            <select class="config-menu__select" onchange="line0Color(this)" id="line0Color">
+                <option value="3">Spectrum (default)</option>
+                <option value="red">Red</option>
+                <option value="pink">Pink</option>
+                <option value="purple">Purple</option>
+                <option value="deepPurple">Deep Purple</option>
+                <option value="indigo">Indigo</option>
+                <option value="blue">Blue</option>
+                <option value="lightBlue">Light Blue</option>
+                <option value="cyan">Cyan</option>
+                <option value="teal">Teal</option>
+                <option value="green">Green</option>
+                <option value="lightGreen">Light Green</option>
+                <option value="lime">Lime</option>
+                <option value="yellow">Yellow</option>
+                <option value="amber">Amber</option>
+                <option value="orange">Orange</option>
+                <option value="deepOrange">Deep Orange</option>
+            </select>
 
             <h1 class="config-menu__sub-title">.lines[1]</h1>
 
-            <label for="line2Name" class="config-menu__option-label">.name</label>
-            <input class="config-menu__text-input" type="text" onkeyup="line2Name(this)" id="line2Name" />
+            <label for="line1SeriesName" class="config-menu__option-label">.seriesName</label>
+            <input class="config-menu__text-input" type="text" onkeyup="line1SeriesName(this)" id="line1SeriesName" />
+
+            <label for="line1Color" class="config-menu__option-label">.color</label>
+            <select class="config-menu__select" onchange="line1Color(this)" id="line1Color">
+                <option value="3">Spectrum (default)</option>
+                <option value="red">Red</option>
+                <option value="pink">Pink</option>
+                <option value="purple">Purple</option>
+                <option value="deepPurple">Deep Purple</option>
+                <option value="indigo">Indigo</option>
+                <option value="blue">Blue</option>
+                <option value="lightBlue">Light Blue</option>
+                <option value="cyan">Cyan</option>
+                <option value="teal">Teal</option>
+                <option value="green">Green</option>
+                <option value="lightGreen">Light Green</option>
+                <option value="lime">Lime</option>
+                <option value="yellow">Yellow</option>
+                <option value="amber">Amber</option>
+                <option value="orange">Orange</option>
+                <option value="deepOrange">Deep Orange</option>
+            </select>
 
         </div>
 
@@ -161,8 +250,12 @@
                 chart.update(newDataGen({size: 2}));
             }
 
-            function chartTitle(elem) {
+            function titleText(elem) {
                 chart.title.text = elem.value;
+            }
+
+            function titleColor(elem) {
+                chart.title.color = elem.value;
             }
 
             function chartColor(elem) {
@@ -205,11 +298,31 @@
                 chart.primaryVAxis.minimum = elem.value === '0' ? 0 : elem.value;
             }
 
-            function line1Name(elem) {
-                chart.lineName(0, elem.value);
+            function labelVisible(elem) {
+                chart.lines.labelVisible = elem.checked;
             }
-            function line2Name(value) {
-                chart.lineName(1, value.value);
+            function line0Color(elem) {
+                chart.lines.lines[0].color = elem.value;
+            }
+            function line1Color(elem) {
+                chart.lines.lines[1].color = elem.value;
+            }
+            function line0SeriesName(elem) {
+                chart.lines.lines[0].seriesName = elem.value;
+            }
+            function line1SeriesName(elem) {
+                chart.lines.lines[1].seriesName = elem.value;
+            }
+            function linesSmooth(elem) {
+                chart.lines.smooth = elem.checked;
+            }
+
+            function linesThickness(elem) {
+                chart.lines.thickness = elem.value;
+            }
+
+            function pointSize(elem) {
+                chart.lines.pointSize = elem.value;
             }
 
         </script>

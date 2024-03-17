@@ -5,7 +5,7 @@
         <link rel="apple-touch-icon" sizes="180x180" href="../src/icons/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="../src/icons/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="../src/icons/favicon-16x16.png">
-        <link rel="manifest" href="../src/icons/site.webmanifest">
+        <link rel="manifest" href="../src/site.webmanifest">
         <meta name="msapplication-TileColor" content="#da532c">
         <meta name="theme-color" content="#ffffff">
 
@@ -54,9 +54,6 @@
 
             <h1 class="config-menu__sub-title">.chart</h1>
 
-            <label for="title" class="config-menu__option-label">.title</label>
-            <input class="config-menu__text-input" type="text" onkeyup="chartTitle(this)" id="title" />
-
             <label for="chartColor" class="config-menu__option-label">.color</label>
             <select class="config-menu__select" onchange="chartColor(this)" id="chartColor">
                 <option value="#FFFFFF" selected>White</option>
@@ -64,6 +61,32 @@
                 <option value="#232323">Dark Grey</option>
                 <option value="#081B33">Dark Blue</option>
                 <option value="#000000">Black</option>
+            </select>
+
+            <h1 class="config-menu__sub-title">.title</h1>
+
+            <label for="title" class="config-menu__option-label">.text</label>
+            <input class="config-menu__text-input" type="text" onkeyup="titleText(this)" id="title" />
+
+            <label for="titleColor" class="config-menu__option-label">.color</label>
+            <select class="config-menu__select" onchange="titleColor(this)" id="titleColor">
+                <option value="auto" selected>Auto (Default)</option>
+                <option value="red">Red</option>
+                <option value="pink">Pink</option>
+                <option value="purple">Purple</option>
+                <option value="deepPurple">Deep Purple</option>
+                <option value="indigo">Indigo</option>
+                <option value="blue">Blue</option>
+                <option value="lightBlue">Light Blue</option>
+                <option value="cyan">Cyan</option>
+                <option value="teal">Teal</option>
+                <option value="green">Green</option>
+                <option value="lightGreen">Light Green</option>
+                <option value="lime">Lime</option>
+                <option value="yellow">Yellow</option>
+                <option value="amber">Amber</option>
+                <option value="orange">Orange</option>
+                <option value="deepOrange">Deep Orange</option>
             </select>
 
             <h1 class="config-menu__sub-title">.columns</h1>
@@ -169,6 +192,9 @@
             <label class="config-menu__option-label" for="animated">.animatedStripes</label>
             <input class="config-menu__checkbox" type="checkbox" id="animated" onchange="columnAnimatedStripes(this)" disabled/><label class="config-menu__checkbox-label" for="animated"></label>
 
+            <label for="seriesName" class="config-menu__option-label">.seriesName</label>
+            <input class="config-menu__text-input" type="text" onkeyup="seriesName(this)" id="seriesName"/>
+
             <h1 class="config-menu__sub-title">.columns.labels</h1>
 
             <label for="columnLabelPosition" class="config-menu__option-label">.position</label>
@@ -207,9 +233,6 @@
             </select>
 
             <h1 class="config-menu__sub-title">.vAxes.primary</h1>
-
-            <label for="seriesName" class="config-menu__option-label">.name</label>
-            <input class="config-menu__text-input" type="text" onkeyup="seriesName(this)" id="seriesName"/>
 
             <label for="primaryAxisFormat" class="config-menu__option-label">.format</label>
             <select class="config-menu__select" onchange="primaryAxisFormat(this)" id="primaryAxisFormat">
@@ -295,13 +318,17 @@
                 chart.update(newDataGen());
             }
 
-            function chartTitle(elem) {
+            function titleText(elem) {
                 chart.title.text = elem.value;
+            }
+            function titleColor(elem) {
+                chart.title.color = elem.value;
             }
 
             function chartColor(elem) {
                 chart.color = elem.value;
             }
+
             /**
              * Primary vAxis
              */
@@ -379,7 +406,7 @@
             }
 
             function seriesName(elem) {
-                chart.seriesName = elem.value;
+                chart.columns.seriesName = elem.value;
             }
 
         </script>
