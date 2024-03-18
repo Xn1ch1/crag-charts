@@ -310,12 +310,19 @@
 
             function createChart() {
 
-                chart = new CragColumn(newDataGen()).create('column-chart');
+                chart = new CragColumn(
+                    newDataGen({size: 3, min: 0, max: 5000}),
+                    {
+                        columns: {
+                            seriesName: ["A", "B", "C"]
+                        }
+                    }
+                ).create('column-chart');
 
             }
 
             function newData() {
-                chart.update(newDataGen());
+                chart.update(newDataGen({size: 3, min: 0, max: 1000}));
             }
 
             function titleText(elem) {

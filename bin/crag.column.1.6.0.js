@@ -31,7 +31,7 @@ class CragColumn extends CragCore {
 
         this.data = {
             labels: data[0],
-            series: data[1],
+            series: data.slice(1),
             max: 0,
             min: 0
         };
@@ -93,8 +93,8 @@ class CragColumn extends CragCore {
         this.options.columns.onClick = this.validateOption(options?.columns?.onClick, 'function', this.options.columns.onClick);
 
         this.options.columns.labels.position = this.validateOption(options?.columns?.labels?.position, this.labelPositions, this.options.columns.labels.position);
-        this.options.columns.seriesName = this.validateOption(options?.columns?.seriesName, 'string', this.options.columns.seriesName);
-
+        // this.options.columns.seriesName = this.validateOption(options?.columns?.seriesName, 'string', this.options.columns.seriesName);
+        this.options.columns.seriesName = options?.columns?.seriesName;
         /**
          * Title
          */
@@ -213,9 +213,9 @@ class CragColumn extends CragCore {
     update(data) {
 
         this.data.labels = data[0];
-        this.data.series = data[1];
+        this.data.series = data.slice(1);
 
-        this.columns.data = data[1];
+        this.columns.data = data.slice(1);
 
         this._draw();
 
@@ -241,6 +241,7 @@ class Column extends CragCore {
     #index = 0;
     #value = 0;
     #name = '';
+    #group = 0;
 
     #height = 0;
     #bottom = 0;
@@ -420,16 +421,17 @@ class Column extends CragCore {
         return this.#name;
     }
 
-    /**
-     * @param {number} value
-     */
     set index(value) {
-
         this.#index = value;
-
     }
     get index() {
         return this.#index;
+    }
+    set group(value) {
+        this.#group = value;
+    }
+    get group() {
+        return this.#group;
     }
 
     set color(value) {
@@ -533,7 +535,7 @@ class Column extends CragCore {
     }
 
     get seriesName() {
-        return this.#parent.seriesName;
+        return this.#parent.getSeriesNameByGroup(this.#group);
     }
 
 }
@@ -545,15 +547,18 @@ class Columns extends CragCore {
     /** @type {HTMLDivElement} */
     labelArea = null;
 
-    columns = {};
+    columns = [];
 
     chart = null;
 
     data = [];
 
+    groupCount = 1;
+
     constructor(chart, data) {
         super();
 
+        this.groupCount = data.length;
         this.chart = chart;
         this.data = data;
         this._createAreas();
@@ -593,37 +598,47 @@ class Columns extends CragCore {
         /**
          * Update the DataPoints with new data, DataPoints will be created where they don't yet exist
          */
+        for (let g = 0; g < this.groupCount; g++) {
 
-        for (let i = 0; i < this.data.length; i++) {
+            if (!this.columns[g]) {
+                this.columns[g] = {};
+            }
 
-            if (this.columns[i]) {
+            for (let i = 0; i < this.data[g].length; i++) {
 
-                /**
-                 * Update existing DataPoint at this index with new data
-                 */
-                this.columns[i].index = i;
-                this.columns[i].name = this.chart.data.labels[i];
-                this.columns[i].value = this.data[i];
-                this.columns[i].columnOptions = this.chart.options.columns;
+                if (this.columns[g][i]) {
 
-            } else {
+                    /**
+                     * Update existing DataPoint at this index with new data
+                     */
+                    this.columns[g][i].index = i;
+                    this.columns[g][i].name = this.chart.data.labels[i];
+                    this.columns[g][i].value = this.data[g][i];
+                    this.columns[g][i].group = g;
+                    this.columns[g][i].columnOptions = this.chart.options.columns;
 
-                /**
-                 * Create new DataPoint
-                 */
-                this.columns[i] = new Column(this, i, this.data[i], this.chart.data.labels[i]);
+                } else {
 
-                this.labelArea.append(this.columns[i].label);
-                this.columnArea.append(this.columns[i].element);
+                    /**
+                     * Create new DataPoint
+                     */
+                    this.columns[g][i] = new Column(this, i, this.data[g][i], this.chart.data.labels[i]);
 
-                this.chart.toolTip.attach(this.columns[i]);
+                    this.labelArea.append(this.columns[g][i].label);
+                    this.columnArea.append(this.columns[g][i].element);
 
-                /**
-                 * Add onclick if set on creation
-                 */
-                if (this.chart.options.columns.onClick !== null) {
+                    this.chart.toolTip.attach(this.columns[g][i]);
 
-                    this.columns[i].element.onclick = () => this.chart.options.columns.onClick(this.columns[i]);
+                    this.columns[g][i].group = g;
+
+                    /**
+                     * Add onclick if set on creation
+                     */
+                    if (this.chart.options.columns.onClick !== null) {
+
+                        this.columns[g][i].element.onclick = () => this.chart.options.columns.onClick(this.columns[g][i]);
+
+                    }
 
                 }
 
@@ -635,14 +650,18 @@ class Columns extends CragCore {
          * Remove any DataPoints that are beyond the current data set length.
          * This will happen when a new data set is loaded that is smaller than the old data set
          */
-        for (let i = Object.values(this.columns).length + 1; i >= this.data.length; i--) {
+        for (let g = 0; g < this.groupCount; g++) {
 
-            if (!this.columns[i]) continue;
+            for (let i = Object.values(this.columns[g]).length + 1; i >= this.data[g].length; i--) {
 
-            this.columns[i]._destroy();
-            this.columns[i] = null;
+                if (!this.columns[g][i]) continue;
 
-            delete this.columns[i];
+                this.columns[g][i]._destroy();
+                this.columns[g][i] = null;
+
+                delete this.columns[g][i];
+
+            }
 
         }
 
@@ -650,9 +669,13 @@ class Columns extends CragCore {
 
     _positionLabels() {
 
-        for (const column of Object.values(this.columns)) {
+        for (let g = 0; g < this.groupCount; g++) {
 
-            column.setLabelPosition(this.chart.options.columns.labels.position, this.columnArea.offsetHeight);
+            for (const column of Object.values(this.columns[g])) {
+
+                column.setLabelPosition(this.chart.options.columns.labels.position, this.columnArea.offsetHeight);
+
+            }
 
         }
 
@@ -660,19 +683,25 @@ class Columns extends CragCore {
 
     _populateLabels() {
 
-        for (const column of Object.values(this.columns)) {
+        for (let g = 0; g < this.groupCount; g++) {
+            for (const column of Object.values(this.columns[g])) {
 
-            column.labelText = this.formatLabel(column.value, this.chart.options.vAxes.primary.format, this.chart.options.vAxes.primary.currencySymbol, this.chart.options.vAxes.primary.decimalPlaces);
+                column.labelText = this.formatLabel(column.value, this.chart.options.vAxes.primary.format, this.chart.options.vAxes.primary.currencySymbol, this.chart.options.vAxes.primary.decimalPlaces);
 
+            }
         }
 
     }
 
     _colorLabels() {
 
-        for (const column of Object.values(this.columns)) {
+        for (let g = 0; g < this.groupCount; g++) {
 
-            column.setLabelColor(this.chart.options.columns.labels.color, this.chart.options.chart.color);
+            for (const column of Object.values(this.columns[g])) {
+
+                column.setLabelColor(this.chart.options.columns.labels.color, this.chart.options.chart.color);
+
+            }
 
         }
 
@@ -685,8 +714,9 @@ class Columns extends CragCore {
          * This is due to actual space being mid-transition
          * Subtract these from total container size and / by data length
          */
+        const areaWidth = this.chart.chart.container.offsetWidth - this.chart.primaryVAxis.calculatedWidth - (this.chart?.secondaryVAxis?.calculatedWidth ?? 0);
 
-        return (this.chart.chart.container.offsetWidth - this.chart.primaryVAxis.calculatedWidth - (this.chart?.secondaryVAxis?.calculatedWidth ?? 0)) / this.data.length ;
+        return areaWidth / this.data[0].length;
 
     }
 
@@ -697,42 +727,46 @@ class Columns extends CragCore {
         /** Scale is positive to negative, zero line will be a part way through */
         if (this.chart.primaryVAxis.scale.min < 0 && this.chart.primaryVAxis.scale.max > 0) zeroLine = this.columnArea.offsetHeight / (this.chart.primaryVAxis.scale.max - this.chart.primaryVAxis.scale.min) * this.chart.primaryVAxis.scale.max;
 
-        for (const column of Object.values(this.columns)) {
+        for (let g = 0; g < this.groupCount; g++) {
 
-            if (column.value < 0) {
+            for (const column of Object.values(this.columns[g])) {
 
-                /** Negative space / smallest number on scale / * columns value */
-                column.height = (this.columnArea.offsetHeight - zeroLine) / (this.chart.primaryVAxis.scale.min - Math.min(0, this.chart.primaryVAxis.scale.max)) * (column.value - Math.min(0, this.chart.primaryVAxis.scale.max));
+                if (column.value < 0) {
 
-                /** Negative space - column height */
-                column.bottom = this.columnArea.offsetHeight - zeroLine - column.height;
+                    /** Negative space / smallest number on scale / * columns value */
+                    column.height = (this.columnArea.offsetHeight - zeroLine) / (this.chart.primaryVAxis.scale.min - Math.min(0, this.chart.primaryVAxis.scale.max)) * (column.value - Math.min(0, this.chart.primaryVAxis.scale.max));
 
-            } else {
-
-                /** Chart height - Negative space */
-                if (zeroLine === 0) {
-
-                    column.bottom = 0;
-                    /** Positive space / smallest number on scale / * columns value */
-                    column.height = (this.columnArea.offsetHeight - zeroLine) / (this.chart.primaryVAxis.scale.max - this.chart.primaryVAxis.scale.min) * (column.value - this.chart.primaryVAxis.scale.min);
+                    /** Negative space - column height */
+                    column.bottom = this.columnArea.offsetHeight - zeroLine - column.height;
 
                 } else {
 
-                    column.bottom = this.columnArea.offsetHeight - zeroLine;
-                    /** Positive space / smallest number on scale / * columns value */
-                    column.height = zeroLine / this.chart.primaryVAxis.scale.max * column.value;
+                    /** Chart height - Negative space */
+                    if (zeroLine === 0) {
+
+                        column.bottom = 0;
+                        /** Positive space / smallest number on scale / * columns value */
+                        column.height = (this.columnArea.offsetHeight - zeroLine) / (this.chart.primaryVAxis.scale.max - this.chart.primaryVAxis.scale.min) * (column.value - this.chart.primaryVAxis.scale.min);
+
+                    } else {
+
+                        column.bottom = this.columnArea.offsetHeight - zeroLine;
+                        /** Positive space / smallest number on scale / * columns value */
+                        column.height = zeroLine / this.chart.primaryVAxis.scale.max * column.value;
+
+                    }
 
                 }
 
+                const columnWidth = (this._seriesEachWidth() * (this.chart.options.columns.width / 100));
+
+                /** Series width space * column width option % */
+                column.width = columnWidth / this.groupCount;
+
+                /** Series width space * column index (start at 0) + half of remaining space of series width */
+                column.left = (this._seriesEachWidth() * column.index + ((this._seriesEachWidth() - columnWidth) / 2)) + ((columnWidth / this.groupCount) * g);
+
             }
-
-            const columnWidth = this._seriesEachWidth() * (this.chart.options.columns.width / 100);
-
-            /** Series width space * column width option % */
-            column.width = columnWidth;
-
-            /** Series width space * column index (start at 0) + half of remaining space of series width */
-            column.left = this._seriesEachWidth() * column.index + ((this._seriesEachWidth() - columnWidth) / 2);
 
         }
 
@@ -740,37 +774,43 @@ class Columns extends CragCore {
 
     _applyColumnColors() {
 
-        for (const column of Object.values(this.columns)) {
+        for (let g = 0; g < this.groupCount; g++) {
 
-            if ([CragPallet.warmGradient, CragPallet.coolGradient, CragPallet.multi].includes(this.chart.options.columns.color)) {
+            for (const column of Object.values(this.columns[g])) {
 
-                column.color = this._getColorByMode(this.chart.options.columns.color, column.index);
+                if ([CragPallet.warmGradient, CragPallet.coolGradient, CragPallet.multi].includes(this.chart.options.columns.color)) {
 
-            } else if ([CragPallet.dynamicWarmGradient, CragPallet.dynamicCoolGradient].includes(this.chart.options.columns.color)) {
+                    column.color = this._getColorByMode(this.chart.options.columns.color, column.index);
 
-                if (column.value < 0) {
+                } else if ([CragPallet.dynamicWarmGradient, CragPallet.dynamicCoolGradient].includes(this.chart.options.columns.color)) {
 
-                    let offset = this.chart.data.max;
-                    if (this.chart.data.max > 0) offset = 0;
+                    if (column.value < 0) {
 
-                    column.color = this._getColorByMode(this.chart.options.columns.color, Math.abs(this.chart.data.min) - Math.abs(offset), Math.abs(column.value) - Math.abs(offset));
+                        let offset = this.chart.data.max;
+                        if (this.chart.data.max > 0) offset = 0;
+
+                        column.color = this._getColorByMode(this.chart.options.columns.color, Math.abs(this.chart.data.min) - Math.abs(offset), Math.abs(column.value) - Math.abs(offset));
+
+                    } else {
+
+                        let offset = 0;
+                        if (this.chart.data.min > 0) offset = this.chart.data.min;
+
+                        column.color = this._getColorByMode(this.chart.options.columns.color, this.chart.data.max - offset, column.value - offset);
+
+                    }
+
+                } else if (this.chart.options.columns.color === CragPallet.redGreen) {
+
+                    column.color = this._getColorByMode(CragPallet.redGreen, column.value);
 
                 } else {
 
-                    let offset = 0;
-                    if (this.chart.data.min > 0) offset = this.chart.data.min;
-
-                    column.color = this._getColorByMode(this.chart.options.columns.color, this.chart.data.max - offset, column.value - offset);
+                    column.color = this._getColorByMode(CragPallet.match, this.chart.options.columns.color);
 
                 }
 
-            } else if (this.chart.options.columns.color === CragPallet.redGreen) {
-
-                column.color = this._getColorByMode(CragPallet.redGreen, column.value);
-
-            } else {
-
-                column.color = this._getColorByMode(CragPallet.match, this.chart.options.columns.color);
+                column.element.style.filter = `brightness(${1 - (g * 0.05)})`;
 
             }
 
@@ -780,12 +820,16 @@ class Columns extends CragCore {
 
     _applyColumnStyles() {
 
-        for (const column of Object.values(this.columns)) {
+        for (let g = 0; g < this.groupCount; g++) {
 
-            column.rounding = this.chart.options.columns.rounding;
-            column.shadow = this.chart.options.columns.shadow;
-            column.stripes = this.chart.options.columns.stripes;
-            column.animatedStripes = this.chart.options.columns.animatedStripes;
+            for (const column of Object.values(this.columns[g])) {
+
+                column.rounding = this.chart.options.columns.rounding;
+                column.shadow = this.chart.options.columns.shadow;
+                column.stripes = this.chart.options.columns.stripes;
+                column.animatedStripes = this.chart.options.columns.animatedStripes;
+
+            }
 
         }
 
@@ -866,12 +910,11 @@ class Columns extends CragCore {
 
     }
 
-    get seriesName() {
+    getSeriesNameByGroup(groupIndex) {console.log(this.chart.options.columns.seriesName);
+        if (Array.isArray(this.chart.options.columns.seriesName)) {
+            return this.chart.options.columns.seriesName[groupIndex];
+        }
         return this.chart.options.columns.seriesName;
-    }
-
-    set seriesName(value) {
-        this.chart.options.columns.seriesName = value;
     }
 
 }
