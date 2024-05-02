@@ -436,6 +436,8 @@ class Line extends CragCore {
                 this.dots[i].index = i;
                 this.dots[i].value = this.data[i];
 
+                this.#parent.chart.toolTip.attach(this.dots[i]);
+
             } else {
 
                 this.dots[i] = new Dot(this, i, this.data[i]);
@@ -780,8 +782,6 @@ class Lines extends CragCore {
 
                 this.lineArea.append(dot.element);
                 this.labelArea.append(dot.label);
-
-                this.chart.toolTip.attach(dot);
 
             }
 

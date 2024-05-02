@@ -605,6 +605,7 @@ class Columns extends CragCore {
                 this.columns[i].name = this.chart.data.labels[i];
                 this.columns[i].value = this.data[i];
                 this.columns[i].columnOptions = this.chart.options.columns;
+                this.chart.toolTip.attach(this.columns[i]);
 
             } else {
 
