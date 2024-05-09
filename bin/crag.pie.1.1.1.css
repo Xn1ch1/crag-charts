@@ -59,6 +59,7 @@
     top: 100%;
     right: 8px;
     display: flex;
+    align-items: center;
     opacity: 0;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -67,8 +68,8 @@
 .cragPieKeyMarker {
     -webkit-transition: all 0.7s, opacity 0.5s, transform 0.3s;
     transition: all 0.7s, opacity 0.5s, transform 0.3s;
-    height: 20px;
-    width: 20px;
+    height: 16px;
+    width: 16px;
     border-radius: 10px;
 }
 .cragPieKeyLabel {
@@ -77,7 +78,7 @@
     padding-right: 8px;
     font-family: Roboto, sans-serif;
     white-space: nowrap;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 300;
 }
 .cragPieLabel {
