@@ -395,7 +395,7 @@ class CragCore {
 
         let yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
 
-        return (yiq >= 140) ? this.pallet.charcoal : this.pallet.white;
+        return (yiq >= 170) ? this.pallet.charcoal : this.pallet.white;
 
     }
 
