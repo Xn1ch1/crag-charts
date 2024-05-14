@@ -111,9 +111,9 @@ class CragCombo extends CragCore {
 
         this.options.columns.specificBarColor = options?.columns?.specificBarColor ?? null;
 
-            /**
-             * Line Options
-             */
+        /**
+         * Line Options
+         */
         if (this._isValidColor(options?.lines[0]?.color)) this.options.lines[0].color = options.lines[0].color;
         this.options.lines[0].labelVisible = this.validateOption(options?.lines[0]?.labelVisible, 'boolean', this.options.lines[0].labelVisible);
 
@@ -138,6 +138,7 @@ class CragCombo extends CragCore {
          * 1 = right axis, secondary points
          */
         this.options.vAxes.primary.name = this.validateOption(options?.vAxes?.primary?.name, 'string', this.options.vAxes.primary.name);
+        this.options.vAxes.primary.currencySymbol = this.validateOption(options?.vAxes?.primary?.currencySymbol, 'string', this.options.vAxes.primary.currencySymbol);
         this.options.vAxes.primary.majorLines = this.validateOption(options?.vAxes?.primary?.majorLines, 'boolean', this.options.vAxes.primary.majorLines);
         this.options.vAxes.primary.minorLines = this.validateOption(options?.vAxes?.primary?.minorLines, 'boolean', this.options.vAxes.primary.minorLines);
         this.options.vAxes.primary.format = this.validateOption(options?.vAxes?.primary?.format, this.labelFormats, this.options.vAxes.primary.format);
@@ -145,6 +146,7 @@ class CragCombo extends CragCore {
         this.options.vAxes.primary.decimalPlaces = this.validateOption(options?.vAxes?.primary?.decimalPlaces, 'number', this.options.vAxes.primary.decimalPlaces);
 
         this.options.vAxes.secondary.name = this.validateOption(options?.vAxes?.secondary?.name, 'string', this.options.vAxes.secondary.name);
+        this.options.vAxes.secondary.currencySymbol = this.validateOption(options?.vAxes?.secondary?.currencySymbol, 'string', this.options.vAxes.secondary.currencySymbol);
         this.options.vAxes.secondary.majorLines = this.validateOption(options?.vAxes?.secondary?.majorLines, 'boolean', this.options.vAxes.secondary.majorLines);
         this.options.vAxes.secondary.minorLines = this.validateOption(options?.vAxes?.secondary?.minorLines, 'boolean', this.options.vAxes.secondary.minorLines);
         this.options.vAxes.secondary.showOnPrimary = this.validateOption(options?.vAxes?.secondary?.showOnPrimary, 'boolean', this.options.vAxes.secondary.showOnPrimary);

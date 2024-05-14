@@ -412,6 +412,9 @@ class CragCore {
      */
     formatLabel(value, type = 'number', currencySymbol = 'GBP', decimalPlaces = 0) {
 
+        let locale = 'en-GB';
+        if (currencySymbol === 'PLN') locale = 'pl-PL';
+
         switch(type) {
 
             case 'decimal':
@@ -421,7 +424,7 @@ class CragCore {
                 return sToTime(value);
 
             case 'currency':
-                return new Intl.NumberFormat('en-GB',
+                return new Intl.NumberFormat(locale,
                     { style: 'currency', currency: currencySymbol, minimumFractionDigits: decimalPlaces, maximumFractionDigits: decimalPlaces}
                 ).format(value);
 

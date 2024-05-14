@@ -109,6 +109,7 @@ class CragColumn extends CragCore {
         /**
          * Primary vAxes options
          */
+        this.options.vAxes.primary.currencySymbol = this.validateOption(options?.vAxes?.primary?.currencySymbol, 'string', this.options.vAxes.primary.currencySymbol);
         this.options.vAxes.primary.majorLines = this.validateOption(options?.vAxes?.primary?.majorLines, 'boolean', this.options.vAxes.primary.majorLines);
         this.options.vAxes.primary.minorLines = this.validateOption(options?.vAxes?.primary?.minorLines, 'boolean', this.options.vAxes.primary.minorLines);
         this.options.vAxes.primary.format = this.validateOption(options?.vAxes?.primary?.format, this.labelFormats, this.options.vAxes.primary.format);

@@ -72,6 +72,7 @@ class CragPie extends CragCore {
         this.options.slices.detailClickOnly = this.validateOption(options?.slices?.detailClickOnly, 'boolean', this.options.slices.detailClickOnly);
         this.options.slices.showValues = this.validateOption(options?.slices?.showValues, 'boolean', this.options.slices.showValues);
         this.options.slices.labelPosition = this.validateOption(options?.slices?.labelPosition, this.labelPositions, this.options.slices.labelPosition);
+        this.options.slices.currencySymbol = this.validateOption(options?.slices?.currencySymbol, 'string', this.options.slices.currencySymbol);
 
         if (this._isValidColor(options?.slices?.colors)) this.options.slices.colors = options.slices.colors;
 

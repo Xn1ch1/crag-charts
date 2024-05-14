@@ -105,6 +105,7 @@ class CragLine extends CragCore {
          * 1 = right axis, secondary points
          */
         this.options.vAxes.primary.decimalPlaces = this.validateOption(options?.vAxes?.primary?.decimalPlaces, 'number', this.options.vAxes.primary.decimalPlaces);
+        this.options.vAxes.primary.currencySymbol = this.validateOption(options?.vAxes?.primary?.currencySymbol, 'string', this.options.vAxes.primary.currencySymbol);
         this.options.vAxes.primary.majorLines = this.validateOption(options?.vAxes?.primary?.majorLines, 'boolean', this.options.vAxes.primary.majorLines);
         this.options.vAxes.primary.minorLines = this.validateOption(options?.vAxes?.primary?.minorLines, 'boolean', this.options.vAxes.primary.minorLines);
         this.options.vAxes.primary.format = this.validateOption(options?.vAxes?.primary?.format, this.labelFormats, this.options.vAxes.primary.format);
@@ -703,8 +704,8 @@ class Line extends CragCore {
 
 
         if (value === CragPallet.auto) {
-           this.#parent._colorize();
-           return;
+            this.#parent._colorize();
+            return;
         }
 
         const color = this._getColor(value, this.index);
@@ -863,7 +864,7 @@ class Lines extends CragCore {
 
     }
     get pointSize() {
-       return this.chart.options.lines.pointSize;
+        return this.chart.options.lines.pointSize;
     }
 
     set smooth(value) {
