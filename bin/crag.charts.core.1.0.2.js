@@ -408,17 +408,15 @@ class CragCore {
      * @param {string} type Type of formatting to apply, either 'decimal', 'time', 'currency' or default of 'number'
      * @param {string|null} currencySymbol Additional options to be passed to formatter. To be used for currency formatting; pass along the code, eg 'GBP'
      * @param {number} decimalPlaces Number of decimal places for decimal formats.
+     * @param locale
      * @return {string} Returns formatted string
      */
-    formatLabel(value, type = 'number', currencySymbol = 'GBP', decimalPlaces = 0) {
-
-        let locale = 'en-GB';
-        if (currencySymbol === 'PLN') locale = 'pl-PL';
+    formatLabel(value, type = 'number', currencySymbol = 'GBP', decimalPlaces = 0, locale = 'en-GB') {
 
         switch(type) {
 
             case 'decimal':
-                return value.toLocaleString(undefined, {minimumFractionDigits: decimalPlaces, maximumFractionDigits: decimalPlaces});
+                return value.toLocaleString(locale, {minimumFractionDigits: decimalPlaces, maximumFractionDigits: decimalPlaces});
 
             case 'time':
                 return sToTime(value);
@@ -429,7 +427,7 @@ class CragCore {
                 ).format(value);
 
             default:
-                return value.toLocaleString(undefined, {minimumFractionDigits: decimalPlaces, maximumFractionDigits: decimalPlaces});
+                return value.toLocaleString(locale, {minimumFractionDigits: decimalPlaces, maximumFractionDigits: decimalPlaces});
 
         }
 
@@ -477,9 +475,10 @@ class CragCore {
  * @param {string} type Type of formatting to apply, either 'decimal', 'time', 'currency' or default of 'number'
  * @param {string|null} currencySymbol Additional options to be passed to formatter. To be used for currency formatting; pass along the code, eg 'GBP'
  * @param {number} decimalPlaces Number of decimal places for decimal formats
+ * @param locale
  * @return {string} Returns formatted string
  */
-function formatLabel(value, type = 'number', currencySymbol = 'GBP', decimalPlaces = 0) {
+function formatLabel(value, type = 'number', currencySymbol = 'GBP', decimalPlaces = 0, locale = 'en-GB') {
 
     switch(type) {
 
@@ -490,7 +489,7 @@ function formatLabel(value, type = 'number', currencySymbol = 'GBP', decimalPlac
             return sToTime(value);
 
         case 'currency':
-            return new Intl.NumberFormat('en-GB',
+            return new Intl.NumberFormat(locale,
                 { style: 'currency', currency: currencySymbol }
             ).format(value);
 
@@ -880,7 +879,13 @@ class VAxis extends CragCore {
             this.linesDiv.append(line.majorLine, line.minorLine);
             this.axisDiv.appendChild(line.label);
 
-            line.labelText = this.formatLabel(line.value, this.chart.options.vAxes[this.axisName].format, this.chart.options.vAxes[this.axisName].currencySymbol, this.chart.options.vAxes[this.axisName].decimalPlaces);
+            line.labelText = this.formatLabel(
+                line.value,
+                this.chart.options.vAxes[this.axisName].format,
+                this.chart.options.vAxes[this.axisName].currencySymbol,
+                this.chart.options.vAxes[this.axisName].decimalPlaces,
+                this.chart.options.chart.locale
+            );
 
             if (line.label.offsetWidth > this.calculatedWidth) this.calculatedWidth = line.label.offsetWidth;
 
@@ -1431,7 +1436,8 @@ class ToolTip extends CragCore {
                 value,
                 this.chart.options.vAxes.primary.format,
                 this.chart.options.vAxes.primary.currencySymbol,
-                this.chart.options.vAxes.primary.decimalPlaces
+                this.chart.options.vAxes.primary.decimalPlaces,
+                this.chart.options.chart.locale,
             );
 
         } else {

@@ -37,7 +37,8 @@ class CragCombo extends CragCore {
 
         this.options = {
             chart: {
-                color: CragPallet.white
+                color: CragPallet.white,
+                locale: 'en-GB',
             },
             title: {
                 text: null,
@@ -125,6 +126,7 @@ class CragCombo extends CragCore {
          * Chart Options
          */
         if (this._isValidColor(options?.chart?.color)) this.options.chart.color = options.chart.color;
+        this.options.chart.locale = this.validateOption(options?.chart?.locale, 'string', this.options.chart.locale);
 
         /**
          * Title

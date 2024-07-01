@@ -38,7 +38,8 @@ class CragColumn extends CragCore {
 
         this.options = {
             chart: {
-                color: CragPallet.white
+                color: CragPallet.white,
+                locale: 'en-GB',
             },
             title: {
                 text: null,
@@ -105,6 +106,7 @@ class CragColumn extends CragCore {
          * Chart Options
          */
         if (this._isValidColor(options?.chart?.color)) this.options.chart.color = options.chart.color;
+        this.options.chart.locale = this.validateOption(options?.chart?.locale, 'string', this.options.chart.locale);
 
         /**
          * Primary vAxes options
@@ -664,7 +666,13 @@ class Columns extends CragCore {
 
         for (const column of Object.values(this.columns)) {
 
-            column.labelText = this.formatLabel(column.value, this.chart.options.vAxes.primary.format, this.chart.options.vAxes.primary.currencySymbol, this.chart.options.vAxes.primary.decimalPlaces);
+            column.labelText = this.formatLabel(
+                column.value,
+                this.chart.options.vAxes.primary.format,
+                this.chart.options.vAxes.primary.currencySymbol,
+                this.chart.options.vAxes.primary.decimalPlaces,
+                this.chart.options.chart.locale
+            );
 
         }
 

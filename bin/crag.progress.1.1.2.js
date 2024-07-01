@@ -12,7 +12,8 @@ class CragProgress extends CragCore {
         this.options = {
             chart: {
                 color: CragPallet.white,
-                title: null
+                title: null,
+                locale: 'en-GB',
             },
             bar: {
                 inset: false,
@@ -73,6 +74,7 @@ class CragProgress extends CragCore {
         /* CHART */
         this.options.chart.title = this.validateOption(options?.chart?.title, 'string', this.options.chart.title);
         if (this._isValidColor(options?.chart?.color)) this.options.chart.color = options.chart.color;
+        this.options.chart.locale = this.validateOption(options?.chart?.locale, 'string', this.options.chart.locale);
 
         this.options.bar.inset = this.validateOption(options?.bar?.inset, 'boolean', this.options.bar.inset);
         this.options.bar.striped = this.validateOption(options?.bar?.striped, 'boolean', this.options.bar.striped);
