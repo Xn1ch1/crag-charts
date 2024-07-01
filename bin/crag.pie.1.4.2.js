@@ -11,6 +11,7 @@ class CragPie extends CragCore {
         this.options = {
             chart: {
                 color: CragPallet.white,
+                locale: 'en-GB',
             },
             title: {
                 color: CragPallet.auto,
@@ -57,6 +58,7 @@ class CragPie extends CragCore {
 
         /* CHART */
         this.options.chart.title = this.validateOption(options?.chart?.title, 'string', this.options.chart.title);
+        this.options.chart.locale = this.validateOption(options?.chart?.locale, 'string', this.options.chart.locale);
         if (this._isValidColor(options?.chart?.color)) this.options.chart.color = options.chart.color;
 
         /* PIE */
@@ -544,7 +546,8 @@ class Slice extends CragCore {
             this.value,
             this.chart.options.slices.format,
             this.chart.options.slices.currencySymbol,
-            this.chart.options.slices.decimalPlaces
+            this.chart.options.slices.decimalPlaces,
+            this.chart.options.chart.locale
         );
 
         this.chart.sliceDetail.container.style.opacity = '1';
@@ -709,7 +712,8 @@ class Slices extends CragCore {
                     this.slices[i].value,
                     this.chart.options.slices.format,
                     this.chart.options.slices.currencySymbol,
-                    this.chart.options.slices.decimalPlaces
+                    this.chart.options.slices.decimalPlaces,
+                    this.chart.options.chart.locale
                 );
 
             } else {
