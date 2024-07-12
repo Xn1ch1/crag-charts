@@ -25,6 +25,7 @@ class CragCombo extends CragCore {
         this.data = {
             labels: data[0],
             series: data.slice(1, data.length),
+            seriesOriginal: data.slice(1, data.length),
             max: {
                 primary: 0,
                 secondary: 0,
@@ -78,7 +79,8 @@ class CragCombo extends CragCore {
                     format: 'number',
                     currencySymbol: 'GBP',
                     decimalPlaces: 0,
-                    min: 'auto'
+                    min: 'auto',
+                    cumulative: false
                 },
                 secondary: {
                     name: null,
@@ -89,7 +91,8 @@ class CragCombo extends CragCore {
                     format: 'number',
                     currencySymbol: 'GBP',
                     decimalPlaces: 0,
-                    min: 'auto'
+                    min: 'auto',
+                    cumulative: false
                 },
             },
         };
@@ -146,6 +149,7 @@ class CragCombo extends CragCore {
         this.options.vAxes.primary.format = this.validateOption(options?.vAxes?.primary?.format, this.labelFormats, this.options.vAxes.primary.format);
         if (options?.vAxes?.primary?.min === 'auto' || !isNaN(options?.vAxes?.primary?.min)) this.options.vAxes.primary.min = options?.vAxes?.primary?.min;
         this.options.vAxes.primary.decimalPlaces = this.validateOption(options?.vAxes?.primary?.decimalPlaces, 'number', this.options.vAxes.primary.decimalPlaces);
+        this.options.vAxes.primary.cumulative = this.validateOption(options?.vAxes?.primary?.stripes, 'boolean', this.options.vAxes.primary.cumulative);
 
         this.options.vAxes.secondary.name = this.validateOption(options?.vAxes?.secondary?.name, 'string', this.options.vAxes.secondary.name);
         this.options.vAxes.secondary.currencySymbol = this.validateOption(options?.vAxes?.secondary?.currencySymbol, 'string', this.options.vAxes.secondary.currencySymbol);
@@ -155,6 +159,7 @@ class CragCombo extends CragCore {
         this.options.vAxes.secondary.format = this.validateOption(options?.vAxes?.secondary?.format, this.labelFormats, this.options.vAxes.secondary.format);
         if (options?.vAxes?.secondary?.min === 'auto' || !isNaN(options?.vAxes?.secondary?.min)) this.options.vAxes.secondary.min = options?.vAxes?.secondary?.min;
         this.options.vAxes.secondary.decimalPlaces = this.validateOption(options?.vAxes?.secondary?.decimalPlaces, 'number', this.options.vAxes.secondary.decimalPlaces);
+        this.options.vAxes.secondary.cumulative = this.validateOption(options?.vAxes?.secondary?.stripes, 'boolean', this.options.vAxes.secondary.cumulative);
 
         this.chart = {
             parent: null,
@@ -213,12 +218,13 @@ class CragCombo extends CragCore {
         /**
          * Updates both vAxis to match the current data set.
          */
+        this._cumulate();
         this._getDataMinMax();
 
         this.primaryVAxis.update(this.data.min.primary, this.data.max.primary);
         this.secondaryVAxis.update(this.data.min.secondary, this.data.max.secondary);
         this.columns.update(this.data.series[0], this.primaryVAxis.scale);
-        this.lines.update([this.data.series[1]], this.secondaryVAxis.scale);
+        this.lines.update([this.data.series[1]], this.secondaryVAxis.scale, this.options.vAxes.secondary.cumulative);
         this.hAxis.update();
 
         this._colorize();
@@ -242,6 +248,45 @@ class CragCombo extends CragCore {
         this.lines._colorize();
         this.primaryVAxis._colorize();
         this.secondaryVAxis._colorize();
+
+    }
+
+    _cumulate() {
+
+        if (!this.options.vAxes.primary.cumulative) {
+
+            this.data.series[0] = [...this.data.seriesOriginal[0]];
+
+        } else {
+
+            let cumulativeTotal = 0;
+
+            for (let i = 0; i < this.data.series[0].length; i++) {
+
+                cumulativeTotal += this.data.seriesOriginal[0][i];
+                this.data.series[0][i] = cumulativeTotal;
+
+            }
+
+        }
+
+        if (!this.options.vAxes.secondary.cumulative) {
+
+
+            this.data.series[1] = [...this.data.seriesOriginal[1]];
+
+        } else {
+
+            let cumulativeTotal = 0;
+
+            for (let i = 0; i < this.data.series[1].length; i++) {
+
+                cumulativeTotal += this.data.seriesOriginal[1][i];
+                this.data.series[1][i] = cumulativeTotal;
+
+            }
+
+        }
 
     }
 
@@ -279,6 +324,7 @@ class CragCombo extends CragCore {
 
         this.data.labels = data[0];
         this.data.series = data.slice(1, data.length);
+        this.data.seriesOriginal = data.slice(1, data.length);
 
         this._draw();
 
