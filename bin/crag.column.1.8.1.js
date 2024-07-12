@@ -118,7 +118,7 @@ class CragColumn extends CragCore {
         this.options.vAxes.primary.minorLines = this.validateOption(options?.vAxes?.primary?.minorLines, 'boolean', this.options.vAxes.primary.minorLines);
         this.options.vAxes.primary.format = this.validateOption(options?.vAxes?.primary?.format, this.labelFormats, this.options.vAxes.primary.format);
         this.options.vAxes.primary.decimalPlaces = this.validateOption(options?.vAxes?.primary?.decimalPlaces, 'number', this.options.vAxes.primary.decimalPlaces);
-        this.options.vAxes.primary.cumulative = this.validateOption(options?.vAxes?.primary?.stripes, 'boolean', this.options.vAxes.primary.cumulative);
+        this.options.vAxes.primary.cumulative = this.validateOption(options?.vAxes?.primary?.cumulative, 'boolean', this.options.vAxes.primary.cumulative);
 
         if (options?.vAxes?.primary?.min === 'auto' || !isNaN(options?.vAxes?.primary?.min)) this.options.vAxes.primary.min = options.vAxes.primary.min;
 
