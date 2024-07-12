@@ -187,7 +187,7 @@ class CragLine extends CragCore {
 
     }
 
-    _cumulateData() {
+    _cumulateData() {console.log(this.data);
 
         if (!this.options.vAxes.primary.cumulative) {
             for (let i = 0; i < this.data.series.length; i++) {
@@ -231,8 +231,12 @@ class CragLine extends CragCore {
 
     _getDataMinMax() {
 
-        this.data.max = findMaxValue(this.data.series);
-        this.data.min = findMinValue(this.data.series);
+        this.data.max = {
+            primary: findMaxValue(this.data.series),
+        };
+        this.data.min = {
+            primary: findMinValue(this.data.series),
+        };
 
     }
 
@@ -244,6 +248,7 @@ class CragLine extends CragCore {
 
         this.data.labels = data[0];
         this.data.series = data.slice(1, data.length);
+        this.data.seriesOriginal = data.slice(1, data.length);
 
         this._draw();
 
