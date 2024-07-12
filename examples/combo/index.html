@@ -298,6 +298,10 @@
                 <option value="deepOrange">Deep Orange</option>
             </select>
 
+            <label class="config-menu__option-label">.cumulative</label>
+            <input class="config-menu__checkbox" type="checkbox" id="primaryCumulative" onchange="primaryCumulative(this)"/>
+            <label class="config-menu__checkbox-label" for="primaryCumulative"></label>
+
             <h1 class="config-menu__sub-title">.vAxes.secondary</h1>
 
             <label class="config-menu__option-label" for="showOnPrimary">.showOnPrimary</label>
@@ -325,6 +329,9 @@
                 <option value="deepOrange">Deep Orange</option>
             </select>
 
+            <label class="config-menu__option-label">.cumulative</label>
+            <input class="config-menu__checkbox" type="checkbox" id="secondaryCumulative" onchange="secondaryCumulative(this)"/>
+            <label class="config-menu__checkbox-label" for="secondaryCumulative"></label>
 
             <h1 class="config-menu__sub-title">.lines</h1>
 
@@ -348,7 +355,6 @@
             <label class="config-menu__option-label" for="labelVisible">.labelVisible</label>
             <input class="config-menu__checkbox" type="checkbox" id="labelVisible" onchange="labelVisible(this)"/>
             <label class="config-menu__checkbox-label" for="labelVisible"></label>
-
 
             <h1 class="config-menu__sub-title">.lines[0]</h1>
 
@@ -512,6 +518,14 @@
             }
             function secondaryAxisColor(elem) {
                 chart.secondaryVAxis.lineColor = elem.value;
+            }
+
+            function primaryCumulative(elem) {
+                chart.primaryVAxis.cumulative = elem.checked;
+            }
+
+            function secondaryCumulative(elem) {
+                chart.secondaryVAxis.cumulative = elem.checked;
             }
 
         </script>

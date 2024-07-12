@@ -155,6 +155,10 @@
                 <option value="deepOrange">Deep Orange</option>
             </select>
 
+            <label class="config-menu__option-label">.cumulative</label>
+            <input class="config-menu__checkbox" type="checkbox" id="primaryCumulative" onchange="primaryCumulative(this)"/>
+            <label class="config-menu__checkbox-label" for="primaryCumulative"></label>
+
             <h1 class="config-menu__sub-title">.lines</h1>
 
             <label class="config-menu__option-label">.thickness</label>
@@ -296,6 +300,10 @@
 
             function primaryAxisMinimum(elem) {
                 chart.primaryVAxis.minimum = elem.value === '0' ? 0 : elem.value;
+            }
+
+            function primaryCumulative(elem) {
+                chart.primaryVAxis.cumulative = elem.checked;
             }
 
             function labelVisible(elem) {

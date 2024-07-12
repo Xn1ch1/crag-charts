@@ -32,6 +32,7 @@ class CragColumn extends CragCore {
         this.data = {
             labels: data[0],
             series: data[1],
+            seriesOriginal: data[1],
             max: 0,
             min: 0
         };
@@ -54,7 +55,8 @@ class CragColumn extends CragCore {
                     format: 'number',
                     currencySymbol: 'GBP',
                     decimalPlaces: 0,
-                    min: 'auto'
+                    min: 'auto',
+                    cumulative: false
                 },
             },
             columns: {
@@ -116,6 +118,7 @@ class CragColumn extends CragCore {
         this.options.vAxes.primary.minorLines = this.validateOption(options?.vAxes?.primary?.minorLines, 'boolean', this.options.vAxes.primary.minorLines);
         this.options.vAxes.primary.format = this.validateOption(options?.vAxes?.primary?.format, this.labelFormats, this.options.vAxes.primary.format);
         this.options.vAxes.primary.decimalPlaces = this.validateOption(options?.vAxes?.primary?.decimalPlaces, 'number', this.options.vAxes.primary.decimalPlaces);
+        this.options.vAxes.primary.cumulative = this.validateOption(options?.vAxes?.primary?.stripes, 'boolean', this.options.vAxes.primary.cumulative);
 
         if (options?.vAxes?.primary?.min === 'auto' || !isNaN(options?.vAxes?.primary?.min)) this.options.vAxes.primary.min = options.vAxes.primary.min;
 
@@ -170,6 +173,7 @@ class CragColumn extends CragCore {
         /**
          * Updates both vAxis to match the current data set.
          */
+        this._cumulateData();
         this._getDataMinMax();
 
         /**
@@ -202,6 +206,24 @@ class CragColumn extends CragCore {
 
     }
 
+    _cumulateData() {
+
+        if (!this.options.vAxes.primary.cumulative) {
+            this.data.series = [...this.data.seriesOriginal];
+            return;
+        }
+
+        let cumulativeTotal = 0;
+
+        for (let i = 0; i < this.data.series.length; i++) {
+
+            cumulativeTotal += this.data.seriesOriginal[i];
+            this.data.series[i] = cumulativeTotal;
+
+        }
+
+    }
+
     _getDataMinMax() {
 
         this.data.max = findMaxValue(this.data.series);
@@ -217,8 +239,11 @@ class CragColumn extends CragCore {
 
         this.data.labels = data[0];
         this.data.series = data[1];
+        this.data.seriesOriginal = data[1];
 
-        this.columns.data = data[1];
+        this._cumulateData();
+
+        this.columns.data = this.data.series;
 
         this._draw();
 
@@ -606,8 +631,9 @@ class Columns extends CragCore {
                  */
                 this.columns[i].index = i;
                 this.columns[i].name = this.chart.data.labels[i];
-                this.columns[i].value = this.data[i];
                 this.columns[i].columnOptions = this.chart.options.columns;
+                this.columns[i].value = this.data[i];
+
                 this.chart.toolTip.attach(this.columns[i]);
 
             } else {

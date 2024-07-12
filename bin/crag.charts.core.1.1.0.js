@@ -1083,6 +1083,13 @@ class VAxis extends CragCore {
 
     }
 
+    set cumulative(value) {
+
+        this.chart.options.vAxes[this.axisName].cumulative = value;
+        this.chart._draw();
+
+    }
+
 }
 
 class VAxisLine {
