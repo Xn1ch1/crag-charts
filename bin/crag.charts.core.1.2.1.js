@@ -467,6 +467,10 @@ class CragCore {
 
     }
 
+    _deepCopyArray(arr) {
+        return arr.map(item => (Array.isArray(item) ? this._deepCopyArray(item) : item));
+    }
+
 }
 
 /**

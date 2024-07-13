@@ -187,11 +187,12 @@ class CragLine extends CragCore {
 
     }
 
-    _cumulateData() {console.log(this.data);
+    _cumulateData() {
 
         if (!this.options.vAxes.primary.cumulative) {
+
             for (let i = 0; i < this.data.series.length; i++) {
-                this.data.series[i] = [...this.data.seriesOriginal[i]];
+                this.data.series[i] = this._deepCopyArray(this.data.seriesOriginal)[i];
             }
             return;
         }
@@ -246,9 +247,11 @@ class CragLine extends CragCore {
      */
     update(data) {
 
-        this.data.labels = data[0];
-        this.data.series = data.slice(1, data.length);
-        this.data.seriesOriginal = data.slice(1, data.length);
+        const newData = this._deepCopyArray(data);
+
+        this.data.labels = newData[0];
+        this.data.series = newData.slice(1, newData.length);
+        this.data.seriesOriginal = newData.slice(1, newData.length);
 
         this._draw();
 
@@ -874,7 +877,7 @@ class Lines extends CragCore {
 
         for (let i = 0; i < data.length; i++) {
 
-            this.lines[i].update(data[i], scale);
+            this.lines[i].update([...data[i]], scale);
 
         }
 

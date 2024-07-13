@@ -208,16 +208,16 @@ class CragColumn extends CragCore {
 
     _cumulateData() {
 
-        if (!this.options.vAxes.primary.cumulative) {
-            this.data.series = [...this.data.seriesOriginal];
-            return;
-        }
+        this.data.series = this._deepCopyArray(this.data.seriesOriginal);
+
+        if (!this.options.vAxes.primary.cumulative) return;
 
         let cumulativeTotal = 0;
 
         for (let i = 0; i < this.data.series.length; i++) {
 
             cumulativeTotal += this.data.seriesOriginal[i];
+
             this.data.series[i] = cumulativeTotal;
 
         }
@@ -237,11 +237,11 @@ class CragColumn extends CragCore {
      */
     update(data) {
 
-        this.data.labels = data[0];
-        this.data.series = data[1];
-        this.data.seriesOriginal = data[1];
+        const newData = this._deepCopyArray(data);
 
-        this._cumulateData();
+        this.data.labels = newData[0];
+        this.data.series = newData[1];
+        this.data.seriesOriginal = newData[1];
 
         this.columns.data = this.data.series;
 
@@ -604,7 +604,7 @@ class Columns extends CragCore {
 
     update(data) {
 
-        this.data = data;
+        this.data = this._deepCopyArray(data);
 
         this._refactorColumns();
         this._setColumnDimensions();

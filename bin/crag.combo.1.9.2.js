@@ -23,9 +23,9 @@ class CragCombo extends CragCore {
         super();
 
         this.data = {
-            labels: data[0],
-            series: data.slice(1, data.length),
-            seriesOriginal: data.slice(1, data.length),
+            labels: [...data[0]],
+            series: [...data.slice(1, data.length)],
+            seriesOriginal: [...data.slice(1, data.length)],
             max: {
                 primary: 0,
                 secondary: 0,
@@ -253,37 +253,25 @@ class CragCombo extends CragCore {
 
     _cumulate() {
 
-        if (!this.options.vAxes.primary.cumulative) {
+        this.data.series[0] = this._deepCopyArray(this.data.seriesOriginal)[0];
+        this.data.series[1] = this._deepCopyArray(this.data.seriesOriginal)[1];
 
-            this.data.series[0] = [...this.data.seriesOriginal[0]];
-
-        } else {
+        if (this.options.vAxes.primary.cumulative) {
 
             let cumulativeTotal = 0;
-
             for (let i = 0; i < this.data.series[0].length; i++) {
-
                 cumulativeTotal += this.data.seriesOriginal[0][i];
                 this.data.series[0][i] = cumulativeTotal;
-
             }
 
         }
 
-        if (!this.options.vAxes.secondary.cumulative) {
-
-
-            this.data.series[1] = [...this.data.seriesOriginal[1]];
-
-        } else {
+        if (this.options.vAxes.secondary.cumulative) {
 
             let cumulativeTotal = 0;
-
             for (let i = 0; i < this.data.series[1].length; i++) {
-
                 cumulativeTotal += this.data.seriesOriginal[1][i];
                 this.data.series[1][i] = cumulativeTotal;
-
             }
 
         }
@@ -322,9 +310,11 @@ class CragCombo extends CragCore {
      */
     update(data) {
 
-        this.data.labels = data[0];
-        this.data.series = data.slice(1, data.length);
-        this.data.seriesOriginal = data.slice(1, data.length);
+        const newData = this._deepCopyArray(data)
+
+        this.data.labels = newData[0];
+        this.data.series = newData.slice(1, newData.length);
+        this.data.seriesOriginal = newData.slice(1, newData.length);
 
         this._draw();
 
