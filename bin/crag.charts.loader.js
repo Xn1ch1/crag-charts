@@ -3,7 +3,7 @@ class CragLoader {
     defaultPath = 'https://crag-charts.grangefencing.app/bin/';
     resources = {
         core: {
-            js: 'crag.charts.core.1.2.1.js',
+            js: 'crag.charts.core.1.2.2.js',
             css: 'crag.charts.core.0.4.0.css'
         },
         column: {
