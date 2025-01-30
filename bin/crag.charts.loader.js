@@ -1,6 +1,6 @@
 class CragLoader {
 
-    defaultPath = 'https://combinatronics.com/Xn1ch1/Crag-Charts/main/crag/';
+    defaultPath = 'https://crag-charts.grangefencing.app/bin/';
     resources = {
         core: {
             js: 'crag.charts.core.1.2.1.js',
@@ -15,11 +15,11 @@ class CragLoader {
             css: 'crag.progress.1.2.0.css'
         },
         lines: {
-            js: 'crag.lines.1.9.2.js',
+            js: 'crag.lines.1.9.3.js',
             css: 'crag.lines.1.1.0.css'
         },
         combo: {
-            js: ['crag.lines.1.9.2.js', 'crag.column.1.8.2.js', 'crag.combo.1.9.2.js'],
+            js: ['crag.lines.1.9.3.js', 'crag.column.1.8.2.js', 'crag.combo.1.9.2.js'],
             css: ['crag.lines.1.1.0.css', 'crag.column.1.1.0.css', 'crag.combo.1.0.3.css']
         },
         pie: {

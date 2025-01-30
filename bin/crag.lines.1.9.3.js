@@ -63,7 +63,7 @@ class CragLine extends CragCore {
             trendLine: {
                 color: CragPallet.grey,
                 thickness: 2,
-                name: 'Trend'
+                name: ''
             }
         };
 
