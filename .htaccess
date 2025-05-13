@@ -1,7 +1,7 @@
-<FilesMatch ".*loader.*\.js$">
-    <IfModule mod_expires.c>
-        ExpiresActive On
-        ExpiresDefault "access plus 0 seconds"
-        ExpiresByType text/javascript "modification"
-    </IfModule>
-</FilesMatch>
+<IfModule mod_headers.c>
+    <FilesMatch "\.(js)$">
+        Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
+    </FilesMatch>
+</IfModule>
