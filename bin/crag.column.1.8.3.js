@@ -470,7 +470,7 @@ class Column extends CragCore {
 
     set height(value) {
         this.#height = value;
-        this.element.style.height = `${value}px`;
+        this.element.style.height = `${Math.round(value)}px`;
     }
     get height() {
         return this.#height;
@@ -478,7 +478,7 @@ class Column extends CragCore {
 
     set width(value) {
         this.#width = value;
-        this.element.style.width = `${value}px`;
+        this.element.style.width = `${Math.round(value)}px`;
     }
     get width() {
         return this.#width;
@@ -486,7 +486,7 @@ class Column extends CragCore {
 
     set left(value) {
         this.#left = value;
-        this.element.style.left = `${value}px`;
+        this.element.style.left = `${Math.round(value)}px`;
     }
     get left() {
         return this.#left;
@@ -494,7 +494,7 @@ class Column extends CragCore {
 
     set bottom(value) {
         this.#bottom = value;
-        this.element.style.bottom = `${value}px`;
+        this.element.style.bottom = `${Math.round(value)}px`;
     }
     get bottom() {
         return this.#bottom;

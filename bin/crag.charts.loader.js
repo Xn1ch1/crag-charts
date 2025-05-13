@@ -7,7 +7,7 @@ class CragLoader {
             css: 'crag.charts.core.0.4.0.css'
         },
         column: {
-            js: 'crag.column.1.8.2.js',
+            js: 'crag.column.1.8.3.js',
             css: 'crag.column.1.1.0.css'
         },
         progress: {
@@ -19,7 +19,7 @@ class CragLoader {
             css: 'crag.lines.1.1.0.css'
         },
         combo: {
-            js: ['crag.lines.1.9.3.js', 'crag.column.1.8.2.js', 'crag.combo.1.9.2.js'],
+            js: ['crag.lines.1.9.3.js', 'crag.column.1.8.3.js', 'crag.combo.1.9.2.js'],
             css: ['crag.lines.1.1.0.css', 'crag.column.1.1.0.css', 'crag.combo.1.0.3.css']
         },
         pie: {
