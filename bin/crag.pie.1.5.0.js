@@ -5,7 +5,8 @@ class CragPie extends CragCore {
 
         this.data = {
             labels: data[0],
-            series: data[1]
+            series: data[1],
+            seriesLabels: data[2] ?? null
         };
 
         this.options = {
@@ -51,6 +52,7 @@ class CragPie extends CragCore {
             container: null,
             title: null,
             label: null,
+            seriesLabel: null,
             value: null
         };
 
@@ -133,16 +135,19 @@ class CragPie extends CragCore {
         this.sliceDetail.title = document.createElement('h6');
         this.sliceDetail.value = document.createElement('h6');
         this.sliceDetail.label = document.createElement('h6');
+        this.sliceDetail.seriesLabel = document.createElement('h6');
 
         this.sliceDetail.container.className = 'cragPieSliceDetail';
         this.sliceDetail.title.className = 'cragPieSliceDetailTitle';
         this.sliceDetail.value.className = 'cragPieSliceDetailValue';
         this.sliceDetail.label.className = 'cragPieSliceDetailLabel';
+        this.sliceDetail.seriesLabel.className = 'cragPieSliceDetailSeriesLabel';
 
         this.chart.labelArea.appendChild(this.sliceDetail.container);
         this.sliceDetail.container.appendChild(this.sliceDetail.title);
         this.sliceDetail.container.appendChild(this.sliceDetail.label);
         this.sliceDetail.container.appendChild(this.sliceDetail.value);
+        this.sliceDetail.container.appendChild(this.sliceDetail.seriesLabel);
 
     }
 
@@ -183,6 +188,7 @@ class CragPie extends CragCore {
 
         this.data.labels = indices.map(index => this.data.labels[index]);
         this.data.series = indices.map(index => this.data.series[index]);
+        this.data.seriesLabels = indices.map(index => this.data.seriesLabels?.[index] ?? null);
 
     }
 
@@ -207,6 +213,7 @@ class CragPie extends CragCore {
 
         this.data.labels = data[0];
         this.data.series = data[1];
+        this.data.seriesLabels = data[2] ?? null;
 
         if (this.options.pie.highToLow) this._sortData();
 
@@ -253,6 +260,7 @@ class Slice extends CragCore {
     keyDot = null;
 
     name = null;
+    seriesLabel = null;
     value = 0;
     percentage = 0;
 
@@ -272,12 +280,13 @@ class Slice extends CragCore {
         oldEnd: 360
     }
 
-    constructor(chart, index, name, value, percentage) {
+    constructor(chart, index, name, value, percentage, seriesLabel) {
         super();
 
         this.index = index;
         this.chart = chart;
         this.name = name;
+        this.seriesLabel = seriesLabel;
         this.value = value;
         this.percentage = percentage;
 
@@ -539,8 +548,10 @@ class Slice extends CragCore {
         this.chart.sliceDetail.title.style.fontSize = Math.max(18, this.chart.chart.labelArea.offsetHeight / 16) + 'px';
         this.chart.sliceDetail.label.style.fontSize = Math.max(14, this.chart.chart.labelArea.offsetHeight / 26) + 'px';
         this.chart.sliceDetail.value.style.fontSize = Math.max(14, this.chart.chart.labelArea.offsetHeight / 26) + 'px';
+        this.chart.sliceDetail.seriesLabel.style.fontSize = Math.max(10, this.chart.chart.labelArea.offsetHeight / 36) + 'px';
 
         this.chart.sliceDetail.title.textContent = this.name;
+        this.chart.sliceDetail.seriesLabel.textContent = this.seriesLabel;
         this.chart.sliceDetail.label.textContent = this.percentage.toFixed(2) + '%';
         this.chart.sliceDetail.value.textContent = this.formatLabel(
             this.value,
@@ -690,7 +701,8 @@ class Slices extends CragCore {
                     i,
                     this.chart.data.labels[i],
                     this.chart.data.series[i],
-                    100 / total * this.chart.data.series[i]
+                    100 / total * this.chart.data.series[i],
+                    this.chart.data.seriesLabels?.[i] ?? null
                 );
 
             } else {
@@ -698,7 +710,9 @@ class Slices extends CragCore {
                 this.slices[i].index = i;
                 this.slices[i].name = this.chart.data.labels[i];
                 this.slices[i].value = this.chart.data.series[i];
+                this.slices[i].seriesLabel = this.chart.data.seriesLabels?.[i] ?? null;
                 this.slices[i].percentage = 100 / total * this.chart.data.series[i];
+
 
             }
 
