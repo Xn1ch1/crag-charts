@@ -105,6 +105,8 @@
     opacity: 0;
     transition: all 0.5s ease;
     -webkit-tap-highlight-color: transparent;
+    display: flex;
+    flex-direction: column;
 }
 .cragPieSliceDetail h6 {
     color: inherit;
@@ -135,4 +137,5 @@
 }
 .cragPieSliceDetailSeriesLabel {
     text-align: right;
+    margin: 0;
 }

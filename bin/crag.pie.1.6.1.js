@@ -143,10 +143,14 @@ class CragPie extends CragCore {
         this.sliceDetail.label.className = 'cragPieSliceDetailLabel';
         this.sliceDetail.seriesLabel.className = 'cragPieSliceDetailSeriesLabel';
 
+        const valueContainer = document.createElement('div');
+        valueContainer.style.display = 'flex';
+        valueContainer.style.justifyContent = 'space-between';
+        valueContainer.append(this.sliceDetail.label, this.sliceDetail.value);
+
         this.chart.labelArea.appendChild(this.sliceDetail.container);
         this.sliceDetail.container.appendChild(this.sliceDetail.title);
-        this.sliceDetail.container.appendChild(this.sliceDetail.label);
-        this.sliceDetail.container.appendChild(this.sliceDetail.value);
+        this.sliceDetail.container.appendChild(valueContainer);
         this.sliceDetail.container.appendChild(this.sliceDetail.seriesLabel);
 
     }
