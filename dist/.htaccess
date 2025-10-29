@@ -1,0 +1,18 @@
+# Enable CORS for all public JS module requests
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, OPTIONS"
+    Header set Access-Control-Allow-Headers "*"
+</IfModule>
+
+# Ensure correct MIME type for ES modules
+AddType text/javascript .js
+
+# Optional: Set long cache headers for versioned assets
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/javascript "access plus 1 year"
+</IfModule>
+
+# Optional: Prevent directory listing
+Options -Indexes

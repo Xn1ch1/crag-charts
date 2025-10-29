@@ -1,0 +1,33 @@
+.cragComboChartContainer {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: min-content 1fr min-content;
+    grid-template-rows: min-content 1fr min-content;
+    gap: 0 0;
+    grid-template-areas:
+        ". cragTitle ."
+        "cragVAxisPrimary cragComboChartArea cragVAxisSecondary"
+        ". cragHAxis .";
+    overflow: hidden;
+}
+.cragComboChartArea {
+    grid-area: cragComboChartArea;
+    position: relative;
+}
+.cragLineLabel {
+    position: absolute;
+    text-anchor: middle;
+    text-align: center;
+    font-size: 12px;
+    transition: all 0.7s, opacity 0s;
+    padding: 1px 4px;
+    left: 100%;
+    box-sizing: border-box;
+    font-family: Roboto, sans-serif;
+    background: #FFFFFFCC;
+    border-radius: 4px;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+}
