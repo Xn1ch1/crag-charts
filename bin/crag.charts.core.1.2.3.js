@@ -1396,7 +1396,6 @@ class ToolTip extends CragCore {
         const name = object.name;
         const value = object.value;
         const element = object.element;
-        const seriesName = object?.seriesName;
 
         element.onpointerover = (e) => {
             /**
@@ -1404,7 +1403,7 @@ class ToolTip extends CragCore {
              */
             if (e.pointerType === 'touch') return;
             this.quickRemove = true;
-            this.show(e, name, value, !object?.labelVisible, seriesName);
+            this.show(e, name, value, !object?.labelVisible, object.seriesName);
             element.classList.add('--active');
         };
         element.onpointermove = (e) => this._position(e);
@@ -1413,7 +1412,7 @@ class ToolTip extends CragCore {
              * this is not relevant for mouse events
              */
             if (e.pointerType !== 'touch') return;
-            this.show(e, name, value, !object?.labelVisible, seriesName);
+            this.show(e, name, value, !object?.labelVisible, object.seriesName);
             element.classList.add('--active');
             this.quickRemove = false;
             setTimeout(() => {
